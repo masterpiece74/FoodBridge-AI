@@ -21,7 +21,7 @@ import {
 const Register = () => {
   const navigate = useNavigate();
 
-  const API_URL = "http://127.0.0.1:8000";
+  const API_URL = "https://foodbridge-ai-qj9q.onrender.com";
 
   const [formData, setFormData] = useState({
     full_name: "",

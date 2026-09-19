@@ -13,7 +13,7 @@ import {
 const Login = () => {
   const navigate = useNavigate();
 
-  const API_URL = "http://127.0.0.1:8000";
+  const API_URL = "https://foodbridge-ai-qj9q.onrender.com";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

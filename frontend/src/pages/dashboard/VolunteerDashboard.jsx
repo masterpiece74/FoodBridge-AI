@@ -19,7 +19,7 @@ import {
   CircleDot,
 } from "lucide-react";
 
-const API_URL = "http://127.0.0.1:8000";
+const API_URL = "https://foodbridge-ai-qj9q.onrender.com";
 
 function VolunteerDashboard() {
   const [deliveries, setDeliveries] = useState([]);
