@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import os
 import secrets
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import resend
 
 import jwt
 from dotenv import load_dotenv
@@ -63,33 +61,17 @@ PASSWORD_RESET_EXPIRE_MINUTES = 30
 
 
 # =========================
-# GMAIL SMTP SETTINGS
+# RESEND EMAIL SETTINGS
 # =========================
 
-EMAIL_HOST = os.getenv(
-    "EMAIL_HOST",
-    "smtp.gmail.com",
-)
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 
-EMAIL_PORT = int(
-    os.getenv(
-        "EMAIL_PORT",
-        "587",
-    )
-)
-
-EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
-
-if not EMAIL_USERNAME:
+if not RESEND_API_KEY:
     raise RuntimeError(
-        "EMAIL_USERNAME is not configured in the .env file."
+        "RESEND_API_KEY is not configured in the .env file."
     )
 
-if not EMAIL_PASSWORD:
-    raise RuntimeError(
-        "EMAIL_PASSWORD is not configured in the .env file."
-    )
+resend.api_key = RESEND_API_KEY
 
 
 # =========================
@@ -160,17 +142,8 @@ def send_password_reset_email(
     reset_link: str,
 ):
     """
-    Send a password reset email using Gmail SMTP.
+    Send a password reset email using Resend.
     """
-
-    message = MIMEMultipart("alternative")
-
-    message["Subject"] = (
-        "Reset Your FoodBridge AI Password"
-    )
-
-    message["From"] = EMAIL_USERNAME
-    message["To"] = recipient_email
 
     html_content = f"""
     <html>
@@ -186,8 +159,6 @@ def send_password_reset_email(
                 max-width: 600px;
                 margin: 0 auto;
             ">
-
-                <!-- HEADER -->
 
                 <div style="
                     text-align: center;
@@ -209,9 +180,6 @@ def send_password_reset_email(
                     </p>
 
                 </div>
-
-
-                <!-- EMAIL CARD -->
 
                 <div style="
                     background-color: #ffffff;
@@ -240,9 +208,6 @@ def send_password_reset_email(
                         a new password:
                     </p>
 
-
-                    <!-- RESET BUTTON -->
-
                     <div style="
                         text-align: center;
                         margin: 30px 0;
@@ -265,9 +230,6 @@ def send_password_reset_email(
 
                     </div>
 
-
-                    <!-- EXPIRATION -->
-
                     <p style="
                         color: #666666;
                         font-size: 14px;
@@ -275,9 +237,6 @@ def send_password_reset_email(
                         This password reset link will
                         expire in 30 minutes.
                     </p>
-
-
-                    <!-- SECURITY MESSAGE -->
 
                     <p style="
                         color: #666666;
@@ -289,9 +248,6 @@ def send_password_reset_email(
                     </p>
 
                 </div>
-
-
-                <!-- FOOTER -->
 
                 <p style="
                     text-align: center;
@@ -309,39 +265,16 @@ def send_password_reset_email(
     </html>
     """
 
-    message.attach(
-        MIMEText(
-            html_content,
-            "html",
-        )
+    response = resend.Emails.send(
+        {
+            "from": "FoodBridge AI <onboarding@resend.dev>",
+            "to": [recipient_email],
+            "subject": "Reset Your FoodBridge AI Password",
+            "html": html_content,
+        }
     )
 
-
-    # =========================
-    # CONNECT TO GMAIL
-    # =========================
-
-    with smtplib.SMTP(
-        EMAIL_HOST,
-        EMAIL_PORT,
-        timeout=30,
-    ) as server:
-
-        # Secure the connection using STARTTLS.
-        server.starttls()
-
-        # Login using the Gmail App Password.
-        server.login(
-            EMAIL_USERNAME,
-            EMAIL_PASSWORD,
-        )
-
-        # Send the email.
-        server.sendmail(
-            EMAIL_USERNAME,
-            recipient_email,
-            message.as_string(),
-        )
+    return response
 
 
 # =========================
@@ -690,12 +623,12 @@ def forgot_password(
             # =========================
 
             reset_link = (
-                "http://localhost:5173/reset-password"
+                "https://food-bridge-ai-self.vercel.app/reset-password"
                 f"?token={reset_token}"
             )
 
             # =========================
-            # SEND EMAIL THROUGH GMAIL
+            # SEND EMAIL THROUGH RESEND
             # =========================
 
             try:
@@ -725,7 +658,7 @@ def forgot_password(
                 connection.commit()
 
                 print(
-                    "Gmail SMTP email error:",
+                    "Resend email error:",
                     email_error,
                 )
 
