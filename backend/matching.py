@@ -21,6 +21,33 @@ router = APIRouter(
 
 
 # ============================================================
+# TEXT NORMALIZATION
+# ============================================================
+
+def normalize_food_text(value):
+    """
+    Normalize food names/types so comparisons are consistent.
+
+    Examples:
+        "Jollof Rice" -> "jollof rice"
+        "prepared_meal" -> "prepared meal"
+        "  Jollof   Rice  " -> "jollof rice"
+    """
+
+    if value is None:
+        return ""
+
+    return " ".join(
+        str(value)
+        .strip()
+        .lower()
+        .replace("-", " ")
+        .replace("_", " ")
+        .split()
+    )
+
+
+# ============================================================
 # DISTANCE CALCULATION
 # ============================================================
 
@@ -61,6 +88,7 @@ def calculate_distance_km(
 
     lat1_rad = math.radians(lat1)
     lon1_rad = math.radians(lon1)
+
     lat2_rad = math.radians(lat2)
     lon2_rad = math.radians(lon2)
 
@@ -132,30 +160,121 @@ def calculate_distance_score(distance_km):
 
 
 # ============================================================
-# FOOD TYPE SCORE
+# FOOD TYPE / FOOD NAME SCORE
 # ============================================================
 
 def calculate_food_type_score(
+    donation_food_name,
     donation_food_type,
     requested_food_type,
 ):
-    if not donation_food_type or not requested_food_type:
+    """
+    Match the donated food against the recipient's request.
+
+    Example:
+
+        Donation food_name:
+            Jollof Rice
+
+        Donation food_type:
+            prepared_meal
+
+        Recipient requested food_type:
+            jollof rice
+
+    Result:
+        100
+
+    This allows a specific food such as Jollof Rice
+    to match a broader category such as prepared_meal.
+
+    The function still prevents unrelated foods
+    from being matched.
+    """
+
+    donation_name = normalize_food_text(
+        donation_food_name
+    )
+
+    donation_type = normalize_food_text(
+        donation_food_type
+    )
+
+    requested_type = normalize_food_text(
+        requested_food_type
+    )
+
+    if not requested_type:
         return 0.0
 
-    donation_type = str(
-        donation_food_type
-    ).strip().lower()
-
-    requested_type = str(
-        requested_food_type
-    ).strip().lower()
-
-    if donation_type == requested_type:
-        return 100.0
+    # --------------------------------------------------------
+    # Exact match against the actual donated food name
+    # --------------------------------------------------------
 
     if (
-        donation_type in requested_type
-        or requested_type in donation_type
+        donation_name
+        and donation_name == requested_type
+    ):
+        return 100.0
+
+    # --------------------------------------------------------
+    # Exact match against donation category/type
+    # --------------------------------------------------------
+
+    if (
+        donation_type
+        and donation_type == requested_type
+    ):
+        return 100.0
+
+    # --------------------------------------------------------
+    # Partial/similar food-name match
+    #
+    # Example:
+    # donation = "jollof rice"
+    # request  = "jollof rice meal"
+    # --------------------------------------------------------
+
+    if (
+        donation_name
+        and (
+            donation_name in requested_type
+            or requested_type in donation_name
+        )
+    ):
+        return 95.0
+
+    # --------------------------------------------------------
+    # Broad food categories
+    # --------------------------------------------------------
+
+    broad_food_categories = {
+        "prepared meal",
+        "prepared meals",
+        "meal",
+        "meals",
+        "cooked food",
+        "cooked meal",
+        "food",
+    }
+
+    if (
+        donation_type in broad_food_categories
+        and requested_type in broad_food_categories
+    ):
+        return 100.0
+
+    # --------------------------------------------------------
+    # Partial category/type compatibility
+    # --------------------------------------------------------
+
+    if (
+        donation_type
+        and requested_type
+        and (
+            donation_type in requested_type
+            or requested_type in donation_type
+        )
     ):
         return 80.0
 
@@ -376,6 +495,10 @@ def run_ai_matching(
     try:
         with connection.cursor() as cursor:
 
+            # ------------------------------------------------
+            # GET DONATION
+            # ------------------------------------------------
+
             cursor.execute(
                 """
                 SELECT
@@ -418,11 +541,19 @@ def run_ai_matching(
                 donation_status,
             ) = donation
 
+            # ------------------------------------------------
+            # VERIFY DONOR
+            # ------------------------------------------------
+
             if donor_id != current_user["id"]:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="You can only match your own donations.",
                 )
+
+            # ------------------------------------------------
+            # VERIFY DONATION STATUS
+            # ------------------------------------------------
 
             if donation_status != "available":
                 raise HTTPException(
@@ -433,6 +564,10 @@ def run_ai_matching(
             freshness_score = calculate_freshness_score(
                 donation_freshness_score
             )
+
+            # ------------------------------------------------
+            # GET ACTIVE RECIPIENT NEEDS
+            # ------------------------------------------------
 
             cursor.execute(
                 """
@@ -481,6 +616,10 @@ def run_ai_matching(
 
             formatted_matches = []
 
+            # =================================================
+            # PROCESS EACH RECIPIENT NEED
+            # =================================================
+
             for need in recipient_needs:
 
                 (
@@ -500,28 +639,47 @@ def run_ai_matching(
                     recipient_longitude,
                 ) = need
 
+                # ------------------------------------------------
+                # FOOD MATCHING
+                # ------------------------------------------------
+
                 food_type_score = calculate_food_type_score(
+                    food_name,
                     donation_food_type,
                     requested_food_type,
                 )
 
+                # If food is completely incompatible,
+                # skip this recipient.
                 if food_type_score <= 0:
                     continue
+
+                # ------------------------------------------------
+                # QUANTITY SCORE
+                # ------------------------------------------------
 
                 quantity_score = calculate_quantity_score(
                     donation_quantity,
                     quantity_needed,
                 )
 
+                # ------------------------------------------------
+                # FRESHNESS SCORE
+                # ------------------------------------------------
+
                 current_freshness_score = freshness_score
+
+                # ------------------------------------------------
+                # URGENCY SCORE
+                # ------------------------------------------------
 
                 urgency_score = calculate_urgency_score(
                     recipient_urgency_score
                 )
 
-                # --------------------------------------------
-                # ACTUAL DISTANCE
-                # --------------------------------------------
+                # ------------------------------------------------
+                # DISTANCE
+                # ------------------------------------------------
 
                 distance_km = calculate_distance_km(
                     donor_latitude,
@@ -534,6 +692,10 @@ def run_ai_matching(
                     distance_km
                 )
 
+                # ------------------------------------------------
+                # OVERALL AI SCORE
+                # ------------------------------------------------
+
                 match_score = calculate_overall_match_score(
                     distance_score,
                     food_type_score,
@@ -542,6 +704,10 @@ def run_ai_matching(
                     urgency_score,
                 )
 
+                # ------------------------------------------------
+                # AI EXPLANATION
+                # ------------------------------------------------
+
                 ai_reason = build_ai_reason(
                     food_type_score,
                     quantity_score,
@@ -549,6 +715,10 @@ def run_ai_matching(
                     urgency_score,
                     distance_score,
                 )
+
+                # ------------------------------------------------
+                # CHECK EXISTING MATCH
+                # ------------------------------------------------
 
                 cursor.execute(
                     """
@@ -573,6 +743,7 @@ def run_ai_matching(
                     match_id = existing_match[0]
                     existing_status = existing_match[1]
 
+                    # Preserve completed/accepted/rejected states.
                     if existing_status in (
                         "accepted",
                         "completed",
@@ -609,6 +780,10 @@ def run_ai_matching(
                         saved_status = existing_status
 
                 else:
+
+                    # ------------------------------------------------
+                    # CREATE NEW MATCH
+                    # ------------------------------------------------
 
                     cursor.execute(
                         """
@@ -655,6 +830,10 @@ def run_ai_matching(
 
                     saved_status = "suggested"
 
+                # ------------------------------------------------
+                # ADD MATCH TO RESPONSE
+                # ------------------------------------------------
+
                 formatted_matches.append(
                     {
                         "match_id": match_id,
@@ -687,6 +866,10 @@ def run_ai_matching(
                         "status": saved_status,
                     }
                 )
+
+            # ------------------------------------------------
+            # SORT BEST MATCH FIRST
+            # ------------------------------------------------
 
             formatted_matches.sort(
                 key=lambda item: item["match_score"],
@@ -748,6 +931,10 @@ def get_donation_matches(
     try:
         with connection.cursor() as cursor:
 
+            # ------------------------------------------------
+            # GET DONATION
+            # ------------------------------------------------
+
             cursor.execute(
                 """
                 SELECT
@@ -791,6 +978,10 @@ def get_donation_matches(
                 donor_longitude,
                 donation_status,
             ) = donation
+
+            # ------------------------------------------------
+            # GET MATCHES
+            # ------------------------------------------------
 
             cursor.execute(
                 """
@@ -893,9 +1084,9 @@ def get_donation_matches(
                     need_urgency_score,
                 ) = row
 
-                # --------------------------------------------
+                # ------------------------------------------------
                 # RECALCULATE ACTUAL DISTANCE
-                # --------------------------------------------
+                # ------------------------------------------------
 
                 distance_km = calculate_distance_km(
                     donor_latitude,
@@ -999,6 +1190,10 @@ def accept_match(
     try:
         with connection.cursor() as cursor:
 
+            # ------------------------------------------------
+            # GET MATCH + DONATION + RECIPIENT
+            # ------------------------------------------------
+
             cursor.execute(
                 """
                 SELECT
@@ -1047,11 +1242,19 @@ def accept_match(
                 delivery_address,
             ) = match
 
+            # ------------------------------------------------
+            # VERIFY DONOR
+            # ------------------------------------------------
+
             if donor_id != current_user["id"]:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="You can only accept matches for your own donations.",
                 )
+
+            # ------------------------------------------------
+            # VERIFY MATCH STATUS
+            # ------------------------------------------------
 
             if match_status != "suggested":
                 raise HTTPException(
@@ -1059,11 +1262,19 @@ def accept_match(
                     detail="This match is no longer available for acceptance.",
                 )
 
+            # ------------------------------------------------
+            # VERIFY DONATION STATUS
+            # ------------------------------------------------
+
             if donation_status != "available":
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="This donation is no longer available.",
                 )
+
+            # ------------------------------------------------
+            # VERIFY ADDRESSES
+            # ------------------------------------------------
 
             if not pickup_address:
                 raise HTTPException(
@@ -1077,6 +1288,10 @@ def accept_match(
                     detail="The recipient delivery address is missing.",
                 )
 
+            # ------------------------------------------------
+            # ACCEPT SELECTED MATCH
+            # ------------------------------------------------
+
             cursor.execute(
                 """
                 UPDATE food_matches
@@ -1086,6 +1301,10 @@ def accept_match(
                 (match_id_db,),
             )
 
+            # ------------------------------------------------
+            # RESERVE DONATION
+            # ------------------------------------------------
+
             cursor.execute(
                 """
                 UPDATE food_donations
@@ -1094,6 +1313,10 @@ def accept_match(
                 """,
                 (donation_id,),
             )
+
+            # ------------------------------------------------
+            # REJECT OTHER SUGGESTED MATCHES
+            # ------------------------------------------------
 
             cursor.execute(
                 """
@@ -1110,6 +1333,10 @@ def accept_match(
             )
 
             rejected_count = cursor.rowcount
+
+            # ------------------------------------------------
+            # CREATE DELIVERY
+            # ------------------------------------------------
 
             cursor.execute(
                 """
@@ -1143,6 +1370,10 @@ def accept_match(
                 if delivery
                 else None
             )
+
+            # ------------------------------------------------
+            # COMMIT
+            # ------------------------------------------------
 
             connection.commit()
 
