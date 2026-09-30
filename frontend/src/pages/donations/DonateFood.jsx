@@ -16,6 +16,10 @@ import {
   HeartHandshake,
 } from "lucide-react";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://foodbridge-ai-qj9q.onrender.com";
+
 const DonateFood = () => {
   const navigate = useNavigate();
 
@@ -28,7 +32,7 @@ const DonateFood = () => {
     expiry_time: "",
     address: "",
     city: "",
-    state: "Ekiti",
+    state: "Ekiti", 
     description: "",
   });
 
@@ -37,19 +41,16 @@ const DonateFood = () => {
   const [error, setError] = useState("");
   const [aiInsight, setAiInsight] = useState(null);
 
-  // Controls the success popup
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  // Stores the newly created donation ID
   const [createdDonationId, setCreatedDonationId] = useState(null);
 
   const submitInFlight = useRef(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((previous) => ({
+      ...previous,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -69,13 +70,14 @@ const DonateFood = () => {
 
     if (!token) {
       submitInFlight.current = false;
+      setLoading(false);
       navigate("/login");
       return;
     }
 
     try {
       const response = await fetch(
-        "https://foodbridge-ai-qj9q.onrender.com/donations",
+        `${API_BASE_URL}/donations`,
         {
           method: "POST",
           headers: {
@@ -100,13 +102,14 @@ const DonateFood = () => {
             address: formData.address,
             city: formData.city,
             state: formData.state,
+
             latitude: null,
             longitude: null,
           }),
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -114,14 +117,13 @@ const DonateFood = () => {
         );
       }
 
-      // Save success information
       setSuccess(
-        data.message || "Food donation created successfully!"
+        data.message ||
+          "Food donation created successfully!"
       );
 
       setAiInsight(data.ai_insight || null);
 
-      // Get the newly created donation ID
       const newDonationId =
         data.id ||
         data.donation_id ||
@@ -130,10 +132,8 @@ const DonateFood = () => {
 
       setCreatedDonationId(newDonationId);
 
-      // Show the professional success popup
       setShowSuccessModal(true);
 
-      // Reset form
       setFormData({
         food_name: "",
         food_type: "",
@@ -147,7 +147,10 @@ const DonateFood = () => {
         description: "",
       });
     } catch (err) {
-      console.error("Donation submission error:", err);
+      console.error(
+        "Donation submission error:",
+        err
+      );
 
       setError(
         err.message ||
@@ -168,15 +171,28 @@ const DonateFood = () => {
     navigate("/donor-dashboard");
   };
 
+  /*
+   * IMPORTANT:
+   * The AI Match page route is /ai-match/:donationId.
+   *
+   * AIMatch.jsx is responsible for running:
+   * POST /matches/donation/:donationId
+   *
+   * and then loading:
+   * GET /matches/donation/:donationId
+   */
   const goToAIMatch = () => {
-    if (createdDonationId) {
-      setShowSuccessModal(false);
-      navigate(`/matches/${createdDonationId}`);
-    } else {
-      // Fallback if backend didn't return the ID
+    if (!createdDonationId) {
       setShowSuccessModal(false);
       navigate("/donor-dashboard");
+      return;
     }
+
+    setShowSuccessModal(false);
+
+    navigate(
+      `/ai-match/${createdDonationId}`
+    );
   };
 
   return (
@@ -188,11 +204,11 @@ const DonateFood = () => {
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm">
 
-          {/* Modal */}
           <div className="relative w-full max-w-md overflow-hidden rounded-[28px] bg-white shadow-2xl">
 
-            {/* Close button */}
+            {/* Close */}
             <button
+              type="button"
               onClick={closeSuccessModal}
               className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200 hover:text-slate-900"
               aria-label="Close"
@@ -200,24 +216,21 @@ const DonateFood = () => {
               <X size={18} />
             </button>
 
-            {/* Top success area */}
+            {/* Success header */}
             <div className="bg-gradient-to-b from-green-50 to-white px-6 pb-4 pt-9 text-center">
 
-              {/* Friendly smiling face */}
               <div className="relative mx-auto mb-5 flex h-24 w-24 items-center justify-center">
 
-                {/* Glow */}
                 <div className="absolute inset-0 animate-pulse rounded-full bg-green-100" />
 
-                {/* Face */}
                 <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-4 border-green-200 bg-green-100 text-4xl shadow-sm">
                   😊
                 </div>
 
-                {/* Small check */}
                 <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border-4 border-white bg-green-600 text-white">
                   <CheckCircle2 size={16} />
                 </div>
+
               </div>
 
               <div className="mx-auto mb-3 flex w-fit items-center gap-2 rounded-full bg-green-100 px-3 py-1.5 text-xs font-bold text-green-700">
@@ -233,6 +246,7 @@ const DonateFood = () => {
                 Your food donation has been successfully recorded.
                 You're helping turn surplus food into meaningful support.
               </p>
+
             </div>
 
             {/* Donation information */}
@@ -250,13 +264,16 @@ const DonateFood = () => {
                   </div>
 
                   <div className="min-w-0">
+
                     <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                       Your donation
                     </p>
 
                     <p className="truncate font-bold text-slate-900">
-                      {success || "Food donation successfully submitted"}
+                      {success ||
+                        "Food donation successfully submitted"}
                     </p>
+
                   </div>
 
                 </div>
@@ -265,6 +282,7 @@ const DonateFood = () => {
                   <div className="mt-4 border-t border-slate-200 pt-4">
 
                     <div className="flex items-center gap-2">
+
                       <Sparkles
                         size={16}
                         className="text-green-600"
@@ -273,6 +291,7 @@ const DonateFood = () => {
                       <p className="text-sm font-semibold text-slate-800">
                         AI has analyzed your donation
                       </p>
+
                     </div>
 
                     <p className="mt-1 text-xs leading-5 text-slate-500">
@@ -285,18 +304,20 @@ const DonateFood = () => {
 
               </div>
 
-              {/* Next step */}
               <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-400">
                 What would you like to do next?
               </p>
 
               <div className="space-y-3">
 
-                {/* AI Match */}
+                {/* AI MATCH */}
                 <button
+                  type="button"
                   onClick={goToAIMatch}
-                  className="group flex w-full items-center justify-between rounded-2xl bg-slate-900 px-5 py-4 text-left text-white shadow-sm transition hover:bg-slate-800 hover:shadow-md"
+                  disabled={!createdDonationId}
+                  className="group flex w-full items-center justify-between rounded-2xl bg-slate-900 px-5 py-4 text-left text-white shadow-sm transition hover:bg-slate-800 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
                 >
+
                   <div className="flex items-center gap-3">
 
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
@@ -304,6 +325,7 @@ const DonateFood = () => {
                     </div>
 
                     <div>
+
                       <p className="text-sm font-bold">
                         Find AI Match
                       </p>
@@ -311,6 +333,7 @@ const DonateFood = () => {
                       <p className="mt-0.5 text-xs text-slate-300">
                         Find the best recipient for your food
                       </p>
+
                     </div>
 
                   </div>
@@ -319,13 +342,16 @@ const DonateFood = () => {
                     size={19}
                     className="transition-transform group-hover:translate-x-1"
                   />
+
                 </button>
 
-                {/* Dashboard */}
+                {/* DASHBOARD */}
                 <button
+                  type="button"
                   onClick={goToDashboard}
                   className="group flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
                 >
+
                   <div className="flex items-center gap-3">
 
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100">
@@ -333,6 +359,7 @@ const DonateFood = () => {
                     </div>
 
                     <div>
+
                       <p className="text-sm font-bold">
                         View Dashboard
                       </p>
@@ -340,6 +367,7 @@ const DonateFood = () => {
                       <p className="mt-0.5 text-xs text-slate-500">
                         See all your food donations
                       </p>
+
                     </div>
 
                   </div>
@@ -348,11 +376,13 @@ const DonateFood = () => {
                     size={19}
                     className="text-slate-400 transition-transform group-hover:translate-x-1"
                   />
+
                 </button>
 
               </div>
 
               <button
+                type="button"
                 onClick={closeSuccessModal}
                 className="mt-4 w-full py-2 text-sm font-medium text-slate-400 transition hover:text-slate-700"
               >
@@ -368,10 +398,14 @@ const DonateFood = () => {
           HEADER
       ========================== */}
       <header className="border-b border-gray-200 bg-white">
+
         <div className="mx-auto max-w-6xl px-6 py-5">
 
           <button
-            onClick={() => navigate("/donor-dashboard")}
+            type="button"
+            onClick={() =>
+              navigate("/donor-dashboard")
+            }
             className="flex items-center gap-2 text-sm text-gray-600 transition hover:text-green-700"
           >
             <ArrowLeft size={18} />
@@ -379,6 +413,7 @@ const DonateFood = () => {
           </button>
 
         </div>
+
       </header>
 
       {/* =========================
@@ -386,19 +421,22 @@ const DonateFood = () => {
       ========================== */}
       <main className="mx-auto max-w-4xl px-6 py-10">
 
-        {/* Title */}
+        {/* TITLE */}
         <div className="mb-8">
 
           <div className="mb-4 flex items-center gap-3">
 
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-100">
+
               <Package
                 className="text-green-700"
                 size={25}
               />
+
             </div>
 
             <div>
+
               <h1 className="text-3xl font-bold text-gray-900">
                 Donate Food
               </h1>
@@ -406,13 +444,14 @@ const DonateFood = () => {
               <p className="mt-1 text-gray-500">
                 Turn surplus food into meaningful support for your community.
               </p>
+
             </div>
 
           </div>
 
         </div>
 
-        {/* Error */}
+        {/* ERROR */}
         {error && (
           <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
 
@@ -423,7 +462,7 @@ const DonateFood = () => {
           </div>
         )}
 
-        {/* Form Card */}
+        {/* FORM CARD */}
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 
           <form
@@ -431,9 +470,7 @@ const DonateFood = () => {
             className="space-y-7"
           >
 
-            {/* =========================
-                FOOD INFORMATION
-            ========================== */}
+            {/* FOOD INFORMATION */}
             <div>
 
               <h2 className="text-lg font-semibold text-gray-900">
@@ -446,8 +483,9 @@ const DonateFood = () => {
 
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                {/* Food Name */}
+                {/* FOOD NAME */}
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Food name
                   </label>
@@ -461,10 +499,12 @@ const DonateFood = () => {
                     required
                     className="h-12 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                   />
+
                 </div>
 
-                {/* Food Type */}
+                {/* FOOD TYPE */}
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Food type
                   </label>
@@ -476,6 +516,7 @@ const DonateFood = () => {
                     required
                     className="h-12 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                   >
+
                     <option value="">
                       Select food type
                     </option>
@@ -507,11 +548,14 @@ const DonateFood = () => {
                     <option value="other">
                       Other
                     </option>
+
                   </select>
+
                 </div>
 
-                {/* Quantity */}
+                {/* QUANTITY */}
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Quantity
                   </label>
@@ -527,10 +571,12 @@ const DonateFood = () => {
                     required
                     className="h-12 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                   />
+
                 </div>
 
-                {/* Unit */}
+                {/* UNIT */}
                 <div>
+
                   <label className="mb-2 block text-sm font-medium text-gray-700">
                     Quantity unit
                   </label>
@@ -542,6 +588,7 @@ const DonateFood = () => {
                     required
                     className="h-12 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm outline-none focus:border-green-600 focus:ring-2 focus:ring-green-100"
                   >
+
                     <option value="servings">
                       Servings
                     </option>
@@ -561,15 +608,15 @@ const DonateFood = () => {
                     <option value="items">
                       Items
                     </option>
+
                   </select>
+
                 </div>
 
               </div>
             </div>
 
-            {/* =========================
-                FOOD FRESHNESS
-            ========================== */}
+            {/* FOOD FRESHNESS */}
             <div className="border-t border-gray-100 pt-6">
 
               <h2 className="text-lg font-semibold text-gray-900">
@@ -582,7 +629,7 @@ const DonateFood = () => {
 
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                {/* Prepared */}
+                {/* PREPARED */}
                 <div>
 
                   <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -600,7 +647,7 @@ const DonateFood = () => {
 
                 </div>
 
-                {/* Expiry */}
+                {/* EXPIRY */}
                 <div>
 
                   <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -622,9 +669,7 @@ const DonateFood = () => {
               </div>
             </div>
 
-            {/* =========================
-                PICKUP DETAILS
-            ========================== */}
+            {/* PICKUP DETAILS */}
             <div className="border-t border-gray-100 pt-6">
 
               <h2 className="text-lg font-semibold text-gray-900">
@@ -637,7 +682,7 @@ const DonateFood = () => {
 
               <div className="space-y-5">
 
-                {/* Address */}
+                {/* ADDRESS */}
                 <div>
 
                   <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -659,7 +704,7 @@ const DonateFood = () => {
 
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                  {/* City */}
+                  {/* CITY */}
                   <div>
 
                     <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -678,7 +723,7 @@ const DonateFood = () => {
 
                   </div>
 
-                  {/* State */}
+                  {/* STATE */}
                   <div>
 
                     <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -702,9 +747,7 @@ const DonateFood = () => {
               </div>
             </div>
 
-            {/* =========================
-                DESCRIPTION
-            ========================== */}
+            {/* DESCRIPTION */}
             <div className="border-t border-gray-100 pt-6">
 
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -723,9 +766,7 @@ const DonateFood = () => {
 
             </div>
 
-            {/* =========================
-                AI INFORMATION
-            ========================== */}
+            {/* AI INFORMATION */}
             <div className="rounded-xl border border-green-100 bg-green-50 p-4">
 
               <div className="flex gap-3">
@@ -753,14 +794,14 @@ const DonateFood = () => {
 
             </div>
 
-            {/* =========================
-                SUBMIT
-            ========================== */}
+            {/* SUBMIT */}
             <div className="flex flex-col justify-end gap-3 pt-2 sm:flex-row">
 
               <button
                 type="button"
-                onClick={() => navigate("/donor-dashboard")}
+                onClick={() =>
+                  navigate("/donor-dashboard")
+                }
                 className="h-12 rounded-lg border border-gray-300 px-6 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
               >
                 Cancel
@@ -771,6 +812,7 @@ const DonateFood = () => {
                 disabled={loading}
                 className="flex h-12 items-center justify-center gap-2 rounded-lg bg-green-700 px-7 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
+
                 {loading ? (
                   <>
                     <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -782,6 +824,7 @@ const DonateFood = () => {
                     Submit Donation
                   </>
                 )}
+
               </button>
 
             </div>

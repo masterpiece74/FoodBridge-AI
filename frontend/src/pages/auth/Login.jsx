@@ -21,10 +21,11 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
   // =========================
-  // LOGIN
+  // NORMAL LOGIN
   // =========================
 
   const handleLogin = async (event) => {
@@ -107,6 +108,32 @@ const Login = () => {
 
     } finally {
       setLoading(false);
+    }
+  };
+
+  // =========================
+  // GOOGLE LOGIN
+  // =========================
+
+  const handleGoogleLogin = () => {
+    try {
+      setGoogleLoading(true);
+      setError("");
+
+      // Existing FoodBridge users keep their existing role.
+      // A completely new Google account will be created as a donor
+      // when starting from the Login page.
+      window.location.href =
+        `${API_URL}/auth/google/login?role=donor`;
+
+    } catch (error) {
+      console.error(error);
+
+      setGoogleLoading(false);
+
+      setError(
+        "Unable to continue with Google. Please try again."
+      );
     }
   };
 
@@ -561,11 +588,92 @@ const Login = () => {
               )}
 
 
+              {/* =========================
+                  GOOGLE LOGIN
+              ========================== */}
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading || loading}
+                className="
+                  mt-8
+                  flex
+                  w-full
+                  items-center
+                  justify-center
+                  gap-3
+                  rounded-xl
+                  border
+                  border-gray-200
+                  bg-white
+                  py-3.5
+                  text-sm
+                  font-semibold
+                  text-gray-700
+                  shadow-sm
+                  transition
+                  hover:border-gray-300
+                  hover:bg-gray-50
+                  hover:shadow-md
+                  disabled:cursor-not-allowed
+                  disabled:opacity-60
+                "
+              >
+
+                {/* GOOGLE ICON */}
+
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#4285F4"
+                    d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
+                  />
+                </svg>
+
+                {googleLoading
+                  ? "Connecting to Google..."
+                  : "Continue with Google"}
+
+              </button>
+
+
+              {/* DIVIDER */}
+
+              <div className="my-6 flex items-center gap-4">
+
+                <div className="h-px flex-1 bg-gray-200" />
+
+                <span className="text-xs font-medium text-gray-400">
+                  OR
+                </span>
+
+                <div className="h-px flex-1 bg-gray-200" />
+
+              </div>
+
+
               {/* LOGIN FORM */}
 
               <form
                 onSubmit={handleLogin}
-                className="mt-8 space-y-5"
+                className="space-y-5"
               >
 
                 {/* EMAIL */}
@@ -753,7 +861,7 @@ const Login = () => {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   className="
                     w-full
                     rounded-xl
@@ -839,4 +947,3 @@ const Login = () => {
 };
 
 export default Login;
-

@@ -37,6 +37,9 @@ const DonorDashboard = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  // Tracks the donation currently running AI matching.
+  const [aiMatchingId, setAiMatchingId] = useState(null);
+
   const API_URL =
     import.meta.env.VITE_API_BASE_URL ||
     "https://foodbridge-ai-qj9q.onrender.com";
@@ -68,7 +71,14 @@ const DonorDashboard = () => {
         },
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(
@@ -78,8 +88,10 @@ const DonorDashboard = () => {
 
       setDonations(data.donations || []);
     } catch (error) {
-      console.error(error);
-      setError(error.message);
+      console.error("Donation fetch error:", error);
+      setError(
+        error.message || "Failed to load donations."
+      );
     } finally {
       setLoading(false);
     }
@@ -108,7 +120,14 @@ const DonorDashboard = () => {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(
@@ -156,7 +175,7 @@ const DonorDashboard = () => {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -207,7 +226,7 @@ const DonorDashboard = () => {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -376,18 +395,78 @@ const DonorDashboard = () => {
   };
 
   // =========================
-  // AI MATCH NAVIGATION
+  // RUN AI MATCHING
   // =========================
 
-  const handleViewMatches = (donationId) => {
+  const handleViewMatches = async (donationId) => {
     if (!donationId) {
       console.error(
-        "Unable to open AI Matches: donation ID is missing."
+        "Unable to run AI Match: donation ID is missing."
+      );
+      setError(
+        "Unable to run AI matching because the donation ID is missing."
       );
       return;
     }
 
-    navigate(`/ai-match/${donationId}`);
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      setError("");
+      setAiMatchingId(donationId);
+
+      console.log(
+        `Running AI matching for donation ${donationId}...`
+      );
+
+      const response = await fetch(
+        `${API_URL}/matches/donation/${donationId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      console.log("AI matching response:", data);
+
+      if (response.status === 401) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        navigate("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.detail ||
+            data.message ||
+            "Unable to run AI matching."
+        );
+      }
+
+      // Matching has successfully been generated.
+      // AIMatch.jsx will fetch the generated matches.
+      navigate(`/ai-match/${donationId}`);
+    } catch (error) {
+      console.error("AI matching error:", error);
+
+      setError(
+        error.message ||
+          "Unable to run AI matching. Please try again."
+      );
+    } finally {
+      setAiMatchingId(null);
+    }
   };
 
   // =========================
@@ -1154,141 +1233,159 @@ const DonorDashboard = () => {
 
                         <tbody className="divide-y divide-gray-100">
 
-                          {donations.map((donation) => (
+                          {donations.map((donation) => {
 
-                            <tr
-                              key={donation.id}
-                              className="transition hover:bg-gray-50"
-                            >
+                            const isMatching =
+                              aiMatchingId === donation.id;
 
-                              <td className="px-6 py-4">
+                            return (
 
-                                <div className="flex items-center gap-3">
+                              <tr
+                                key={donation.id}
+                                className="transition hover:bg-gray-50"
+                              >
 
-                                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50">
+                                <td className="px-6 py-4">
 
-                                    <Utensils
-                                      size={17}
-                                      className="text-green-700"
-                                    />
+                                  <div className="flex items-center gap-3">
 
-                                  </div>
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-50">
 
-                                  <div>
+                                      <Utensils
+                                        size={17}
+                                        className="text-green-700"
+                                      />
 
-                                    <p className="text-sm font-semibold text-gray-900">
-                                      {donation.food_name}
-                                    </p>
+                                    </div>
 
-                                    <p className="mt-0.5 text-xs capitalize text-gray-500">
+                                    <div>
 
-                                      {donation.food_type?.replaceAll(
-                                        "_",
-                                        " "
-                                      )}
+                                      <p className="text-sm font-semibold text-gray-900">
+                                        {donation.food_name}
+                                      </p>
 
-                                    </p>
+                                      <p className="mt-0.5 text-xs capitalize text-gray-500">
 
-                                  </div>
+                                        {donation.food_type?.replaceAll(
+                                          "_",
+                                          " "
+                                        )}
 
-                                </div>
+                                      </p>
 
-                              </td>
-
-                              <td className="px-6 py-4">
-
-                                <p className="text-sm text-gray-700">
-
-                                  {donation.quantity}{" "}
-                                  {donation.quantity_unit}
-
-                                </p>
-
-                              </td>
-
-                              <td className="px-6 py-4">
-
-                                <div className="flex items-center gap-2">
-
-                                  <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-100">
-
-                                    <div
-                                      className="h-full rounded-full bg-green-500"
-                                      style={{
-                                        width: `${Math.min(
-                                          donation.freshness_score || 0,
-                                          100
-                                        )}%`,
-                                      }}
-                                    />
+                                    </div>
 
                                   </div>
 
-                                  <span className="text-xs font-medium text-gray-600">
+                                </td>
 
-                                    {donation.freshness_score}%
+                                <td className="px-6 py-4">
+
+                                  <p className="text-sm text-gray-700">
+
+                                    {donation.quantity}{" "}
+                                    {donation.quantity_unit}
+
+                                  </p>
+
+                                </td>
+
+                                <td className="px-6 py-4">
+
+                                  <div className="flex items-center gap-2">
+
+                                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-100">
+
+                                      <div
+                                        className="h-full rounded-full bg-green-500"
+                                        style={{
+                                          width: `${Math.min(
+                                            donation.freshness_score || 0,
+                                            100
+                                          )}%`,
+                                        }}
+                                      />
+
+                                    </div>
+
+                                    <span className="text-xs font-medium text-gray-600">
+
+                                      {donation.freshness_score}%
+
+                                    </span>
+
+                                  </div>
+
+                                </td>
+
+                                <td className="px-6 py-4">
+
+                                  <span className="text-sm font-medium text-gray-700">
+
+                                    {donation.urgency_score}%
 
                                   </span>
 
-                                </div>
+                                </td>
 
-                              </td>
+                                <td className="px-6 py-4">
 
-                              <td className="px-6 py-4">
+                                  <span
+                                    className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${getStatusStyle(
+                                      donation.status
+                                    )}`}
+                                  >
 
-                                <span className="text-sm font-medium text-gray-700">
+                                    {formatStatus(
+                                      donation.status
+                                    )}
 
-                                  {donation.urgency_score}%
+                                  </span>
 
-                                </span>
+                                </td>
 
-                              </td>
+                                <td className="px-6 py-4">
 
-                              <td className="px-6 py-4">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      handleViewMatches(
+                                        donation.id
+                                      )
+                                    }
+                                    disabled={aiMatchingId !== null}
+                                    className="inline-flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 transition hover:bg-green-100 hover:text-green-800 disabled:cursor-not-allowed disabled:opacity-60"
+                                  >
 
-                                <span
-                                  className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${getStatusStyle(
-                                    donation.status
-                                  )}`}
-                                >
+                                    {isMatching ? (
+                                      <>
+                                        <RefreshCw
+                                          size={15}
+                                          className="animate-spin"
+                                        />
 
-                                  {formatStatus(
-                                    donation.status
-                                  )}
+                                        Running AI Match...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Sparkles size={15} />
 
-                                </span>
+                                        View AI Matches
 
-                              </td>
+                                        <ArrowUpRight
+                                          size={15}
+                                        />
+                                      </>
+                                    )}
 
-                              <td className="px-6 py-4">
+                                  </button>
 
-                                {/* =================================================
-                                    FIXED AI MATCH NAVIGATION
-                                ================================================= */}
+                                </td>
 
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    handleViewMatches(
-                                      donation.id
-                                    )
-                                  }
-                                  className="inline-flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-semibold text-green-700 transition hover:bg-green-100 hover:text-green-800"
-                                >
+                              </tr>
 
-                                  <Sparkles size={15} />
-
-                                  View AI Matches
-
-                                  <ArrowUpRight size={15} />
-
-                                </button>
-
-                              </td>
-
-                            </tr>
-
-                          ))}
+                            );
+                          })}
 
                         </tbody>
 

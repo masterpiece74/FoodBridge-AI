@@ -37,6 +37,7 @@ const Register = () => {
     useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
 
   const [assistantMessage, setAssistantMessage] = useState(
@@ -88,6 +89,33 @@ const Register = () => {
   };
 
   // =========================
+  // GOOGLE REGISTRATION
+  // =========================
+
+  const handleGoogleRegister = () => {
+    try {
+      setGoogleLoading(true);
+      setError("");
+
+      const selectedRole = formData.role;
+
+      window.location.href =
+        `${API_URL}/auth/google/login?role=${encodeURIComponent(
+          selectedRole
+        )}`;
+
+    } catch (error) {
+      console.error(error);
+
+      setGoogleLoading(false);
+
+      setError(
+        "Unable to continue with Google. Please try again."
+      );
+    }
+  };
+
+  // =========================
   // PASSWORD STRENGTH
   // =========================
 
@@ -132,7 +160,7 @@ const Register = () => {
   const passwordStrength = getPasswordStrength();
 
   // =========================
-  // SUBMIT
+  // NORMAL REGISTRATION
   // =========================
 
   const handleSubmit = async (e) => {
@@ -243,16 +271,21 @@ const Register = () => {
             </div>
 
             <div>
+
               <p className="text-base font-bold tracking-tight text-[#0B2F1A]">
+
                 FoodBridge
+
                 <span className="text-[#1F7A4D]">
                   {" "}AI
                 </span>
+
               </p>
 
               <p className="hidden text-[11px] text-gray-400 sm:block">
                 Turning surplus into hope.
               </p>
+
             </div>
 
           </Link>
@@ -603,123 +636,207 @@ const Register = () => {
               )}
 
 
-              {/* Form */}
+              {/* =========================================
+                  ROLE
+              ========================================== */}
 
-              <form
-                onSubmit={handleSubmit}
-                className="mt-8 space-y-6"
-              >
+              <div className="mt-8">
 
+                <div className="mb-3 flex items-center justify-between">
 
-                {/* =========================================
-                    ROLE
-                ========================================== */}
+                  <label className="text-sm font-semibold text-gray-800">
+                    I want to participate as a
+                  </label>
 
-                <div>
-
-                  <div className="mb-3 flex items-center justify-between">
-
-                    <label className="text-sm font-semibold text-gray-800">
-                      I want to participate as a
-                    </label>
-
-                    <span className="text-xs text-gray-400">
-                      Choose one
-                    </span>
-
-                  </div>
-
-
-                  <div className="grid gap-3 sm:grid-cols-3">
-
-                    {roles.map((role) => {
-
-                      const Icon = role.icon;
-
-                      const selected =
-                        formData.role === role.value;
-
-                      return (
-
-                        <button
-                          key={role.value}
-                          type="button"
-                          onClick={() =>
-                            handleRoleChange(role.value)
-                          }
-                          className={`
-                            relative
-                            rounded-2xl
-                            border
-                            p-4
-                            text-left
-                            transition-all
-                            duration-200
-                            ${
-                              selected
-                                ? "border-[#1F7A4D] bg-[#F0F8F3] shadow-sm ring-2 ring-[#A7D7B8]/50"
-                                : "border-gray-200 bg-white hover:border-[#A7D7B8] hover:bg-[#FAFCFA]"
-                            }
-                          `}
-                        >
-
-                          {selected && (
-
-                            <CheckCircle2
-                              size={17}
-                              className="
-                                absolute
-                                right-3
-                                top-3
-                                text-[#1F7A4D]
-                              "
-                            />
-
-                          )}
-
-
-                          <div
-                            className={`
-                              flex
-                              h-10
-                              w-10
-                              items-center
-                              justify-center
-                              rounded-xl
-                              transition
-                              ${
-                                selected
-                                  ? "bg-[#1F7A4D] text-white"
-                                  : "bg-gray-100 text-gray-500"
-                              }
-                            `}
-                          >
-                            <Icon size={19} />
-                          </div>
-
-
-                          <p className="mt-3 text-sm font-semibold text-gray-800">
-                            {role.title}
-                          </p>
-
-                          <p className="mt-1 text-[11px] leading-5 text-gray-500">
-                            {role.description}
-                          </p>
-
-                        </button>
-
-                      );
-
-                    })}
-
-                  </div>
+                  <span className="text-xs text-gray-400">
+                    Choose one
+                  </span>
 
                 </div>
 
 
-                {/* =========================================
-                    PERSONAL INFORMATION
-                ========================================== */}
+                <div className="grid gap-3 sm:grid-cols-3">
+
+                  {roles.map((role) => {
+
+                    const Icon = role.icon;
+
+                    const selected =
+                      formData.role === role.value;
+
+                    return (
+
+                      <button
+                        key={role.value}
+                        type="button"
+                        onClick={() =>
+                          handleRoleChange(role.value)
+                        }
+                        className={`
+                          relative
+                          rounded-2xl
+                          border
+                          p-4
+                          text-left
+                          transition-all
+                          duration-200
+                          ${
+                            selected
+                              ? "border-[#1F7A4D] bg-[#F0F8F3] shadow-sm ring-2 ring-[#A7D7B8]/50"
+                              : "border-gray-200 bg-white hover:border-[#A7D7B8] hover:bg-[#FAFCFA]"
+                          }
+                        `}
+                      >
+
+                        {selected && (
+
+                          <CheckCircle2
+                            size={17}
+                            className="
+                              absolute
+                              right-3
+                              top-3
+                              text-[#1F7A4D]
+                            "
+                          />
+
+                        )}
+
+
+                        <div
+                          className={`
+                            flex
+                            h-10
+                            w-10
+                            items-center
+                            justify-center
+                            rounded-xl
+                            transition
+                            ${
+                              selected
+                                ? "bg-[#1F7A4D] text-white"
+                                : "bg-gray-100 text-gray-500"
+                            }
+                          `}
+                        >
+                          <Icon size={19} />
+                        </div>
+
+
+                        <p className="mt-3 text-sm font-semibold text-gray-800">
+                          {role.title}
+                        </p>
+
+                        <p className="mt-1 text-[11px] leading-5 text-gray-500">
+                          {role.description}
+                        </p>
+
+                      </button>
+
+                    );
+
+                  })}
+
+                </div>
+
+              </div>
+
+
+              {/* =========================================
+                  GOOGLE REGISTRATION
+              ========================================== */}
+
+              <button
+                type="button"
+                onClick={handleGoogleRegister}
+                disabled={googleLoading || loading}
+                className="
+                  mt-6
+                  flex
+                  w-full
+                  items-center
+                  justify-center
+                  gap-3
+                  rounded-xl
+                  border
+                  border-gray-200
+                  bg-white
+                  py-3.5
+                  text-sm
+                  font-semibold
+                  text-gray-700
+                  shadow-sm
+                  transition
+                  hover:border-gray-300
+                  hover:bg-gray-50
+                  hover:shadow-md
+                  disabled:cursor-not-allowed
+                  disabled:opacity-60
+                "
+              >
+
+                {/* Google Icon */}
+
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#4285F4"
+                    d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
+                  />
+                </svg>
+
+                {googleLoading
+                  ? "Connecting to Google..."
+                  : `Continue with Google as ${
+                      formData.role.charAt(0).toUpperCase() +
+                      formData.role.slice(1)
+                    }`}
+
+              </button>
+
+
+              {/* Divider */}
+
+              <div className="my-6 flex items-center gap-4">
+
+                <div className="h-px flex-1 bg-gray-200" />
+
+                <span className="text-xs font-medium text-gray-400">
+                  OR
+                </span>
+
+                <div className="h-px flex-1 bg-gray-200" />
+
+              </div>
+
+
+              {/* =========================================
+                  FORM
+              ========================================== */}
+
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-6"
+              >
+
+
+                {/* PERSONAL INFORMATION */}
 
                 <div className="grid gap-5 sm:grid-cols-2">
 
@@ -883,9 +1000,7 @@ const Register = () => {
                 </div>
 
 
-                {/* =========================================
-                    PASSWORD
-                ========================================== */}
+                {/* PASSWORD */}
 
                 <div>
 
@@ -1001,9 +1116,7 @@ const Register = () => {
                 </div>
 
 
-                {/* =========================================
-                    CONFIRM PASSWORD
-                ========================================== */}
+                {/* CONFIRM PASSWORD */}
 
                 <div>
 
@@ -1123,9 +1236,7 @@ const Register = () => {
                 </div>
 
 
-                {/* =========================================
-                    TRUST NOTE
-                ========================================== */}
+                {/* TRUST NOTE */}
 
                 <div
                   className="
@@ -1154,13 +1265,11 @@ const Register = () => {
                 </div>
 
 
-                {/* =========================================
-                    SUBMIT
-                ========================================== */}
+                {/* SUBMIT */}
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   className="
                     group
                     flex
@@ -1187,20 +1296,24 @@ const Register = () => {
                   {loading ? (
 
                     <>
+
                       <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
 
                       Creating Account...
+
                     </>
 
                   ) : (
 
                     <>
+
                       Create Account
 
                       <ArrowRight
                         size={18}
                         className="transition-transform group-hover:translate-x-1"
                       />
+
                     </>
 
                   )}
@@ -1244,4 +1357,3 @@ const Register = () => {
 };
 
 export default Register;
-

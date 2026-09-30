@@ -15,6 +15,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import GoogleCallback from "./pages/auth/GoogleCallback";
 
 // Public pages
 import About from "./pages/about/About";
@@ -101,6 +102,12 @@ function App() {
       <Route
         path="/reset-password"
         element={<ResetPassword />}
+      />
+
+      {/* Google OAuth callback */}
+      <Route
+        path="/auth/google/callback"
+        element={<GoogleCallback />}
       />
 
 

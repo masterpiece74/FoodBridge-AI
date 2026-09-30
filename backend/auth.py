@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta, timezone
 import os
 import secrets
-import resend
+from urllib.parse import urlencode
 
+import requests
+import resend
 import jwt
+
 from dotenv import load_dotenv
 from fastapi import (
     APIRouter,
@@ -11,6 +14,7 @@ from fastapi import (
     HTTPException,
     status,
 )
+from fastapi.responses import RedirectResponse
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
@@ -56,8 +60,50 @@ ALGORITHM = "HS256"
 
 ACCESS_TOKEN_EXPIRE_HOURS = 24
 
-# Password reset tokens are valid for 30 minutes.
 PASSWORD_RESET_EXPIRE_MINUTES = 30
+
+
+# =========================
+# GOOGLE OAUTH SETTINGS
+# =========================
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+
+GOOGLE_REDIRECT_URI = (
+    "https://foodbridge-ai-qj9q.onrender.com/auth/google/callback"
+)
+
+FRONTEND_URL = (
+    "https://food-bridge-ai-self.vercel.app"
+)
+
+if not GOOGLE_CLIENT_ID:
+    raise RuntimeError(
+        "GOOGLE_CLIENT_ID is not configured."
+    )
+
+if not GOOGLE_CLIENT_SECRET:
+    raise RuntimeError(
+        "GOOGLE_CLIENT_SECRET is not configured."
+    )
+
+
+# =========================
+# GOOGLE OAUTH ENDPOINTS
+# =========================
+
+GOOGLE_AUTHORIZATION_URL = (
+    "https://accounts.google.com/o/oauth2/v2/auth"
+)
+
+GOOGLE_TOKEN_URL = (
+    "https://oauth2.googleapis.com/token"
+)
+
+GOOGLE_USERINFO_URL = (
+    "https://openidconnect.googleapis.com/v1/userinfo"
+)
 
 
 # =========================
@@ -132,9 +178,102 @@ def create_access_token(
     )
 
 
-# =========================
+# ============================================================
+# GOOGLE OAUTH STATE
+# ============================================================
+
+def create_google_state(role: str):
+    """
+    Create a short-lived signed state token.
+
+    The selected role is carried through the Google
+    authentication process for new users.
+    """
+
+    allowed_roles = [
+        "donor",
+        "recipient",
+        "volunteer",
+    ]
+
+    if role not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Role must be donor, recipient, "
+                "or volunteer."
+            ),
+        )
+
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=10
+    )
+
+    payload = {
+        "role": role,
+        "nonce": secrets.token_urlsafe(24),
+        "type": "google_oauth",
+        "exp": expire,
+    }
+
+    return jwt.encode(
+        payload,
+        SECRET_KEY,
+        algorithm=ALGORITHM,
+    )
+
+
+def decode_google_state(state: str):
+    """
+    Verify and decode the Google OAuth state token.
+    """
+
+    try:
+        payload = jwt.decode(
+            state,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+        )
+
+        if payload.get("type") != "google_oauth":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid Google authentication state.",
+            )
+
+        role = payload.get("role")
+
+        if role not in [
+            "donor",
+            "recipient",
+            "volunteer",
+        ]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid registration role.",
+            )
+
+        return payload
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Google authentication session expired. "
+                "Please try again."
+            ),
+        )
+
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid Google authentication state.",
+        )
+
+
+# ============================================================
 # SEND PASSWORD RESET EMAIL
-# =========================
+# ============================================================
 
 def send_password_reset_email(
     recipient_email: str,
@@ -260,7 +399,6 @@ def send_password_reset_email(
                 </p>
 
             </div>
-
         </body>
     </html>
     """
@@ -348,8 +486,6 @@ def get_current_admin(
 )
 def register(user: RegisterRequest):
 
-    # Public registration roles only.
-    # Admin accounts must be created separately.
     allowed_roles = [
         "donor",
         "recipient",
@@ -369,10 +505,6 @@ def register(user: RegisterRequest):
 
     try:
         with connection.cursor() as cursor:
-
-            # =========================
-            # CHECK EXISTING EMAIL
-            # =========================
 
             cursor.execute(
                 """
@@ -394,17 +526,9 @@ def register(user: RegisterRequest):
                     ),
                 )
 
-            # =========================
-            # HASH PASSWORD
-            # =========================
-
             hashed_password = password_hash.hash(
                 user.password
             )
-
-            # =========================
-            # CREATE USER
-            # =========================
 
             cursor.execute(
                 """
@@ -463,10 +587,6 @@ def login(
     try:
         with connection.cursor() as cursor:
 
-            # =========================
-            # FIND USER
-            # =========================
-
             cursor.execute(
                 """
                 SELECT
@@ -489,10 +609,6 @@ def login(
                     detail="Invalid email or password.",
                 )
 
-            # =========================
-            # VERIFY PASSWORD
-            # =========================
-
             password_valid = password_hash.verify(
                 credentials.password,
                 user[3],
@@ -503,10 +619,6 @@ def login(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid email or password.",
                 )
-
-            # =========================
-            # CREATE JWT
-            # =========================
 
             access_token = create_access_token(
                 user_id=user[0],
@@ -530,6 +642,460 @@ def login(
 
 
 # ============================================================
+# GOOGLE LOGIN
+# ============================================================
+
+@router.get("/google/login")
+def google_login(
+    role: str = "donor",
+):
+    """
+    Start Google OAuth.
+
+    The role is used only when a brand-new FoodBridge
+    account needs to be created.
+    """
+
+    state = create_google_state(role)
+
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "state": state,
+        "access_type": "online",
+        "prompt": "select_account",
+    }
+
+    authorization_url = (
+        GOOGLE_AUTHORIZATION_URL
+        + "?"
+        + urlencode(params)
+    )
+
+    return RedirectResponse(
+        url=authorization_url,
+        status_code=status.HTTP_302_FOUND,
+    )
+
+
+# ============================================================
+# GOOGLE CALLBACK
+# ============================================================
+
+@router.get("/google/callback")
+def google_callback(
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+):
+    """
+    Google redirects here after authentication.
+
+    The backend exchanges Google's authorization code,
+    retrieves the verified Google identity, creates or
+    links the FoodBridge account, then creates a normal
+    FoodBridge JWT.
+
+    The JWT is returned to the frontend in the URL
+    fragment rather than the query string.
+    """
+
+    # =========================
+    # HANDLE GOOGLE ERROR
+    # =========================
+
+    if error:
+        error_url = (
+            f"{FRONTEND_URL}/login?"
+            + urlencode(
+                {
+                    "google_error": (
+                        "Google authentication was cancelled "
+                        "or failed."
+                    )
+                }
+            )
+        )
+
+        return RedirectResponse(
+            url=error_url,
+            status_code=status.HTTP_302_FOUND,
+        )
+
+    # =========================
+    # VALIDATE PARAMETERS
+    # =========================
+
+    if not code or not state:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Missing Google authentication parameters.",
+        )
+
+    # =========================
+    # VALIDATE STATE
+    # =========================
+
+    state_payload = decode_google_state(state)
+
+    selected_role = state_payload["role"]
+
+    # =========================
+    # EXCHANGE CODE FOR TOKEN
+    # =========================
+
+    try:
+        token_response = requests.post(
+            GOOGLE_TOKEN_URL,
+            data={
+                "code": code,
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "redirect_uri": GOOGLE_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            },
+            timeout=15,
+        )
+
+    except requests.RequestException as error:
+        print(
+            "Google token request error:",
+            error,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                "Unable to communicate with Google. "
+                "Please try again."
+            ),
+        )
+
+    if not token_response.ok:
+        print(
+            "Google token exchange failed:",
+            token_response.text,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Google authentication could not be completed."
+            ),
+        )
+
+    token_data = token_response.json()
+
+    google_access_token = token_data.get(
+        "access_token"
+    )
+
+    if not google_access_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Google did not return a valid access token."
+            ),
+        )
+
+    # =========================
+    # GET GOOGLE USER INFO
+    # =========================
+
+    try:
+        userinfo_response = requests.get(
+            GOOGLE_USERINFO_URL,
+            headers={
+                "Authorization": (
+                    f"Bearer {google_access_token}"
+                )
+            },
+            timeout=15,
+        )
+
+    except requests.RequestException as error:
+        print(
+            "Google userinfo request error:",
+            error,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=(
+                "Unable to retrieve Google account "
+                "information."
+            ),
+        )
+
+    if not userinfo_response.ok:
+        print(
+            "Google userinfo failed:",
+            userinfo_response.text,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Unable to verify your Google account."
+            ),
+        )
+
+    google_user = userinfo_response.json()
+
+    # =========================
+    # VERIFY GOOGLE IDENTITY
+    # =========================
+
+    google_sub = google_user.get("sub")
+    google_email = google_user.get("email")
+    email_verified = google_user.get(
+        "email_verified"
+    )
+
+    google_name = (
+        google_user.get("name")
+        or google_user.get("given_name")
+        or "FoodBridge User"
+    )
+
+    if isinstance(email_verified, str):
+        email_verified = (
+            email_verified.lower() == "true"
+        )
+
+    if not google_sub:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Google account identification failed."
+            ),
+        )
+
+    if not google_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                "Google did not provide an email address."
+            ),
+        )
+
+    if not email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Your Google email must be verified "
+                "before you can use Google login."
+            ),
+        )
+
+    google_email = google_email.lower().strip()
+
+    # =========================
+    # FIND / CREATE USER
+    # =========================
+
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+
+            # =========================
+            # FIRST: FIND GOOGLE ACCOUNT
+            # =========================
+
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    full_name,
+                    email,
+                    role,
+                    google_sub
+                FROM users
+                WHERE google_sub = %s
+                """,
+                (google_sub,),
+            )
+
+            user = cursor.fetchone()
+
+            # =========================
+            # SECOND: FIND BY EMAIL
+            # =========================
+
+            if not user:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        full_name,
+                        email,
+                        role,
+                        google_sub
+                    FROM users
+                    WHERE LOWER(email) = %s
+                    """,
+                    (google_email,),
+                )
+
+                user = cursor.fetchone()
+
+            # =================================================
+            # EXISTING FOODBRIDGE ACCOUNT
+            # =================================================
+
+            if user:
+
+                user_id = user[0]
+                full_name = user[1]
+                email = user[2]
+                role = user[3]
+                existing_google_sub = user[4]
+
+                # =========================
+                # SECURITY CHECK
+                # =========================
+
+                if (
+                    existing_google_sub
+                    and existing_google_sub != google_sub
+                ):
+                    raise HTTPException(
+                        status_code=(
+                            status.HTTP_409_CONFLICT
+                        ),
+                        detail=(
+                            "This FoodBridge account is "
+                            "already linked to a different "
+                            "Google account."
+                        ),
+                    )
+
+                # =========================
+                # LINK GOOGLE ACCOUNT
+                # =========================
+
+                if not existing_google_sub:
+
+                    cursor.execute(
+                        """
+                        UPDATE users
+                        SET
+                            google_sub = %s,
+                            is_verified = TRUE
+                        WHERE id = %s
+                        """,
+                        (
+                            google_sub,
+                            user_id,
+                        ),
+                    )
+
+                connection.commit()
+
+            # =================================================
+            # NEW FOODBRIDGE ACCOUNT
+            # =================================================
+
+            else:
+
+                # Google users still need a password_hash
+                # because the existing database requires
+                # that field to be NOT NULL.
+                #
+                # A random secret is generated and hashed.
+                # The user does not know this password and
+                # therefore cannot use it to log in.
+
+                random_password = secrets.token_urlsafe(
+                    48
+                )
+
+                hashed_password = password_hash.hash(
+                    random_password
+                )
+
+                cursor.execute(
+                    """
+                    INSERT INTO users (
+                        full_name,
+                        email,
+                        phone,
+                        password_hash,
+                        role,
+                        is_verified,
+                        google_sub
+                    )
+                    VALUES (
+                        %s,
+                        %s,
+                        NULL,
+                        %s,
+                        %s,
+                        TRUE,
+                        %s
+                    )
+                    RETURNING
+                        id,
+                        full_name,
+                        email,
+                        role
+                    """,
+                    (
+                        google_name,
+                        google_email,
+                        hashed_password,
+                        selected_role,
+                        google_sub,
+                    ),
+                )
+
+                new_user = cursor.fetchone()
+
+                user_id = new_user[0]
+                full_name = new_user[1]
+                email = new_user[2]
+                role = new_user[3]
+
+                connection.commit()
+
+            # =========================
+            # CREATE FOODBRIDGE JWT
+            # =========================
+
+            access_token = create_access_token(
+                user_id=user_id,
+                role=role,
+            )
+
+    finally:
+        connection.close()
+
+    # =========================================================
+    # REDIRECT TO FRONTEND
+    # =========================================================
+
+    # The token is placed in the URL fragment rather than
+    # the query string so it is not sent as an HTTP request
+    # to the frontend server.
+
+    redirect_url = (
+        f"{FRONTEND_URL}/auth/google/callback"
+        f"#access_token={access_token}"
+        f"&user_id={user_id}"
+        f"&role={role}"
+    )
+
+    return RedirectResponse(
+        url=redirect_url,
+        status_code=status.HTTP_302_FOUND,
+    )
+
+
+# ============================================================
 # FORGOT PASSWORD
 # ============================================================
 
@@ -546,9 +1112,6 @@ def forgot_password(
 
     connection = get_connection()
 
-    # Always return the same public message whether or not
-    # the email exists. This helps prevent account enumeration.
-
     generic_message = (
         "If an account with that email exists, "
         "a password reset link has been sent."
@@ -556,10 +1119,6 @@ def forgot_password(
 
     try:
         with connection.cursor() as cursor:
-
-            # =========================
-            # FIND USER
-            # =========================
 
             cursor.execute(
                 """
@@ -584,10 +1143,6 @@ def forgot_password(
             full_name = user[1]
             email = user[2]
 
-            # =========================
-            # CREATE SECURE TOKEN
-            # =========================
-
             reset_token = secrets.token_urlsafe(32)
 
             reset_expires = (
@@ -596,10 +1151,6 @@ def forgot_password(
                     minutes=PASSWORD_RESET_EXPIRE_MINUTES
                 )
             )
-
-            # =========================
-            # SAVE TOKEN
-            # =========================
 
             cursor.execute(
                 """
@@ -618,18 +1169,10 @@ def forgot_password(
 
             connection.commit()
 
-            # =========================
-            # CREATE RESET LINK
-            # =========================
-
             reset_link = (
                 "https://food-bridge-ai-self.vercel.app/reset-password"
                 f"?token={reset_token}"
             )
-
-            # =========================
-            # SEND EMAIL THROUGH RESEND
-            # =========================
 
             try:
 
@@ -640,9 +1183,6 @@ def forgot_password(
                 )
 
             except Exception as email_error:
-
-                # If email sending fails, clear the reset token
-                # so the token cannot be used without the email.
 
                 cursor.execute(
                     """
@@ -663,16 +1203,14 @@ def forgot_password(
                 )
 
                 raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    status_code=(
+                        status.HTTP_500_INTERNAL_SERVER_ERROR
+                    ),
                     detail=(
                         "Unable to send password reset email. "
                         "Please try again later."
                     ),
                 )
-
-            # =========================
-            # SUCCESS
-            # =========================
 
             return {
                 "message": generic_message,
@@ -694,24 +1232,18 @@ def reset_password(
     Reset a user's password using a valid reset token.
     """
 
-    # =========================
-    # BASIC PASSWORD VALIDATION
-    # =========================
-
     if len(request.new_password) < 8:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be at least 8 characters long.",
+            detail=(
+                "Password must be at least 8 characters long."
+            ),
         )
 
     connection = get_connection()
 
     try:
         with connection.cursor() as cursor:
-
-            # =========================
-            # FIND VALID TOKEN
-            # =========================
 
             cursor.execute(
                 """
@@ -734,10 +1266,6 @@ def reset_password(
 
             user_id = user[0]
             expires_at = user[1]
-
-            # =========================
-            # CHECK EXPIRATION
-            # =========================
 
             now = datetime.now(timezone.utc)
 
@@ -767,17 +1295,9 @@ def reset_password(
                     detail="Invalid or expired reset token.",
                 )
 
-            # =========================
-            # HASH NEW PASSWORD
-            # =========================
-
             hashed_password = password_hash.hash(
                 request.new_password
             )
-
-            # =========================
-            # UPDATE PASSWORD
-            # =========================
 
             cursor.execute(
                 """
