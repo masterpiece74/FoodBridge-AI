@@ -44,8 +44,8 @@ function Navbar() {
             aria-label="FoodBridge AI home"
             className="group flex items-baseline text-xl font-normal tracking-[-0.04em] md:text-2xl"
           >
-            FoodBridge
-            <span className="ml-1 text-green">AI</span>
+            <span className="text-[#111111]">FoodBridge</span>
+            <span className="ml-1 text-[#1F7A4D]">AI</span>
           </Link>
 
           {/* DESKTOP NAVIGATION */}
@@ -54,8 +54,8 @@ function Navbar() {
               to="/"
               className={`border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
                 isActive("/")
-                  ? "text-green"
-                  : "text-muted hover:text-ink"
+                  ? "text-[#1F7A4D]"
+                  : "text-[#5F635F] hover:text-[#111111]"
               }`}
             >
               Home
@@ -64,7 +64,7 @@ function Navbar() {
             <button
               type="button"
               onClick={() => scrollToSection("how-it-works")}
-              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-[#5F635F] transition-colors hover:text-[#111111]"
             >
               How It Works
             </button>
@@ -72,7 +72,7 @@ function Navbar() {
             <button
               type="button"
               onClick={() => scrollToSection("impact")}
-              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-[#5F635F] transition-colors hover:text-[#111111]"
             >
               Impact
             </button>
@@ -81,19 +81,23 @@ function Navbar() {
               to="/about"
               className={`border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
                 isActive("/about")
-                  ? "text-green"
-                  : "text-muted hover:text-ink"
+                  ? "text-[#1F7A4D]"
+                  : "text-[#5F635F] hover:text-[#111111]"
               }`}
             >
               About
             </Link>
 
+            {/* ENTER PLATFORM */}
             <Link
               to="/login"
-              className="ml-4 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-3 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-green hover:border-green"
+              className="ml-4 inline-flex items-center gap-2 border border-[#111111] bg-[#111111] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
             >
               Enter platform
-              <ArrowRight size={14} strokeWidth={1.4} />
+              <ArrowRight
+                size={14}
+                strokeWidth={1.4}
+              />
             </Link>
           </div>
 
@@ -108,7 +112,7 @@ function Navbar() {
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-navigation"
             onClick={() => setMobileMenuOpen((current) => !current)}
-            className="flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:border-ink hover:text-green md:hidden"
+            className="flex h-10 w-10 items-center justify-center border border-line text-[#111111] transition-colors hover:border-[#111111] hover:text-[#1F7A4D] md:hidden"
           >
             {mobileMenuOpen ? (
               <X size={20} strokeWidth={1.4} />
@@ -137,8 +141,8 @@ function Navbar() {
                   onClick={closeMobileMenu}
                   className={`border-b border-line py-5 text-xs uppercase tracking-[0.08em] transition-colors ${
                     isActive("/")
-                      ? "text-green"
-                      : "text-muted hover:text-ink"
+                      ? "text-[#1F7A4D]"
+                      : "text-[#5F635F] hover:text-[#111111]"
                   }`}
                 >
                   Home
@@ -147,7 +151,7 @@ function Navbar() {
                 <button
                   type="button"
                   onClick={() => scrollToSection("how-it-works")}
-                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-[#5F635F] transition-colors hover:text-[#111111]"
                 >
                   How It Works
                 </button>
@@ -155,7 +159,7 @@ function Navbar() {
                 <button
                   type="button"
                   onClick={() => scrollToSection("impact")}
-                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-[#5F635F] transition-colors hover:text-[#111111]"
                 >
                   Impact
                 </button>
@@ -165,20 +169,24 @@ function Navbar() {
                   onClick={closeMobileMenu}
                   className={`border-b border-line py-5 text-xs uppercase tracking-[0.08em] transition-colors ${
                     isActive("/about")
-                      ? "text-green"
-                      : "text-muted hover:text-ink"
+                      ? "text-[#1F7A4D]"
+                      : "text-[#5F635F] hover:text-[#111111]"
                   }`}
                 >
                   About
                 </Link>
 
+                {/* MOBILE ENTER PLATFORM */}
                 <Link
                   to="/login"
                   onClick={closeMobileMenu}
-                  className="my-5 flex items-center justify-between border border-ink bg-ink px-5 py-4 text-xs uppercase tracking-[0.08em] text-white transition-colors hover:border-green hover:bg-green"
+                  className="my-5 flex items-center justify-between border border-[#111111] bg-[#111111] px-5 py-4 text-xs font-medium uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
                 >
                   Enter platform
-                  <ArrowRight size={15} strokeWidth={1.4} />
+                  <ArrowRight
+                    size={15}
+                    strokeWidth={1.4}
+                  />
                 </Link>
               </div>
             </div>
