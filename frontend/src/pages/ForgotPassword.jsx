@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
+  Heart,
   KeyRound,
   Mail,
   ShieldCheck,
@@ -33,21 +34,25 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim(),
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/auth/forgot-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email.trim(),
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data?.detail || "Unable to process your request. Please try again."
+          data?.detail ||
+            "Unable to process your request. Please try again."
         );
       }
 
@@ -60,7 +65,8 @@ export default function ForgotPassword() {
       }
     } catch (err) {
       setError(
-        err.message || "Something went wrong. Please try again."
+        err.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -68,204 +74,483 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-[#0B2F1A]">
-      <div className="min-h-screen flex">
+    <div className="min-h-screen bg-paper text-ink">
 
-        {/* Left Side */}
-        <div className="hidden lg:flex lg:w-1/2 bg-[#0B2F1A] relative overflow-hidden">
-          <div className="absolute inset-0">
-            <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#1F7A4D]/30 blur-3xl" />
-            <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#A7D7B8]/10 blur-3xl" />
-          </div>
+      {/* =====================================================
+          TOP BAR
+      ====================================================== */}
 
-          <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-white text-xl font-bold w-fit"
-            >
-              <div className="w-10 h-10 rounded-xl bg-[#1F7A4D] flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
-              </div>
-              FoodBridge
-            </Link>
+      <header className="border-b border-line">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5 md:px-10 lg:px-12">
 
-            <div className="max-w-lg">
-              <div className="w-16 h-16 rounded-2xl bg-[#1F7A4D] flex items-center justify-center mb-7">
-                <KeyRound size={30} className="text-white" />
-              </div>
-
-              <h1 className="text-4xl xl:text-5xl font-bold text-white leading-tight">
-                Secure access to your FoodBridge account.
-              </h1>
-
-              <p className="mt-6 text-white/70 text-lg leading-relaxed">
-                Forgot your password? No problem. We'll help you get back
-                into your account securely.
-              </p>
-
-              <div className="mt-10 space-y-4">
-                <div className="flex items-center gap-3 text-white/80">
-                  <ShieldCheck size={20} className="text-[#A7D7B8]" />
-                  <span>Secure password recovery</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/80">
-                  <Mail size={20} className="text-[#A7D7B8]" />
-                  <span>Reset instructions linked to your email</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/80">
-                  <CheckCircle2 size={20} className="text-[#A7D7B8]" />
-                  <span>Get back to connecting surplus with communities</span>
-                </div>
-              </div>
+          <Link
+            to="/"
+            className="group flex items-center gap-3"
+          >
+            <div className="flex h-8 w-8 items-center justify-center border border-line">
+              <Heart
+                size={15}
+                strokeWidth={1.3}
+                className="text-green"
+              />
             </div>
 
-            <p className="text-white/40 text-sm">
-              Turning Surplus Into Hope.
+            <div>
+              <p className="text-sm font-medium tracking-[-0.02em]">
+                FoodBridge
+                <span className="text-green">AI</span>
+              </p>
+
+              <p className="hidden text-[9px] uppercase tracking-[0.08em] text-muted sm:block">
+                Turning surplus into hope
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            to="/login"
+            className="fb-arrow text-[10px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-green"
+          >
+            <ArrowLeft
+              size={14}
+              strokeWidth={1.2}
+            />
+            Back to login
+          </Link>
+
+        </div>
+      </header>
+
+
+      {/* =====================================================
+          MAIN
+      ====================================================== */}
+
+      <main className="mx-auto grid min-h-[calc(100vh-73px)] max-w-[1400px] lg:grid-cols-[0.9fr_1.1fr]">
+
+        {/* =================================================
+            LEFT IMAGE / MESSAGE
+        ================================================== */}
+
+        <section className="relative hidden overflow-hidden border-r border-line lg:block">
+
+          <img
+            src="/aaa.png"
+            alt="FoodBridge community food support"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+
+          <div className="absolute inset-0 bg-black/50" />
+
+          <div className="absolute left-10 top-10 xl:left-12">
+            <p className="text-[10px] uppercase tracking-[0.1em] text-white/50">
+              03 — Account recovery
             </p>
           </div>
-        </div>
 
-        {/* Right Side */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-md">
+          <div className="absolute inset-x-0 bottom-0 p-10 xl:p-12">
 
-            {/* Mobile Logo */}
-            <Link
-              to="/"
-              className="lg:hidden flex items-center gap-2 text-[#0B2F1A] text-xl font-bold mb-12"
-            >
-              <div className="w-10 h-10 rounded-xl bg-[#1F7A4D] flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
+            <div className="max-w-xl text-white">
+
+              <div className="mb-10 flex items-center justify-between border-b border-white/20 pb-5">
+
+                <span className="text-[10px] uppercase tracking-[0.1em] text-white/55">
+                  FoodBridge / Security
+                </span>
+
+                <KeyRound
+                  size={16}
+                  strokeWidth={1.2}
+                  className="text-light-green"
+                />
+
               </div>
-              FoodBridge
-            </Link>
+
+              <p className="text-[10px] uppercase tracking-[0.1em] text-light-green">
+                Access can be restored
+              </p>
+
+              <h1 className="mt-5 text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                FIND YOUR
+                <br />
+                WAY
+                <br />
+                <span className="text-light-green">
+                  BACK.
+                </span>
+              </h1>
+
+              <p className="mt-8 max-w-md text-sm leading-7 text-white/65">
+                Enter the email connected to your FoodBridge account
+                and we'll help you recover access securely.
+              </p>
+
+              <div className="mt-10 grid gap-4 border-t border-white/20 pt-6">
+
+                <div className="flex items-center gap-3">
+
+                  <ShieldCheck
+                    size={15}
+                    strokeWidth={1.2}
+                    className="text-light-green"
+                  />
+
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-white/55">
+                    Secure recovery
+                  </span>
+
+                </div>
+
+                <div className="flex items-center gap-3">
+
+                  <Mail
+                    size={15}
+                    strokeWidth={1.2}
+                    className="text-light-green"
+                  />
+
+                  <span className="text-[10px] uppercase tracking-[0.08em] text-white/55">
+                    Email-based reset
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* =================================================
+            RIGHT FORM
+        ================================================== */}
+
+        <section className="flex items-center px-6 py-14 sm:px-10 md:px-16 lg:px-20 xl:px-24">
+
+          <div className="w-full max-w-xl">
+
+            {/* MOBILE LABEL */}
+
+            <div className="mb-14 lg:hidden">
+
+              <p className="fb-label text-green">
+                03 — Account recovery
+              </p>
+
+            </div>
+
 
             {!success ? (
               <>
-                <div className="mb-8">
-                  <p className="text-[#1F7A4D] font-semibold text-sm mb-3">
-                    PASSWORD RECOVERY
+
+                {/* INTRO */}
+
+                <div className="border-b border-line pb-10">
+
+                  <p className="fb-label text-green">
+                    Password recovery
                   </p>
 
-                  <h2 className="text-3xl font-bold text-[#0B2F1A]">
-                    Forgot your password?
+                  <h2 className="mt-5 text-[clamp(3rem,7vw,5.5rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                    FIND YOUR
+                    <br />
+                    <span className="text-green">
+                      WAY BACK.
+                    </span>
                   </h2>
 
-                  <p className="mt-3 text-gray-500 leading-relaxed">
-                    Enter the email address associated with your account and
-                    we'll help you reset your password.
+                  <p className="mt-7 max-w-lg text-sm leading-7 text-muted md:text-base">
+                    Enter the email address associated with your
+                    FoodBridge account and we'll help you reset your
+                    password.
                   </p>
+
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-semibold text-[#0B2F1A] mb-2">
-                      Email address
-                    </label>
 
-                    <div className="relative">
-                      <Mail
-                        size={19}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                      />
+                {/* ERROR */}
 
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@example.com"
-                        autoComplete="email"
-                        className="w-full pl-12 pr-4 py-3.5 rounded-xl border border-gray-200 bg-white outline-none transition focus:border-[#1F7A4D] focus:ring-4 focus:ring-[#1F7A4D]/10"
-                      />
-                    </div>
-                  </div>
-
-                  {error && (
-                    <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
-                      {error}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1F7A4D] hover:bg-[#14532D] text-white font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      "Sending..."
-                    ) : (
-                      <>
-                        Send Reset Instructions
-                        <ArrowRight size={18} />
-                      </>
-                    )}
-                  </button>
-                </form>
-
-                <Link
-                  to="/login"
-                  className="mt-8 flex items-center justify-center gap-2 text-sm font-semibold text-[#1F7A4D] hover:text-[#14532D]"
-                >
-                  <ArrowLeft size={16} />
-                  Back to Login
-                </Link>
-              </>
-            ) : (
-              <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-[#E8F5ED] flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2
-                    size={32}
-                    className="text-[#1F7A4D]"
-                  />
-                </div>
-
-                <h2 className="text-3xl font-bold text-[#0B2F1A]">
-                  Check your email
-                </h2>
-
-                <p className="mt-4 text-gray-500 leading-relaxed">
-                  If an account exists with{" "}
-                  <span className="font-semibold text-[#0B2F1A]">
-                    {email}
-                  </span>
-                  , password reset instructions have been generated.
-                </p>
-
-                {/* Development-only reset link */}
-                {resetLink && (
-                  <div className="mt-7 rounded-xl border border-[#A7D7B8] bg-[#F0F9F3] p-4 text-left">
-                    <p className="text-xs font-semibold text-[#14532D] mb-2">
-                      DEVELOPMENT RESET LINK
-                    </p>
-
-                    <a
-                      href={resetLink}
-                      className="text-sm text-[#1F7A4D] underline break-all"
-                    >
-                      {resetLink}
-                    </a>
+                {error && (
+                  <div className="border-b border-red-300 bg-red-50 px-4 py-4 text-sm leading-6 text-red-700">
+                    {error}
                   </div>
                 )}
 
-                <Link
-                  to="/login"
-                  className="mt-8 inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#1F7A4D] hover:bg-[#14532D] text-white font-semibold transition"
+
+                {/* FORM */}
+
+                <form
+                  onSubmit={handleSubmit}
+                  className="pt-8"
                 >
-                  Back to Login
-                  <ArrowRight size={18} />
-                </Link>
+
+                  <div className="border-b border-line pb-7">
+
+                    <label
+                      htmlFor="email"
+                      className="fb-label text-muted"
+                    >
+                      Email address
+                    </label>
+
+                    <div className="relative mt-4">
+
+                      <Mail
+                        size={17}
+                        strokeWidth={1.2}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
+                      />
+
+                      <input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) =>
+                          setEmail(e.target.value)
+                        }
+                        placeholder="you@example.com"
+                        autoComplete="email"
+                        required
+                        className="
+                          w-full
+                          border-0
+                          border-b
+                          border-line
+                          bg-transparent
+                          px-8
+                          py-3
+                          text-base
+                          text-ink
+                          outline-none
+                          placeholder:text-ash
+                          focus:border-green
+                        "
+                      />
+
+                    </div>
+
+                  </div>
+
+
+                  {/* SECURITY NOTE */}
+
+                  <div className="flex items-start gap-3 border-b border-line py-6">
+
+                    <ShieldCheck
+                      size={15}
+                      strokeWidth={1.2}
+                      className="mt-0.5 shrink-0 text-green"
+                    />
+
+                    <p className="text-xs leading-6 text-muted">
+                      We'll use your email to generate a secure
+                      password reset process for your account.
+                    </p>
+
+                  </div>
+
+
+                  {/* SUBMIT */}
+
+                  <div className="pt-8">
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="
+                        group
+                        flex
+                        w-full
+                        items-center
+                        justify-between
+                        bg-deep-green
+                        px-5
+                        py-4
+                        text-[11px]
+                        uppercase
+                        tracking-[0.08em]
+                        text-white
+                        transition-colors
+                        hover:bg-green
+                        disabled:cursor-not-allowed
+                        disabled:opacity-60
+                      "
+                    >
+
+                      <span>
+                        {loading
+                          ? "Sending reset instructions..."
+                          : "Send reset instructions"}
+                      </span>
+
+                      {!loading && (
+                        <ArrowRight
+                          size={16}
+                          strokeWidth={1.2}
+                          className="transition-transform duration-200 group-hover:translate-x-1"
+                        />
+                      )}
+
+                    </button>
+
+                  </div>
+
+                </form>
+
+
+                {/* LOGIN */}
+
+                <div className="mt-10 border-t border-line pt-7">
+
+                  <Link
+                    to="/login"
+                    className="fb-arrow text-sm text-muted transition-colors hover:text-green"
+                  >
+                    <ArrowLeft
+                      size={14}
+                      strokeWidth={1.2}
+                    />
+                    Back to login
+                  </Link>
+
+                </div>
+
+              </>
+            ) : (
+
+              /* =================================================
+                 SUCCESS STATE
+              ================================================== */
+
+              <div>
+
+                <div className="border-b border-line pb-10">
+
+                  <div className="flex h-14 w-14 items-center justify-center border border-green bg-light-green">
+
+                    <CheckCircle2
+                      size={25}
+                      strokeWidth={1.2}
+                      className="text-green"
+                    />
+
+                  </div>
+
+                  <p className="fb-label mt-10 text-green">
+                    Recovery request received
+                  </p>
+
+                  <h2 className="mt-5 text-[clamp(3rem,7vw,5.5rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                    CHECK
+                    <br />
+                    YOUR
+                    <br />
+                    <span className="text-green">
+                      EMAIL.
+                    </span>
+                  </h2>
+
+                  <p className="mt-7 max-w-lg text-sm leading-7 text-muted md:text-base">
+                    If an account exists with{" "}
+                    <span className="font-medium text-ink">
+                      {email}
+                    </span>
+                    , password reset instructions have been
+                    generated.
+                  </p>
+
+                </div>
+
+
+                {/* DEVELOPMENT RESET LINK */}
+
+                {resetLink && (
+                  <div className="border-b border-line py-7">
+
+                    <p className="fb-label text-green">
+                      Development reset link
+                    </p>
+
+                    <div className="mt-4 border border-line bg-light-green/30 p-4">
+
+                      <a
+                        href={resetLink}
+                        className="block break-all text-sm leading-6 text-green underline decoration-green/40 underline-offset-4 transition-colors hover:text-deep-green"
+                      >
+                        {resetLink}
+                      </a>
+
+                    </div>
+
+                    <p className="mt-3 text-[10px] uppercase tracking-[0.06em] text-ash">
+                      Visible because the current backend returns
+                      the reset link directly.
+                    </p>
+
+                  </div>
+                )}
+
+
+                {/* RETURN TO LOGIN */}
+
+                <div className="pt-8">
+
+                  <Link
+                    to="/login"
+                    className="
+                      group
+                      flex
+                      w-full
+                      items-center
+                      justify-between
+                      bg-deep-green
+                      px-5
+                      py-4
+                      text-[11px]
+                      uppercase
+                      tracking-[0.08em]
+                      text-white
+                      transition-colors
+                      hover:bg-green
+                    "
+                  >
+
+                    <span>
+                      Back to login
+                    </span>
+
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.2}
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+
+                  </Link>
+
+                </div>
+
+
+                <div className="mt-10 border-t border-line pt-6">
+
+                  <p className="text-[10px] uppercase tracking-[0.07em] text-ash">
+                    FoodBridge AI / Account recovery
+                  </p>
+
+                </div>
+
               </div>
+
             )}
 
-            <p className="text-center text-xs text-gray-400 mt-10">
-              © 2026 FoodBridge AI · Turning Surplus Into Hope
-            </p>
           </div>
-        </div>
-      </div>
+
+        </section>
+
+      </main>
+
     </div>
   );
 }
-

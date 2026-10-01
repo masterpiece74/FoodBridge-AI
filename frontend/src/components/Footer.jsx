@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import {
-  ArrowUpRight,
+  ArrowRight,
   Heart,
   Mail,
 } from "lucide-react";
@@ -26,6 +26,26 @@ function Footer() {
     }
   };
 
+  const scrollToTop = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      
+      window.setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 100);
+
+      return;
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   const platformLinks = [
     {
       label: "How It Works",
@@ -37,7 +57,7 @@ function Footer() {
     },
     {
       label: "Our Impact",
-      target: "impact-results",
+      target: "impact",
     },
     {
       label: "Our Network",
@@ -52,65 +72,72 @@ function Footer() {
   ];
 
   return (
-    <footer className="relative overflow-hidden bg-[#0B2F1A] px-5 pb-7 pt-16 text-white sm:px-6 sm:pt-20 md:px-12 lg:px-20">
-      {/* Background decoration */}
-      <div className="pointer-events-none absolute -right-40 top-0 h-96 w-96 rounded-full bg-[#1F7A4D]/20 blur-3xl" />
-
-      <div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-[#A7D7B8]/10 blur-3xl" />
-
-      <div className="relative mx-auto max-w-7xl">
+    <footer className="bg-deep-green text-white">
+      <div className="mx-auto max-w-[1400px]">
         {/* Main footer */}
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:gap-10">
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
           {/* Brand */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
+            className="border-b border-white/10 px-6 py-12 md:px-10 lg:border-b-0 lg:border-r lg:px-12 lg:py-14"
           >
             <Link
               to="/"
-              className="inline-block text-2xl font-bold tracking-tight transition-opacity duration-300 hover:opacity-80 sm:text-[26px]"
+              className="inline-block text-2xl font-normal tracking-[-0.04em] transition-colors hover:text-light-green"
             >
               FoodBridge
-              <span className="text-[#A7D7B8]">AI</span>
+              <span className="text-light-green">AI</span>
             </Link>
 
-            <p className="mt-5 max-w-sm text-sm leading-7 text-white/45">
-              Turning surplus into hope by intelligently connecting
-              food donors, communities, and volunteers.
+            <p className="mt-6 max-w-sm text-sm leading-7 text-white/50">
+              Connecting surplus food with verified communities through
+              intelligent matching, coordinated delivery, and measurable
+              impact.
             </p>
 
-            <div className="mt-6 inline-flex items-center gap-2 text-sm text-white/40">
+            <div className="mt-8 flex items-center gap-3">
               <Heart
                 size={15}
-                className="fill-[#A7D7B8]/20 text-[#A7D7B8]"
+                strokeWidth={1.2}
+                className="text-light-green"
               />
 
-              <span>Turning Surplus Into Hope.</span>
+              <span className="text-[10px] uppercase tracking-[0.08em] text-white/40">
+                Turning surplus into hope.
+              </span>
             </div>
           </motion.div>
 
           {/* Platform */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.05 }}
+            className="border-b border-white/10 px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-10 lg:py-14"
           >
-            <h3 className="text-sm font-semibold text-white">
+            <p className="fb-label text-white/40">
               Platform
-            </h3>
+            </p>
 
-            <div className="mt-5 space-y-3.5">
+            <div className="mt-7 flex flex-col items-start gap-5">
               {platformLinks.map((item) => (
                 <button
                   key={item.target}
                   type="button"
                   onClick={() => scrollToSection(item.target)}
-                  className="block text-left text-sm text-white/45 transition-all duration-300 hover:translate-x-1 hover:text-[#A7D7B8]"
+                  className="group flex items-center gap-3 text-left text-sm text-white/60 transition-colors hover:text-light-green"
                 >
-                  {item.label}
+                  <span>{item.label}</span>
+
+                  <ArrowRight
+                    size={13}
+                    strokeWidth={1.2}
+                    className="opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100"
+                  />
                 </button>
               ))}
             </div>
@@ -118,27 +145,29 @@ function Footer() {
 
           {/* Get involved */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.1 }}
+            className="border-b border-white/10 px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-10 lg:py-14"
           >
-            <h3 className="text-sm font-semibold text-white">
+            <p className="fb-label text-white/40">
               Get involved
-            </h3>
+            </p>
 
-            <div className="mt-5 space-y-3.5">
+            <div className="mt-7 flex flex-col items-start gap-5">
               {involvementLinks.map((label) => (
                 <Link
                   key={label}
                   to="/register"
-                  className="group flex w-fit items-center gap-1 text-sm text-white/45 transition-all duration-300 hover:translate-x-1 hover:text-[#A7D7B8]"
+                  className="group flex items-center gap-3 text-sm text-white/60 transition-colors hover:text-light-green"
                 >
-                  {label}
+                  <span>{label}</span>
 
-                  <ArrowUpRight
+                  <ArrowRight
                     size={13}
-                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={1.2}
+                    className="opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100"
                   />
                 </Link>
               ))}
@@ -147,79 +176,94 @@ function Footer() {
 
           {/* Connect */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6, delay: 0.15 }}
+            className="px-6 py-10 md:px-10 lg:px-10 lg:py-14"
           >
-            <h3 className="text-sm font-semibold text-white">
+            <p className="fb-label text-white/40">
               Connect
-            </h3>
+            </p>
 
-            <div className="mt-5 space-y-5">
+            <div className="mt-7">
               <a
                 href="mailto:hello@foodbridge.ai"
-                className="group flex w-fit items-center gap-2 text-sm text-white/45 transition-colors duration-300 hover:text-[#A7D7B8]"
+                className="group flex w-fit items-center gap-3 text-sm text-white/60 transition-colors hover:text-light-green"
               >
                 <Mail
                   size={15}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                  strokeWidth={1.2}
                 />
 
-                Contact us
+                <span>hello@foodbridge.ai</span>
               </a>
 
-              {/* Social links */}
-              <div className="flex gap-2">
-                <SocialButton
-                  label="X"
-                  ariaLabel="X"
-                />
+              <div className="mt-8">
+                <p className="text-[10px] uppercase tracking-[0.08em] text-white/30">
+                  Follow
+                </p>
 
-                <SocialButton
-                  label="in"
-                  ariaLabel="LinkedIn"
-                />
-
-                <SocialButton
-                  label="IG"
-                  ariaLabel="Instagram"
-                />
+                <div className="mt-4 flex items-center gap-5">
+                  <SocialLink label="X" />
+                  <SocialLink label="LinkedIn" />
+                  <SocialLink label="Instagram" />
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Divider */}
-        <div className="my-10 h-px bg-white/10 sm:my-12" />
-
-        {/* Bottom */}
-        <div className="flex flex-col gap-4 text-xs text-white/30 md:flex-row md:items-center md:justify-between">
-          <p>
-            © 2026 FoodBridge AI. All rights reserved.
-          </p>
-
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <span>Built for impact.</span>
-
-            <span>Powered by AI.</span>
-
-            <span className="text-[#A7D7B8]/50">
-              Turning surplus into hope.
-            </span>
+        {/* Closing statement */}
+        <div className="grid border-t border-white/10 md:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-white/10 px-6 py-8 md:border-b-0 md:border-r md:px-10 lg:px-12">
+            <p className="text-[10px] uppercase tracking-[0.08em] text-white/30">
+              FoodBridge AI / 2026
+            </p>
           </div>
+
+          <div className="flex flex-col justify-between gap-6 px-6 py-8 md:flex-row md:items-center md:px-10 lg:px-12">
+            <p className="text-sm text-white/50">
+              Good food deserves another destination.
+            </p>
+
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="fb-arrow w-fit text-[10px] uppercase tracking-[0.08em] text-light-green"
+            >
+              Back to top
+
+              <ArrowRight
+                size={14}
+                strokeWidth={1.2}
+                className="-rotate-90"
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Legal / copyright */}
+        <div className="flex flex-col gap-3 border-t border-white/10 px-6 py-5 text-[10px] uppercase tracking-[0.06em] text-white/25 sm:flex-row sm:items-center sm:justify-between md:px-10 lg:px-12">
+          <span>
+            © 2026 FoodBridge AI. All rights reserved.
+          </span>
+
+          <span>
+            Built for impact.
+          </span>
         </div>
       </div>
     </footer>
   );
 }
 
-function SocialButton({ label, ariaLabel }) {
+function SocialLink({ label }) {
   return (
     <button
       type="button"
-      aria-label={ariaLabel}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-[11px] font-bold text-white/40 transition-all duration-300 hover:-translate-y-1 hover:border-[#A7D7B8]/30 hover:bg-[#A7D7B8]/10 hover:text-[#A7D7B8]"
+      aria-label={label}
+      className="text-[10px] uppercase tracking-[0.08em] text-white/40 transition-colors hover:text-light-green"
     >
       {label}
     </button>

@@ -3,12 +3,13 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
+  Check,
   Eye,
   EyeOff,
   KeyRound,
   ShieldCheck,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const API_URL = "https://foodbridge-ai-qj9q.onrender.com";
 
@@ -83,133 +84,225 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] text-[#0B2F1A]">
-      <div className="min-h-screen flex">
+    <div className="min-h-screen bg-paper text-ink">
+      <div className="grid min-h-screen lg:grid-cols-2">
 
-        {/* Left Side */}
-        <div className="hidden lg:flex lg:w-1/2 bg-[#0B2F1A] relative overflow-hidden">
-          <div className="absolute inset-0">
-            <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#1F7A4D]/30 blur-3xl" />
-            <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#A7D7B8]/10 blur-3xl" />
-          </div>
+        {/* =========================================================
+            LEFT — EDITORIAL PANEL
+        ========================================================= */}
+        <div className="hidden min-h-screen border-r border-line bg-deep-green text-white lg:flex">
+          <div className="flex w-full flex-col justify-between px-12 py-10 xl:px-16 xl:py-12">
 
-          <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
-
+            {/* Brand */}
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-white text-xl font-bold w-fit"
+              className="group flex w-fit items-center gap-3"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#1F7A4D] flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
+              <div className="flex h-10 w-10 items-center justify-center border border-light-green/40">
+                <span className="text-sm font-medium tracking-[-0.03em]">
+                  F
+                </span>
               </div>
 
-              FoodBridge
+              <div>
+                <p className="text-[15px] font-medium tracking-[-0.02em]">
+                  FoodBridge
+                </p>
+                <p className="mt-0.5 text-[9px] uppercase tracking-[0.14em] text-white/40">
+                  AI
+                </p>
+              </div>
             </Link>
 
-            <div className="max-w-lg">
+            {/* Main editorial message */}
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
+              className="max-w-xl"
+            >
+              <div className="mb-10 flex items-center gap-3">
+                <KeyRound
+                  size={18}
+                  strokeWidth={1.2}
+                  className="text-light-green"
+                />
 
-              <div className="w-16 h-16 rounded-2xl bg-[#1F7A4D] flex items-center justify-center mb-7">
-                <KeyRound size={30} className="text-white" />
+                <p className="fb-label text-light-green">
+                  Account security
+                </p>
               </div>
 
-              <h1 className="text-4xl xl:text-5xl font-bold text-white leading-tight">
-                Create a new password.
+              <h1 className="text-[clamp(4rem,7vw,7.5rem)] font-normal leading-[0.86] tracking-[-0.06em]">
+                FIND
+                <br />
+                YOUR WAY
+                <br />
+                <span className="text-light-green">BACK.</span>
               </h1>
 
-              <p className="mt-6 text-white/70 text-lg leading-relaxed">
-                Choose a strong password to keep your FoodBridge account
-                secure.
+              <p className="mt-10 max-w-md text-base leading-7 text-white/55 md:text-lg md:leading-8">
+                Create a new password and get back to moving good food
+                toward people and communities that need it.
               </p>
 
-              <div className="mt-10 space-y-4">
+              <div className="mt-12 border-t border-white/10 pt-6">
+                <p className="fb-label mb-5 text-white/35">
+                  Reset protocol
+                </p>
 
-                <div className="flex items-center gap-3 text-white/80">
-                  <ShieldCheck
-                    size={20}
-                    className="text-[#A7D7B8]"
-                  />
-                  <span>Secure password protection</span>
+                <div className="space-y-5">
+                  <div className="flex items-start gap-4">
+                    <ShieldCheck
+                      size={17}
+                      strokeWidth={1.2}
+                      className="mt-0.5 shrink-0 text-light-green"
+                    />
+
+                    <div>
+                      <p className="text-sm text-white/80">
+                        Secure password protection
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-white/35">
+                        Your new password protects access to your account.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <Check
+                      size={17}
+                      strokeWidth={1.5}
+                      className="mt-0.5 shrink-0 text-light-green"
+                    />
+
+                    <div>
+                      <p className="text-sm text-white/80">
+                        Time-limited reset link
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-white/35">
+                        Reset links are designed for one secure password
+                        change.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <KeyRound
+                      size={17}
+                      strokeWidth={1.2}
+                      className="mt-0.5 shrink-0 text-light-green"
+                    />
+
+                    <div>
+                      <p className="text-sm text-white/80">
+                        Minimum 8 characters
+                      </p>
+                      <p className="mt-1 text-xs leading-5 text-white/35">
+                        Choose a password you can keep secure.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-3 text-white/80">
-                  <CheckCircle2
-                    size={20}
-                    className="text-[#A7D7B8]"
-                  />
-                  <span>Your reset link is time-limited</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-white/80">
-                  <KeyRound
-                    size={20}
-                    className="text-[#A7D7B8]"
-                  />
-                  <span>Use at least 8 characters</span>
-                </div>
-
               </div>
+            </motion.div>
+
+            {/* Footer */}
+            <div className="flex items-end justify-between gap-6 border-t border-white/10 pt-5">
+              <span className="text-[10px] uppercase tracking-[0.08em] text-white/30">
+                FoodBridge / 004
+              </span>
+
+              <span className="text-[10px] uppercase tracking-[0.08em] text-white/30">
+                Turning surplus into hope.
+              </span>
             </div>
-
-            <p className="text-white/40 text-sm">
-              Turning Surplus Into Hope.
-            </p>
-
           </div>
         </div>
 
-        {/* Right Side */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
-          <div className="w-full max-w-md">
+        {/* =========================================================
+            RIGHT — FORM
+        ========================================================= */}
+        <div className="flex min-h-screen items-center justify-center px-6 py-10 md:px-10 lg:px-12 xl:px-20">
 
-            {/* Mobile Logo */}
+          <div className="w-full max-w-xl">
+
+            {/* Mobile brand */}
             <Link
               to="/"
-              className="lg:hidden flex items-center gap-2 text-[#0B2F1A] text-xl font-bold mb-12"
+              className="mb-16 flex w-fit items-center gap-3 lg:hidden"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#1F7A4D] flex items-center justify-center">
-                <span className="text-white font-bold">F</span>
+              <div className="flex h-10 w-10 items-center justify-center border border-green bg-green">
+                <span className="text-sm font-medium text-white">
+                  F
+                </span>
               </div>
 
-              FoodBridge
+              <div>
+                <p className="text-[15px] font-medium tracking-[-0.02em]">
+                  FoodBridge
+                </p>
+
+                <p className="mt-0.5 text-[9px] uppercase tracking-[0.14em] text-muted">
+                  AI
+                </p>
+              </div>
             </Link>
 
             {!success ? (
-              <>
-                <div className="mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                {/* Header */}
+                <div className="border-b border-line pb-8">
+                  <div className="flex items-center gap-3">
+                    <span className="fb-label text-green">
+                      04 — Reset password
+                    </span>
 
-                  <p className="text-[#1F7A4D] font-semibold text-sm mb-3">
-                    RESET PASSWORD
-                  </p>
+                    {!token && (
+                      <span className="text-[10px] uppercase tracking-[0.08em] text-red-500">
+                        Invalid link
+                      </span>
+                    )}
+                  </div>
 
-                  <h2 className="text-3xl font-bold text-[#0B2F1A]">
-                    Set a new password
+                  <h2 className="mt-6 text-[clamp(3rem,6vw,5.5rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                    SET A NEW
+                    <br />
+                    PASSWORD.
                   </h2>
 
-                  <p className="mt-3 text-gray-500 leading-relaxed">
+                  <p className="mt-7 max-w-md text-base leading-7 text-muted">
                     Create a new password for your FoodBridge account.
                   </p>
-
                 </div>
 
+                {/* Form */}
                 <form
                   onSubmit={handleSubmit}
-                  className="space-y-5"
+                  className="mt-10"
                 >
-
-                  {/* New Password */}
-                  <div>
-                    <label className="block text-sm font-semibold text-[#0B2F1A] mb-2">
+                  {/* New password */}
+                  <div className="border-b border-line pb-7">
+                    <label
+                      htmlFor="new-password"
+                      className="fb-label block text-muted"
+                    >
                       New password
                     </label>
 
-                    <div className="relative">
-
+                    <div className="relative mt-3">
                       <KeyRound
-                        size={19}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        size={17}
+                        strokeWidth={1.3}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                       />
 
                       <input
+                        id="new-password"
                         type={showPassword ? "text" : "password"}
                         value={newPassword}
                         onChange={(e) =>
@@ -217,7 +310,7 @@ export default function ResetPassword() {
                         }
                         placeholder="Enter your new password"
                         autoComplete="new-password"
-                        className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 bg-white outline-none transition focus:border-[#1F7A4D] focus:ring-4 focus:ring-[#1F7A4D]/10"
+                        className="w-full border-0 border-b border-line bg-transparent py-4 pl-8 pr-12 text-base text-ink outline-none transition placeholder:text-ash focus:border-green"
                       />
 
                       <button
@@ -225,7 +318,7 @@ export default function ResetPassword() {
                         onClick={() =>
                           setShowPassword(!showPassword)
                         }
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1F7A4D]"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 text-graphite transition-colors hover:text-green"
                         aria-label={
                           showPassword
                             ? "Hide password"
@@ -233,33 +326,36 @@ export default function ResetPassword() {
                         }
                       >
                         {showPassword ? (
-                          <EyeOff size={19} />
+                          <EyeOff size={18} strokeWidth={1.3} />
                         ) : (
-                          <Eye size={19} />
+                          <Eye size={18} strokeWidth={1.3} />
                         )}
                       </button>
-
                     </div>
 
-                    <p className="mt-2 text-xs text-gray-400">
-                      Use at least 8 characters.
+                    <p className="mt-3 text-[11px] uppercase tracking-[0.06em] text-ash">
+                      Minimum 8 characters
                     </p>
                   </div>
 
-                  {/* Confirm Password */}
-                  <div>
-                    <label className="block text-sm font-semibold text-[#0B2F1A] mb-2">
-                      Confirm new password
+                  {/* Confirm password */}
+                  <div className="mt-7 border-b border-line pb-7">
+                    <label
+                      htmlFor="confirm-password"
+                      className="fb-label block text-muted"
+                    >
+                      Confirm password
                     </label>
 
-                    <div className="relative">
-
+                    <div className="relative mt-3">
                       <KeyRound
-                        size={19}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        size={17}
+                        strokeWidth={1.3}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                       />
 
                       <input
+                        id="confirm-password"
                         type={
                           showConfirmPassword
                             ? "text"
@@ -271,7 +367,7 @@ export default function ResetPassword() {
                         }
                         placeholder="Confirm your new password"
                         autoComplete="new-password"
-                        className="w-full pl-12 pr-12 py-3.5 rounded-xl border border-gray-200 bg-white outline-none transition focus:border-[#1F7A4D] focus:ring-4 focus:ring-[#1F7A4D]/10"
+                        className="w-full border-0 border-b border-line bg-transparent py-4 pl-8 pr-12 text-base text-ink outline-none transition placeholder:text-ash focus:border-green"
                       />
 
                       <button
@@ -281,7 +377,7 @@ export default function ResetPassword() {
                             !showConfirmPassword
                           )
                         }
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1F7A4D]"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 text-graphite transition-colors hover:text-green"
                         aria-label={
                           showConfirmPassword
                             ? "Hide password"
@@ -289,85 +385,129 @@ export default function ResetPassword() {
                         }
                       >
                         {showConfirmPassword ? (
-                          <EyeOff size={19} />
+                          <EyeOff size={18} strokeWidth={1.3} />
                         ) : (
-                          <Eye size={19} />
+                          <Eye size={18} strokeWidth={1.3} />
                         )}
                       </button>
-
                     </div>
                   </div>
 
+                  {/* Error */}
                   {error && (
-                    <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-7 border-l-2 border-red-500 bg-red-50 px-4 py-4 text-sm leading-6 text-red-600"
+                    >
                       {error}
-                    </div>
+                    </motion.div>
                   )}
 
+                  {/* Submit */}
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#1F7A4D] hover:bg-[#14532D] text-white font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="group mt-8 flex w-full items-center justify-between border border-deep-green bg-deep-green px-5 py-4 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-green disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {loading ? (
-                      "Updating Password..."
-                    ) : (
-                      <>
-                        Reset Password
-                        <ArrowRight size={18} />
-                      </>
-                    )}
-                  </button>
+                    <span>
+                      {loading
+                        ? "Updating password..."
+                        : "Reset password"}
+                    </span>
 
+                    <ArrowRight
+                      size={17}
+                      strokeWidth={1.2}
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  </button>
                 </form>
 
+                {/* Back */}
                 <Link
                   to="/login"
-                  className="mt-8 flex items-center justify-center gap-2 text-sm font-semibold text-[#1F7A4D] hover:text-[#14532D]"
+                  className="fb-arrow mt-8 w-fit text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-green"
                 >
-                  <ArrowLeft size={16} />
-                  Back to Login
-                </Link>
-              </>
-            ) : (
-              <div className="text-center">
-
-                <div className="w-16 h-16 rounded-full bg-[#E8F5ED] flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2
-                    size={32}
-                    className="text-[#1F7A4D]"
+                  <ArrowLeft
+                    size={15}
+                    strokeWidth={1.2}
                   />
+                  Back to login
+                </Link>
+              </motion.div>
+            ) : (
+              /* =====================================================
+                 SUCCESS STATE
+              ===================================================== */
+              <motion.div
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65 }}
+              >
+                <div className="border-b border-line pb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center bg-green text-white">
+                      <Check
+                        size={16}
+                        strokeWidth={1.5}
+                      />
+                    </div>
+
+                    <span className="fb-label text-green">
+                      Password updated
+                    </span>
+                  </div>
+
+                  <h2 className="mt-8 text-[clamp(3.5rem,7vw,6.5rem)] font-normal leading-[0.86] tracking-[-0.06em]">
+                    YOU'RE
+                    <br />
+                    <span className="text-green">ALL SET.</span>
+                  </h2>
+
+                  <p className="mt-8 max-w-md text-base leading-7 text-muted md:text-lg md:leading-8">
+                    Your FoodBridge password has been successfully
+                    updated. You can now sign in with your new password.
+                  </p>
                 </div>
-
-                <p className="text-[#1F7A4D] font-semibold text-sm mb-3">
-                  PASSWORD UPDATED
-                </p>
-
-                <h2 className="text-3xl font-bold text-[#0B2F1A]">
-                  You're all set!
-                </h2>
-
-                <p className="mt-4 text-gray-500 leading-relaxed">
-                  Your FoodBridge password has been successfully updated.
-                  You can now sign in with your new password.
-                </p>
 
                 <button
                   type="button"
                   onClick={() => navigate("/login")}
-                  className="mt-8 inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#1F7A4D] hover:bg-[#14532D] text-white font-semibold transition"
+                  className="group mt-10 flex w-full items-center justify-between border border-deep-green bg-deep-green px-5 py-4 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-green"
                 >
-                  Continue to Login
-                  <ArrowRight size={18} />
+                  <span>Continue to login</span>
+
+                  <ArrowRight
+                    size={17}
+                    strokeWidth={1.2}
+                    className="transition-transform duration-200 group-hover:translate-x-1"
+                  />
                 </button>
 
-              </div>
+                <Link
+                  to="/"
+                  className="fb-arrow mt-8 w-fit text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-green"
+                >
+                  <ArrowLeft
+                    size={15}
+                    strokeWidth={1.2}
+                  />
+                  Return home
+                </Link>
+              </motion.div>
             )}
 
-            <p className="text-center text-xs text-gray-400 mt-10">
-              © 2026 FoodBridge AI · Turning Surplus Into Hope
-            </p>
+            {/* Bottom metadata */}
+            <div className="mt-14 flex items-center justify-between border-t border-line pt-5">
+              <span className="text-[10px] uppercase tracking-[0.08em] text-ash">
+                FoodBridge AI
+              </span>
 
+              <span className="text-[10px] uppercase tracking-[0.08em] text-ash">
+                2026
+              </span>
+            </div>
           </div>
         </div>
       </div>

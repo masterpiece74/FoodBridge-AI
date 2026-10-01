@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import {
-  Brain,
+  ArrowRight,
   Building2,
   HeartHandshake,
   MapPin,
@@ -14,389 +14,300 @@ const roles = [
   {
     number: "01",
     icon: Building2,
-    title: "Food Donors",
+    label: "DONORS",
+    title: "Those with surplus.",
     description:
-      "Restaurants, hotels, supermarkets, event organizers, and individuals can turn surplus food into meaningful support.",
-    tags: ["Restaurants", "Supermarkets", "Events"],
+      "Restaurants, hotels, supermarkets, event organizers, and individuals can give surplus food another destination.",
+    examples: "Restaurants / Supermarkets / Events",
   },
   {
     number: "02",
     icon: HeartHandshake,
-    title: "Recipients",
+    label: "RECIPIENTS",
+    title: "Those with a need.",
     description:
-      "Verified NGOs and community organizations receive food matched to their needs, location, and capacity.",
-    tags: ["NGOs", "Shelters", "Communities"],
+      "Verified NGOs and community organizations receive food based on their needs, location, and capacity.",
+    examples: "NGOs / Shelters / Communities",
   },
   {
     number: "03",
     icon: Truck,
-    title: "Volunteers",
+    label: "VOLUNTEERS",
+    title: "Those who move it.",
     description:
-      "People within the network can help move rescued food safely from donors to recipients.",
-    tags: ["Pickup", "Delivery", "Support"],
+      "Volunteers help close the distance between available food and the communities waiting to receive it.",
+    examples: "Pickup / Delivery / Support",
   },
 ];
-
-const roleVariants = {
-  hidden: {
-    opacity: 0,
-    y: 35,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.65,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
 
 function EcosystemSection() {
   return (
     <section
       id="ecosystem"
-      className="relative overflow-hidden bg-[#F4F8F5] px-5 py-20 sm:px-6 md:px-12 md:py-24 lg:px-20"
+      className="scroll-mt-20 border-b border-line bg-paper"
     >
-      {/* Background decoration */}
-
-      <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-[#A7D7B8]/20 blur-3xl" />
-
-      <motion.div
-        animate={{
-          x: [0, 20, 0],
-          y: [0, 15, 0],
-        }}
-        transition={{
-          duration: 9,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="pointer-events-none absolute -bottom-20 -right-32 h-72 w-72 rounded-full bg-[#F59E0B]/10 blur-3xl"
-      />
-
-      <div className="relative mx-auto max-w-7xl">
-        {/* Section heading */}
-
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{
-            duration: 0.75,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-[#1F7A4D]/10 bg-white px-4 py-2 text-xs font-semibold text-[#1F7A4D] shadow-sm sm:text-sm">
-            <Users size={15} />
-
-            One network. Shared impact.
+      <div className="mx-auto max-w-[1400px]">
+        {/* Header */}
+        <div className="grid border-b border-line lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <p className="fb-label text-green">05 — Ecosystem</p>
           </div>
 
-          <h2 className="text-3xl font-bold leading-[1.1] tracking-tight text-[#0B2F1A] sm:text-4xl md:text-5xl lg:text-6xl">
-            Everyone has a role in
-            <br className="hidden sm:block" />{" "}
-            <span className="text-[#1F7A4D]">
-              fighting food waste.
-            </span>
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+            className="px-6 py-12 md:px-10 md:py-16 lg:px-12 lg:py-20"
+          >
+            <h2 className="fb-heading max-w-5xl">
+              ONE NETWORK.
+              <br />
+              <span className="text-green">MANY HANDS.</span>
+            </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[#0B2F1A]/50 sm:mt-6 sm:text-lg sm:leading-8">
-            FoodBridge AI brings donors, recipients, and volunteers
-            together in one intelligent network designed to move
-            surplus food where it can create the most value.
-          </p>
-        </motion.div>
+            <p className="mt-10 max-w-2xl text-base leading-7 text-muted md:text-lg md:leading-8">
+              FoodBridge brings different parts of the food ecosystem together
+              so surplus can move from where it exists to where it is needed.
+            </p>
+          </motion.div>
+        </div>
 
-        {/* Ecosystem flow */}
-
+        {/* Network flow */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: 0.75,
-            delay: 0.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="mx-auto mt-12 max-w-5xl sm:mt-16"
+          transition={{ duration: 0.7 }}
+          className="border-b border-line"
         >
-          <div className="relative overflow-hidden rounded-[1.75rem] border border-[#0B2F1A]/8 bg-white p-4 shadow-[0_12px_45px_rgba(11,47,26,0.05)] sm:rounded-[2rem] sm:p-6 md:p-10">
-            {/* Desktop connecting line */}
+          <div className="grid md:grid-cols-3">
+            <FlowNode
+              number="01"
+              icon={Utensils}
+              label="SURPLUS"
+              title="Food enters."
+              description="Available food is listed by a donor."
+            />
 
-            <div className="absolute left-[17%] right-[17%] top-1/2 hidden h-px bg-[#1F7A4D]/10 md:block" />
+            <FlowNode
+              number="02"
+              icon={PackageCheck}
+              label="CONNECTION"
+              title="Needs align."
+              description="FoodBridge identifies a suitable destination."
+              highlighted
+            />
 
-            <div className="relative grid gap-4 md:grid-cols-3 md:gap-6">
-              <FlowNode
-                icon={Utensils}
-                label="SURPLUS FOOD"
-                title="Donor"
-                description="Food enters the network"
-                delay={0}
-              />
-
-              <FlowNode
-                icon={Brain}
-                label="AI MATCH"
-                title="FoodBridge AI"
-                description="Finds the best destination"
-                delay={0.15}
-                highlighted
-              />
-
-              <FlowNode
-                icon={PackageCheck}
-                label="COMMUNITY NEED"
-                title="Recipient"
-                description="Food reaches people"
-                delay={0.3}
-              />
-            </div>
+            <FlowNode
+              number="03"
+              icon={HeartHandshake}
+              label="COMMUNITY"
+              title="Food arrives."
+              description="A verified recipient receives the donation."
+            />
           </div>
         </motion.div>
 
-        {/* Role cards */}
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{
-            staggerChildren: 0.12,
-          }}
-          className="mt-5 grid gap-5 md:mt-6 lg:grid-cols-3"
-        >
-          {roles.map((role) => {
+        {/* Roles */}
+        <div className="grid md:grid-cols-3">
+          {roles.map((role, index) => {
             const Icon = role.icon;
 
             return (
-              <motion.div
-                key={role.title}
-                variants={roleVariants}
-                whileHover={{
-                  y: -7,
-                  transition: {
-                    duration: 0.25,
-                    ease: "easeOut",
-                  },
+              <motion.article
+                key={role.number}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
                 }}
-                className="group relative overflow-hidden rounded-[1.75rem] border border-[#0B2F1A]/8 bg-white p-6 shadow-[0_10px_35px_rgba(11,47,26,0.05)] transition-all duration-300 hover:border-[#1F7A4D]/20 hover:shadow-[0_18px_45px_rgba(11,47,26,0.09)] sm:p-7"
+                className={`group min-h-[390px] px-6 py-10 md:px-10 md:py-12 lg:px-12 lg:py-14 ${
+                  index > 0
+                    ? "border-t border-line md:border-l md:border-t-0"
+                    : ""
+                }`}
               >
-                {/* Header */}
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold tracking-[0.2em] text-[#0B2F1A]/20">
+                <div className="flex items-start justify-between">
+                  <span className="text-[clamp(3rem,5vw,5rem)] font-normal leading-none tracking-[-0.06em] text-ash transition-colors duration-300 group-hover:text-green">
                     {role.number}
                   </span>
 
-                  <motion.div
-                    whileHover={{
-                      scale: 1.08,
-                      rotate: 4,
-                    }}
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1F7A4D]/10 text-[#1F7A4D] transition-colors duration-300 group-hover:bg-[#1F7A4D] group-hover:text-white"
-                  >
-                    <Icon size={21} />
-                  </motion.div>
-                </div>
-
-                <h3 className="mt-6 text-xl font-bold text-[#0B2F1A] sm:text-2xl">
-                  {role.title}
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-[#0B2F1A]/50">
-                  {role.description}
-                </p>
-
-                {/* Tags */}
-
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {role.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-[#F4F8F5] px-3 py-1.5 text-[11px] font-medium text-[#0B2F1A]/50"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Hover accent */}
-
-                <div className="absolute bottom-0 left-0 h-1 w-0 bg-[#1F7A4D] transition-all duration-500 group-hover:w-full" />
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* Volunteer / final-mile highlight */}
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: 0.75,
-            delay: 0.1,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="mt-5 overflow-hidden rounded-[1.75rem] bg-[#0B2F1A] text-white shadow-[0_15px_45px_rgba(11,47,26,0.10)] sm:mt-6 sm:rounded-[2rem]"
-        >
-          <div className="grid lg:grid-cols-[1fr_auto] lg:items-center">
-            <div className="p-6 sm:p-8 md:p-10">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#A7D7B8] sm:h-11 sm:w-11">
-                  <Truck size={19} />
-                </div>
-
-                <span className="text-sm font-semibold text-[#A7D7B8]">
-                  Powered by community
-                </span>
-              </div>
-
-              <h3 className="mt-5 max-w-2xl text-2xl font-bold leading-tight sm:text-3xl">
-                Good food should not get stuck on the way.
-              </h3>
-
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/55">
-                Volunteers help close the final-mile gap by
-                supporting pickup and delivery, helping rescued food
-                reach its destination while it is still useful.
-              </p>
-            </div>
-
-            <div className="border-t border-white/10 p-6 sm:p-8 md:p-10 lg:border-l lg:border-t-0">
-              <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10">
-                  <MapPin
-                    size={22}
-                    className="text-[#A7D7B8]"
+                  <Icon
+                    size={27}
+                    strokeWidth={1.2}
+                    className="text-ink transition-colors duration-300 group-hover:text-green"
                   />
                 </div>
 
-                <div>
-                  <p className="text-2xl font-bold">Local</p>
+                <p className="fb-label mt-16 text-green">{role.label}</p>
 
-                  <p className="text-sm text-white/40">
-                    Pickup & delivery network
+                <h3 className="mt-4 max-w-sm text-2xl font-normal leading-tight tracking-[-0.03em] md:text-3xl">
+                  {role.title}
+                </h3>
+
+                <p className="mt-5 max-w-md text-sm leading-6 text-muted md:text-base md:leading-7">
+                  {role.description}
+                </p>
+
+                <div className="mt-8 border-t border-line pt-4">
+                  <p className="text-[10px] uppercase tracking-[0.08em] text-muted">
+                    {role.examples}
+                  </p>
+                </div>
+
+                <div className="mt-8 flex items-center gap-3 text-[11px] uppercase tracking-[0.08em] text-muted transition-all duration-300 group-hover:gap-5 group-hover:text-green">
+                  <span>Join the network</span>
+                  <ArrowRight size={14} strokeWidth={1.2} />
+                </div>
+              </motion.article>
+            );
+          })}
+        </div>
+
+        {/* Final-mile section */}
+        <div className="grid border-t border-line lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <div className="flex items-center gap-3">
+              <Truck
+                size={18}
+                strokeWidth={1.2}
+                className="text-green"
+              />
+
+              <p className="fb-label text-muted">
+                The final mile
+              </p>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="px-6 py-12 md:px-10 lg:px-12 lg:py-16"
+          >
+            <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
+              <div>
+                <h3 className="max-w-3xl text-[clamp(2.3rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.045em]">
+                  GOOD FOOD
+                  <br />
+                  SHOULD <span className="text-green">MOVE.</span>
+                </h3>
+
+                <p className="mt-8 max-w-2xl text-base leading-7 text-muted md:text-lg md:leading-8">
+                  Volunteers help bridge the final distance, supporting
+                  pickup and delivery so rescued food can reach its intended
+                  destination while it is still useful.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4 border-t border-line pt-5 md:border-t-0 md:border-l md:pl-8 md:pt-0">
+                <MapPin
+                  size={24}
+                  strokeWidth={1.2}
+                  className="text-green"
+                />
+
+                <div>
+                  <p className="text-xl font-normal tracking-[-0.03em]">
+                    Local
+                  </p>
+
+                  <p className="mt-1 text-[10px] uppercase tracking-[0.08em] text-muted">
+                    Pickup & delivery
                   </p>
                 </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+
+        {/* Closing line */}
+        <div className="flex items-center justify-between border-t border-line px-6 py-6 md:px-10 lg:px-12">
+          <div className="flex items-center gap-3">
+            <Users
+              size={15}
+              strokeWidth={1.2}
+              className="text-green"
+            />
+
+            <p className="text-[11px] uppercase tracking-[0.08em] text-muted">
+              Built together
+            </p>
           </div>
-        </motion.div>
 
-        {/* Closing statement */}
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.08em] text-muted">
+            <span className="hidden sm:block">
+              Surplus → Connection → Community
+            </span>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: 0.7,
-            delay: 0.15,
-          }}
-          className="mt-8 flex items-center justify-center gap-2 px-4 text-center text-xs text-[#0B2F1A]/35 sm:mt-10 sm:text-sm"
-        >
-          <HeartHandshake
-            size={16}
-            className="shrink-0 text-[#1F7A4D]"
-          />
-
-          <span>
-            Together, we turn surplus into something that matters.
-          </span>
-        </motion.div>
+            <ArrowRight
+              size={14}
+              strokeWidth={1.2}
+              className="text-green"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* =========================
-   FLOW NODE
-========================= */
-
 function FlowNode({
+  number,
   icon: Icon,
   label,
   title,
   description,
-  delay,
   highlighted = false,
 }) {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        scale: 0.94,
-      }}
-      whileInView={{
-        opacity: 1,
-        scale: 1,
-      }}
-      viewport={{
-        once: true,
-        amount: 0.3,
-      }}
-      transition={{
-        duration: 0.55,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{
-        y: highlighted ? -3 : -2,
-        transition: {
-          duration: 0.2,
-        },
-      }}
-      className={`relative z-10 rounded-3xl p-5 text-center sm:p-6 ${
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.6 }}
+      className={`relative px-6 py-10 md:px-10 md:py-12 lg:px-12 lg:py-14 ${
         highlighted
-          ? "bg-[#1F7A4D] text-white shadow-xl shadow-[#1F7A4D]/20"
-          : "border border-[#0B2F1A]/8 bg-[#F7FAF8]"
+          ? "border-y border-line bg-deep-green text-white md:border-x md:border-y-0"
+          : "border-t border-line md:border-t-0"
       }`}
     >
-      <motion.div
-        animate={
-          highlighted
-            ? {
-                y: [0, -5, 0],
-              }
-            : undefined
-        }
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className={`mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ${
-          highlighted
-            ? "bg-white/10 text-[#A7D7B8]"
-            : "bg-[#1F7A4D]/10 text-[#1F7A4D]"
-        }`}
-      >
-        <Icon size={23} />
-      </motion.div>
+      <div className="flex items-start justify-between">
+        <span
+          className={`text-[clamp(3rem,5vw,5rem)] font-normal leading-none tracking-[-0.06em] ${
+            highlighted ? "text-white/30" : "text-ash"
+          }`}
+        >
+          {number}
+        </span>
+
+        <Icon
+          size={27}
+          strokeWidth={1.2}
+          className={highlighted ? "text-light-green" : "text-green"}
+        />
+      </div>
 
       <p
-        className={`mt-5 text-[10px] font-bold tracking-[0.2em] ${
-          highlighted
-            ? "text-[#A7D7B8]"
-            : "text-[#1F7A4D]"
+        className={`fb-label mt-14 ${
+          highlighted ? "text-light-green" : "text-green"
         }`}
       >
         {label}
       </p>
 
-      <h3 className="mt-2 text-lg font-bold sm:text-xl">
+      <h3 className="mt-4 text-2xl font-normal tracking-[-0.03em] md:text-3xl">
         {title}
       </h3>
 
       <p
-        className={`mt-2 text-sm ${
-          highlighted
-            ? "text-white/55"
-            : "text-[#0B2F1A]/40"
+        className={`mt-4 max-w-xs text-sm leading-6 md:text-base md:leading-7 ${
+          highlighted ? "text-white/60" : "text-muted"
         }`}
       >
         {description}

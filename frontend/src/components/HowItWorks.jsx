@@ -1,32 +1,30 @@
-import {
-  ArrowRight,
-  Brain,
-  HandHeart,
-  Truck,
-} from "lucide-react";
+import { ArrowRight, Brain, HandHeart, Truck } from "lucide-react";
 import { motion } from "framer-motion";
 
 const steps = [
   {
     number: "01",
+    label: "DONATE",
     icon: HandHeart,
-    title: "Donate surplus food",
+    title: "Give surplus a destination.",
     description:
-      "Donors list available surplus food with details such as food type, quantity, location, preparation time, and expiry time.",
+      "List surplus food with the details that matter — what it is, how much is available, where it is, and when it should be collected.",
   },
   {
     number: "02",
+    label: "MATCH",
     icon: Brain,
-    title: "AI finds the best match",
+    title: "Find the right recipient.",
     description:
-      "FoodBridge AI evaluates factors such as location, food type, quantity, freshness, and urgency to recommend suitable verified recipients.",
+      "FoodBridge AI considers location, food type, quantity, freshness, and urgency to identify suitable verified recipients.",
   },
   {
     number: "03",
+    label: "DELIVER",
     icon: Truck,
-    title: "Coordinate delivery",
+    title: "Move food where it matters.",
     description:
-      "Once a match is accepted, the food moves through the delivery process with volunteers helping coordinate pickup, transit, and delivery to the recipient.",
+      "Once a match is accepted, volunteers help coordinate pickup and delivery so surplus food reaches the people who need it.",
   },
 ];
 
@@ -34,117 +32,133 @@ function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-24 bg-white px-6 py-20 md:px-12 md:py-24 lg:px-20"
+      className="scroll-mt-20 border-b border-line bg-paper"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-[1400px]">
         {/* =====================================================
-            SECTION HEADER
+            SECTION INTRO
         ===================================================== */}
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <p className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#1F7A4D]">
-            How it works
-          </p>
+        <div className="grid border-b border-line lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <p className="fb-label text-green">02 — The bridge</p>
+          </div>
 
-          <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#14532D] sm:text-4xl md:text-5xl">
-            From surplus food to meaningful impact.
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+            className="px-6 py-12 md:px-10 md:py-16 lg:px-12 lg:py-20"
+          >
+            <h2 className="fb-heading max-w-5xl">
+              HOW FOOD
+              <br />
+              <span className="text-green">MOVES.</span>
+            </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg sm:leading-8">
-            FoodBridge AI connects donors, recipients, and volunteers through
-            an intelligent redistribution network designed to move surplus
-            food where it can make the greatest difference.
-          </p>
-        </motion.div>
+            <p className="mt-10 max-w-2xl text-base leading-7 text-muted md:text-lg md:leading-8">
+              FoodBridge connects donors, verified recipients, and volunteers
+              through a simple redistribution network designed to move surplus
+              food where it can create the greatest impact.
+            </p>
+          </motion.div>
+        </div>
 
         {/* =====================================================
             STEPS
         ===================================================== */}
 
-        <div className="mt-12 grid gap-6 md:mt-16 md:grid-cols-3 md:gap-5 lg:gap-6">
+        <div className="grid lg:grid-cols-3">
           {steps.map((step, index) => {
             const Icon = step.icon;
 
             return (
-              <motion.div
+              <motion.article
                 key={step.number}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.6,
                   delay: index * 0.1,
                 }}
-                className="group relative rounded-3xl border border-gray-100 bg-[#FAFAF7] p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-[#A7D7B8] hover:shadow-xl sm:p-8"
+                className={`group min-h-[390px] px-6 py-10 md:px-10 md:py-12 lg:px-12 lg:py-14 ${
+                  index > 0 ? "border-t border-line lg:border-l lg:border-t-0" : ""
+                }`}
               >
-                {/* =================================================
-                    TOP ROW
-                ================================================= */}
+                {/* NUMBER + ICON */}
 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold tracking-[0.15em] text-[#1F7A4D]">
+                <div className="flex items-start justify-between">
+                  <span className="text-[clamp(3rem,5vw,5rem)] font-normal leading-none tracking-[-0.06em] text-ash transition-colors duration-300 group-hover:text-green">
                     {step.number}
                   </span>
 
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E8F3EC] text-[#14532D] transition-all duration-300 group-hover:bg-[#14532D] group-hover:text-white">
-                    <Icon size={22} strokeWidth={2} />
-                  </div>
+                  <Icon
+                    size={28}
+                    strokeWidth={1.2}
+                    className="text-ink transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                  />
                 </div>
 
-                {/* =================================================
-                    CONTENT
-                ================================================= */}
+                {/* LABEL */}
 
-                <h3 className="mt-9 text-xl font-bold tracking-tight text-[#14532D] sm:text-2xl">
+                <p className="fb-label mt-16 text-green">{step.label}</p>
+
+                {/* TITLE */}
+
+                <h3 className="mt-4 max-w-sm text-2xl font-normal leading-tight tracking-[-0.03em] md:text-3xl">
                   {step.title}
                 </h3>
 
-                <p className="mt-4 text-sm leading-7 text-gray-600 sm:text-base">
+                {/* DESCRIPTION */}
+
+                <p className="mt-5 max-w-md text-sm leading-6 text-muted md:text-base md:leading-7">
                   {step.description}
                 </p>
 
-                {/* =================================================
-                    PROGRESS INDICATOR
-                ================================================= */}
+                {/* ARROW */}
 
-                <div className="mt-8 h-1 w-12 rounded-full bg-[#A7D7B8] transition-all duration-300 group-hover:w-20" />
+                <div className="mt-10 flex items-center gap-3 text-muted transition-all duration-300 group-hover:gap-5 group-hover:text-green">
+                  <span className="text-[11px] uppercase tracking-[0.08em]">
+                    Step {step.number}
+                  </span>
 
-                {/* =================================================
-                    CONNECTING ARROW
-                ================================================= */}
-
-                {index < steps.length - 1 && (
-                  <div className="absolute -right-5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white text-[#1F7A4D] shadow-sm md:flex">
-                    <ArrowRight size={18} strokeWidth={2} />
-                  </div>
-                )}
-              </motion.div>
+                  <ArrowRight size={15} strokeWidth={1.2} />
+                </div>
+              </motion.article>
             );
           })}
         </div>
 
         {/* =====================================================
-            BOTTOM MESSAGE
+            BOTTOM STATEMENT
         ===================================================== */}
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mx-auto mt-12 max-w-3xl text-center md:mt-14"
-        >
-          <p className="text-sm leading-6 text-gray-500 sm:text-base">
-            Every successful connection helps reduce food waste and get
-            nutritious food to communities that need it.
-          </p>
-        </motion.div>
+        <div className="grid border-t border-line md:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-8 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <p className="fb-label text-muted">The principle</p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="flex items-center justify-between gap-8 px-6 py-10 md:px-10 lg:px-12 lg:py-14"
+          >
+            <p className="max-w-2xl text-xl font-normal leading-tight tracking-[-0.02em] md:text-3xl">
+              Every connection turns food that might have been wasted into
+              something useful.
+            </p>
+
+            <ArrowRight
+              size={28}
+              strokeWidth={1}
+              className="hidden shrink-0 text-green md:block"
+            />
+          </motion.div>
+        </div>
       </div>
     </section>
   );

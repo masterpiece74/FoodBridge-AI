@@ -1,44 +1,19 @@
-
 import { useEffect, useState } from "react";
+import { ArrowRight, Heart, Leaf, Truck, Users, Utensils } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-  ArrowUpRight,
-  Heart,
-  Leaf,
-  Users,
-  Utensils,
-  Truck,
-} from "lucide-react";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://foodbridge-ai-qj9q.onrender.com";
-
-const cardVariants = {
-  hidden: {
-    opacity: 0,
-    y: 35,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: "easeOut",
-    },
-  },
-};
-
-const statsContainerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://foodbridge-ai-qj9q.onrender.com";
 
 function formatNumber(value) {
   return new Intl.NumberFormat("en-US").format(value || 0);
+}
+
+function formatKg(value) {
+  return `${Number(value || 0).toLocaleString("en-US", {
+    maximumFractionDigits: 1,
+  })} kg`;
 }
 
 function ImpactSection() {
@@ -97,397 +72,283 @@ function ImpactSection() {
     };
   }, []);
 
-  const impactStats = [
+  const stats = [
     {
+      number: "01",
+      icon: Utensils,
       value: loading ? "..." : formatNumber(impact.meals_rescued),
       label: "Meals rescued",
       description:
-        "Nutritious meals redirected to people and communities that need them.",
-      icon: Utensils,
+        "Food redirected from potential waste toward people and communities that need it.",
     },
     {
-      value: loading
-        ? "..."
-        : `${impact.food_saved_kg.toLocaleString("en-US", {
-            maximumFractionDigits: 1,
-          })} kg`,
+      number: "02",
+      icon: Leaf,
+      value: loading ? "..." : formatKg(impact.food_saved_kg),
       label: "Food saved",
       description:
-        "Food successfully redistributed through completed FoodBridge deliveries.",
-      icon: Leaf,
+        "Food successfully redistributed through completed FoodBridge activity.",
     },
     {
+      number: "03",
+      icon: Users,
       value: loading ? "..." : formatNumber(impact.people_supported),
       label: "People supported",
       description:
-        "People supported through successfully completed food deliveries.",
-      icon: Users,
+        "People reached through successfully completed food redistribution.",
     },
     {
-      value: loading ? "..." : formatNumber(impact.completed_deliveries),
-      label: "Completed deliveries",
-      description:
-        "Food deliveries successfully completed across the FoodBridge network.",
+      number: "04",
       icon: Truck,
+      value: loading ? "..." : formatNumber(impact.completed_deliveries),
+      label: "Deliveries completed",
+      description:
+        "Successful movements of donated food through the FoodBridge network.",
     },
   ];
 
   return (
     <section
       id="impact"
-      className="relative scroll-mt-24 overflow-hidden bg-[#FAFAF7] px-6 py-20 md:px-12 md:py-24 lg:px-20"
+      className="scroll-mt-20 border-b border-line bg-paper"
     >
-      {/* =====================================================
-          DECORATIVE BACKGROUND
-      ===================================================== */}
-
-      <motion.div
-        animate={{
-          x: [0, 25, 0],
-          y: [0, -15, 0],
-        }}
-        transition={{
-          duration: 9,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="pointer-events-none absolute -right-32 top-20 h-72 w-72 rounded-full bg-[#A7D7B8]/30 blur-3xl"
-      />
-
-      <motion.div
-        animate={{
-          x: [0, -20, 0],
-          y: [0, 20, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="pointer-events-none absolute -bottom-32 left-10 h-72 w-72 rounded-full bg-[#F59E0B]/10 blur-3xl"
-      />
-
-      <div className="relative mx-auto max-w-7xl">
-        {/* =====================================================
-            SECTION HEADER
-        ===================================================== */}
-
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8 }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-[#14532D]/10 bg-[#14532D]/5 px-4 py-2 text-sm font-medium text-[#14532D]">
-            <Heart size={16} />
-            Impact that matters
+      <div className="mx-auto max-w-[1400px]">
+        {/* Header */}
+        <div className="grid border-b border-line lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <p className="fb-label text-green">04 — Impact</p>
           </div>
 
-          <h2 className="text-3xl font-bold leading-tight tracking-tight text-[#1C1C1C] sm:text-4xl md:text-5xl lg:text-6xl">
-            Every donation becomes
-            <br />
-            <span className="text-[#14532D]">measurable impact.</span>
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+            className="px-6 py-12 md:px-10 md:py-16 lg:px-12 lg:py-20"
+          >
+            <h2 className="fb-heading max-w-5xl">
+              MAKE IT
+              <br />
+              <span className="text-green">COUNT.</span>
+            </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-500 sm:mt-6 sm:text-lg sm:leading-8">
-            FoodBridge AI helps turn surplus food into meaningful support
-            while giving donors, volunteers, recipients, and communities
-            visibility into the difference they are creating.
-          </p>
-        </motion.div>
+            <p className="mt-10 max-w-2xl text-base leading-7 text-muted md:text-lg md:leading-8">
+              Every successful connection leaves a measurable trace. Food
+              rescued, people supported, food saved, and deliveries completed
+              become part of the story FoodBridge is building.
+            </p>
+          </motion.div>
+        </div>
 
-        {/* =====================================================
-            IMPACT STATISTICS
-        ===================================================== */}
-
-        <motion.div
-          variants={statsContainerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{
-            once: true,
-            amount: 0.15,
-          }}
-          className="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4"
-        >
-          {impactStats.map((stat) => {
+        {/* Main statistics */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat, index) => {
             const Icon = stat.icon;
 
             return (
-              <motion.div
-                key={stat.label}
-                variants={cardVariants}
-                whileHover={{
-                  y: -8,
-                  transition: {
-                    duration: 0.25,
-                  },
+              <motion.article
+                key={stat.number}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.08,
                 }}
-                className="group relative overflow-hidden rounded-[2rem] border border-gray-200/80 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-xl sm:p-7"
+                className={`group min-h-[330px] px-6 py-10 md:px-10 md:py-12 lg:px-10 lg:py-14 ${
+                  index > 0
+                    ? "border-t border-line md:border-l lg:border-t-0"
+                    : "border-t border-line md:border-t-0"
+                }`}
               >
-                {/* Icon */}
+                <div className="flex items-start justify-between">
+                  <span className="text-[clamp(3rem,5vw,5rem)] font-normal leading-none tracking-[-0.06em] text-ash transition-colors duration-300 group-hover:text-green">
+                    {stat.number}
+                  </span>
 
-                <div className="flex items-center justify-between">
-                  <motion.div
-                    whileHover={{
-                      scale: 1.08,
-                      rotate: 4,
-                    }}
-                    className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#14532D]/5 text-[#14532D]"
-                  >
-                    <Icon size={21} strokeWidth={2} />
-                  </motion.div>
-
-                  <ArrowUpRight
-                    size={18}
-                    className="text-gray-300 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-[#14532D]"
+                  <Icon
+                    size={26}
+                    strokeWidth={1.2}
+                    className="text-ink transition-colors duration-300 group-hover:text-green"
                   />
                 </div>
 
-                {/* Number */}
+                <div className="mt-14">
+                  <p className="text-[clamp(2.4rem,4vw,4rem)] font-normal leading-none tracking-[-0.055em]">
+                    {stat.value}
+                  </p>
 
-                <p className="mt-7 text-3xl font-bold tracking-tight text-[#1C1C1C] sm:text-4xl">
-                  {stat.value}
-                </p>
+                  <p className="fb-label mt-4 text-green">{stat.label}</p>
 
-                {/* Label */}
+                  <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
+                    {stat.description}
+                  </p>
+                </div>
 
-                <h3 className="mt-2 text-base font-semibold text-[#14532D]">
-                  {stat.label}
-                </h3>
+                <div className="mt-8 flex items-center gap-3 text-muted transition-all duration-300 group-hover:gap-5 group-hover:text-green">
+                  <span className="text-[10px] uppercase tracking-[0.08em]">
+                    Impact / {stat.number}
+                  </span>
 
-                {/* Description */}
-
-                <p className="mt-3 text-sm leading-6 text-gray-500">
-                  {stat.description}
-                </p>
-
-                {/* Bottom accent */}
-
-                <div className="absolute bottom-0 left-0 h-1 w-0 bg-[#14532D] transition-all duration-500 group-hover:w-full" />
-              </motion.div>
+                  <ArrowRight size={14} strokeWidth={1.2} />
+                </div>
+              </motion.article>
             );
           })}
-        </motion.div>
+        </div>
 
-        {/* =====================================================
-            MAIN IMPACT STORY
-        ===================================================== */}
+        {/* Impact statement */}
+        <div className="grid border-t border-line lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <div className="flex items-center gap-3">
+              <Heart
+                size={18}
+                strokeWidth={1.2}
+                className="text-green"
+              />
 
+              <p className="fb-label text-muted">
+                The effect
+              </p>
+            </div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="px-6 py-12 md:px-10 lg:px-12 lg:py-16"
+          >
+            <h3 className="max-w-4xl text-[clamp(2.3rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.045em]">
+              LESS WASTE.
+              <br />
+              MORE <span className="text-green">POSSIBILITY.</span>
+            </h3>
+
+            <div className="mt-10 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+              <p className="max-w-2xl text-base leading-7 text-muted md:text-lg md:leading-8">
+                FoodBridge gives surplus food another route. What might have
+                been discarded can become a meal, a completed delivery, and
+                meaningful support for someone else.
+              </p>
+
+              <div className="flex items-center gap-3 text-sm uppercase tracking-[0.06em] text-green">
+                <span>Measure the difference</span>
+                <ArrowRight size={16} strokeWidth={1.2} />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Live network visual */}
         <motion.div
-          initial={{
-            opacity: 0,
-            y: 50,
-          }}
-          whileInView={{
-            opacity: 1,
-            y: 0,
-          }}
-          viewport={{
-            once: true,
-            amount: 0.2,
-          }}
-          transition={{
-            duration: 0.8,
-            delay: 0.1,
-          }}
-          className="mt-6 overflow-hidden rounded-[2rem] bg-[#14532D] text-white"
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7 }}
+          className="grid border-t border-line lg:grid-cols-[0.8fr_1.2fr]"
         >
-          <div className="grid lg:grid-cols-2">
-            {/* =================================================
-                LEFT CONTENT
-            ================================================= */}
+          <div className="border-b border-line px-6 py-10 md:px-10 lg:border-b-0 lg:border-r lg:px-12">
+            <p className="fb-label text-muted">
+              Network activity
+            </p>
 
-            <div className="relative p-7 sm:p-8 md:p-12 lg:p-14">
-              <motion.div
-                animate={{
-                  rotate: [0, 4, -4, 0],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-[#A7D7B8]"
-              >
-                <Heart size={25} strokeWidth={2} />
-              </motion.div>
+            <p className="mt-4 max-w-xs text-sm leading-6 text-muted">
+              Live figures are drawn from completed FoodBridge platform
+              activity.
+            </p>
+          </div>
 
-              <p className="mt-8 text-sm font-medium uppercase tracking-[0.2em] text-[#A7D7B8]">
-                The FoodBridge effect
+          <div className="grid sm:grid-cols-3">
+            <div className="border-b border-line px-6 py-8 sm:border-b-0 sm:border-r md:px-8 lg:px-10">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-muted">
+                Meals
               </p>
 
-              <h3 className="mt-4 max-w-xl text-3xl font-bold leading-tight sm:text-4xl">
-                Less food wasted.
-                <br />
-                More people supported.
-              </h3>
-
-              <p className="mt-5 max-w-xl text-base leading-7 text-white/60">
-                FoodBridge AI helps identify where surplus food can create
-                meaningful value, connecting available food with suitable
-                recipients and coordinating the journey toward delivery.
+              <p className="mt-4 text-3xl font-normal tracking-[-0.04em]">
+                {loading ? "..." : formatNumber(impact.meals_rescued)}
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                {["Food rescue", "AI matching", "Community impact"].map(
-                  (item) => (
-                    <div
-                      key={item}
-                      className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm text-white/70"
-                    >
-                      {item}
-                    </div>
-                  ),
-                )}
+              <div className="mt-5 h-px bg-line">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "78%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1 }}
+                  className="h-px bg-green"
+                />
               </div>
             </div>
 
-            {/* =================================================
-                RIGHT VISUAL
-            ================================================= */}
+            <div className="border-b border-line px-6 py-8 sm:border-b-0 sm:border-r md:px-8 lg:px-10">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-muted">
+                People
+              </p>
 
-            <div className="relative min-h-[340px] overflow-hidden bg-[#1F7A4D] p-7 sm:p-8 md:min-h-[360px] md:p-12">
-              {/* Decorative circles */}
+              <p className="mt-4 text-3xl font-normal tracking-[-0.04em]">
+                {loading ? "..." : formatNumber(impact.people_supported)}
+              </p>
 
-              <motion.div
-                animate={{
-                  scale: [1, 1.08, 1],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-white/10"
-              />
-
-              <motion.div
-                animate={{
-                  scale: [1, 1.12, 1],
-                }}
-                transition={{
-                  duration: 7,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute -bottom-24 -left-20 h-72 w-72 rounded-full border border-white/10"
-              />
-
-              <div className="relative flex h-full items-center justify-center">
-                {/* Central impact circle */}
-
+              <div className="mt-5 h-px bg-line">
                 <motion.div
-                  animate={{
-                    y: [0, -8, 0],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="flex h-44 w-44 flex-col items-center justify-center rounded-full border border-white/15 bg-white/10 text-center shadow-2xl backdrop-blur-md sm:h-48 sm:w-48"
-                >
-                  <Heart size={26} className="text-[#A7D7B8]" />
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "64%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.1 }}
+                  className="h-px bg-green"
+                />
+              </div>
+            </div>
 
-                  <p className="mt-3 text-4xl font-bold">
-                    {loading ? "..." : formatNumber(impact.meals_rescued)}
-                  </p>
+            <div className="px-6 py-8 md:px-8 lg:px-10">
+              <p className="text-[10px] uppercase tracking-[0.08em] text-muted">
+                Deliveries
+              </p>
 
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-white/50 sm:text-xs">
-                    meals rescued
-                  </p>
-                </motion.div>
+              <p className="mt-4 text-3xl font-normal tracking-[-0.04em]">
+                {loading
+                  ? "..."
+                  : formatNumber(impact.completed_deliveries)}
+              </p>
 
-                {/* Food saved */}
-
+              <div className="mt-5 h-px bg-line">
                 <motion.div
-                  animate={{
-                    y: [0, -7, 0],
-                  }}
-                  transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute left-0 top-6 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 backdrop-blur-md sm:left-2 sm:top-10 sm:px-4"
-                >
-                  <p className="text-[10px] text-white/40 sm:text-xs">
-                    Food saved
-                  </p>
-
-                  <p className="mt-1 text-base font-bold sm:text-lg">
-                    {loading
-                      ? "..."
-                      : `${impact.food_saved_kg.toLocaleString("en-US", {
-                          maximumFractionDigits: 1,
-                        })} kg`}
-                  </p>
-                </motion.div>
-
-                {/* People supported */}
-
-                <motion.div
-                  animate={{
-                    y: [0, 7, 0],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute bottom-6 right-0 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 backdrop-blur-md sm:bottom-8 sm:right-2 sm:px-4"
-                >
-                  <p className="text-[10px] text-white/40 sm:text-xs">
-                    People supported
-                  </p>
-
-                  <p className="mt-1 text-base font-bold sm:text-lg">
-                    {loading
-                      ? "..."
-                      : formatNumber(impact.people_supported)}
-                  </p>
-                </motion.div>
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "52%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                  className="h-px bg-green"
+                />
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* =====================================================
-            DATA NOTE
-        ===================================================== */}
+        {/* Data note */}
+        <div className="flex items-start justify-between gap-8 border-t border-line px-6 py-6 md:px-10 lg:px-12">
+          <div className="flex items-start gap-3">
+            <Leaf
+              size={15}
+              strokeWidth={1.2}
+              className="mt-0.5 shrink-0 text-green"
+            />
 
-        <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          whileInView={{
-            opacity: 1,
-          }}
-          viewport={{
-            once: true,
-          }}
-          transition={{
-            duration: 0.8,
-            delay: 0.25,
-          }}
-          className="mt-6 flex items-start justify-center gap-2 text-center text-xs leading-5 text-gray-400"
-        >
-          <Leaf
-            size={14}
-            className="mt-0.5 shrink-0 text-[#14532D]"
-          />
+            <p className="max-w-2xl text-[11px] leading-5 text-muted">
+              {error
+                ? "Impact statistics are temporarily unavailable. Please check your connection and try again."
+                : "Impact metrics are powered by completed FoodBridge platform activity and update as the network grows."}
+            </p>
+          </div>
 
-          <span>
-            {error
-              ? "Impact statistics are temporarily unavailable. Please check your connection and try again."
-              : "Impact metrics are powered by completed FoodBridge platform activity and update as the network grows."}
+          <span className="hidden text-[10px] uppercase tracking-[0.08em] text-muted sm:block">
+            04 — Impact
           </span>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
 
 export default ImpactSection;
+

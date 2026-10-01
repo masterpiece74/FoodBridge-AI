@@ -22,7 +22,11 @@ import {
   CheckCheck,
   Search,
   Navigation,
+  ArrowRight,
+  ArrowDownRight,
 } from "lucide-react";
+
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_URL = "https://foodbridge-ai-qj9q.onrender.com";
 
@@ -70,14 +74,12 @@ export default function RecipientDashboard() {
   const [showProfileForm, setShowProfileForm] =
     useState(false);
 
-  const [submitting, setSubmitting] =
-    useState(false);
-
+  const [submitting, setSubmitting] = useState(false);
   const [profileSubmitting, setProfileSubmitting] =
     useState(false);
 
   // ============================================================
-  // LOCATION INTELLIGENCE
+  // LOCATION
   // ============================================================
 
   const [locationLoading, setLocationLoading] =
@@ -166,10 +168,6 @@ export default function RecipientDashboard() {
         }),
       ]);
 
-      // ========================================================
-      // AUTH ERROR
-      // ========================================================
-
       if (
         profileResponse.status === 401 ||
         needsResponse.status === 401 ||
@@ -180,10 +178,6 @@ export default function RecipientDashboard() {
         navigate("/login");
         return;
       }
-
-      // ========================================================
-      // PROFILE
-      // ========================================================
 
       if (profileResponse.status === 404) {
         setProfile(null);
@@ -197,10 +191,6 @@ export default function RecipientDashboard() {
         );
       }
 
-      // ========================================================
-      // NEEDS
-      // ========================================================
-
       if (needsResponse.ok) {
         const needsData =
           await needsResponse.json();
@@ -211,10 +201,6 @@ export default function RecipientDashboard() {
             : needsData.needs || []
         );
       }
-
-      // ========================================================
-      // DELIVERIES
-      // ========================================================
 
       if (deliveriesResponse.ok) {
         const deliveriesData =
@@ -241,7 +227,7 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // LOAD NOTIFICATIONS
+  // NOTIFICATIONS
   // ============================================================
 
   const loadNotifications = async () => {
@@ -269,12 +255,12 @@ export default function RecipientDashboard() {
 
       setNotifications(notificationList);
 
-      const unread = notificationList.filter(
-        (notification) =>
-          !notification.is_read
-      ).length;
-
-      setUnreadCount(unread);
+      setUnreadCount(
+        notificationList.filter(
+          (notification) =>
+            !notification.is_read
+        ).length
+      );
     } catch (err) {
       console.error(
         "Notification loading error:",
@@ -300,7 +286,7 @@ export default function RecipientDashboard() {
   }, []);
 
   // ============================================================
-  // MARK ONE NOTIFICATION AS READ
+  // MARK NOTIFICATION READ
   // ============================================================
 
   const markNotificationRead = async (
@@ -346,7 +332,7 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // MARK ALL NOTIFICATIONS AS READ
+  // MARK ALL READ
   // ============================================================
 
   const markAllNotificationsRead = async () => {
@@ -384,7 +370,7 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // PROFILE FORM CHANGE
+  // PROFILE FORM
   // ============================================================
 
   const handleProfileChange = (event) => {
@@ -421,7 +407,6 @@ export default function RecipientDashboard() {
       setLocationMessage(
         "Please enter your full address, street, bus stop, landmark, or organization location first."
       );
-
       return;
     }
 
@@ -434,12 +419,10 @@ export default function RecipientDashboard() {
         `${API_URL}/recipient-profile/find-location`,
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-
           body: JSON.stringify({
             address,
             city: city || null,
@@ -451,14 +434,9 @@ export default function RecipientDashboard() {
       const data = await response.json();
 
       if (response.status === 401) {
-        localStorage.removeItem(
-          "access_token"
-        );
-
+        localStorage.removeItem("access_token");
         localStorage.removeItem("user");
-
         navigate("/login");
-
         return;
       }
 
@@ -471,8 +449,6 @@ export default function RecipientDashboard() {
 
       setLocationResult(data);
 
-      // Keep the user's full address/landmark.
-      // Only fill missing fields from the lookup.
       setProfileForm((previous) => ({
         ...previous,
 
@@ -523,7 +499,7 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // OPEN PROFILE FORM
+  // OPEN PROFILE
   // ============================================================
 
   const openProfileForm = () => {
@@ -578,12 +554,10 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // CREATE / UPDATE PROFILE
+  // SAVE PROFILE
   // ============================================================
 
-  const handleCreateProfile = async (
-    event
-  ) => {
+  const handleCreateProfile = async (event) => {
     event.preventDefault();
 
     const token = getToken();
@@ -593,7 +567,6 @@ export default function RecipientDashboard() {
       return;
     }
 
-    // A new profile needs coordinates before creation.
     if (
       !profile &&
       (!profileForm.latitude ||
@@ -602,11 +575,9 @@ export default function RecipientDashboard() {
       setLocationMessage(
         "Please find your location before creating your recipient profile."
       );
-
       return;
     }
 
-    // Existing profile location update also requires coordinates.
     if (
       profile &&
       (!profileForm.latitude ||
@@ -615,7 +586,6 @@ export default function RecipientDashboard() {
       setLocationMessage(
         "Please find a valid location before saving your changes."
       );
-
       return;
     }
 
@@ -623,8 +593,7 @@ export default function RecipientDashboard() {
       setProfileSubmitting(true);
       setError("");
 
-      const isUpdating =
-        Boolean(profile);
+      const isUpdating = Boolean(profile);
 
       const latitude = Number(
         profileForm.latitude
@@ -648,10 +617,7 @@ export default function RecipientDashboard() {
           ? `${API_URL}/recipient-profile/location`
           : `${API_URL}/recipient-profile`,
         {
-          method: isUpdating
-            ? "PATCH"
-            : "POST",
-
+          method: isUpdating ? "PATCH" : "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -670,7 +636,6 @@ export default function RecipientDashboard() {
                     profileForm.state.trim(),
 
                   latitude,
-
                   longitude,
                 }
               : {
@@ -690,13 +655,11 @@ export default function RecipientDashboard() {
                     profileForm.state.trim(),
 
                   latitude,
-
                   longitude,
 
-                  people_supported:
-                    Number(
-                      profileForm.people_supported
-                    ),
+                  people_supported: Number(
+                    profileForm.people_supported
+                  ),
                 }
           ),
         }
@@ -705,14 +668,9 @@ export default function RecipientDashboard() {
       const data = await response.json();
 
       if (response.status === 401) {
-        localStorage.removeItem(
-          "access_token"
-        );
-
+        localStorage.removeItem("access_token");
         localStorage.removeItem("user");
-
         navigate("/login");
-
         return;
       }
 
@@ -732,7 +690,6 @@ export default function RecipientDashboard() {
       );
 
       setShowProfileForm(false);
-
       setLocationResult(null);
       setLocationMessage("");
 
@@ -764,7 +721,7 @@ export default function RecipientDashboard() {
   };
 
   // ============================================================
-  // FOOD NEED FORM CHANGE
+  // FOOD NEED
   // ============================================================
 
   const handleNeedChange = (event) => {
@@ -776,10 +733,6 @@ export default function RecipientDashboard() {
     }));
   };
 
-  // ============================================================
-  // OPEN NEED FORM
-  // ============================================================
-
   const openNeedForm = () => {
     if (!profile) {
       setShowProfileForm(true);
@@ -789,13 +742,7 @@ export default function RecipientDashboard() {
     setShowNeedForm(true);
   };
 
-  // ============================================================
-  // CREATE FOOD NEED
-  // ============================================================
-
-  const handleCreateNeed = async (
-    event
-  ) => {
+  const handleCreateNeed = async (event) => {
     event.preventDefault();
 
     const token = getToken();
@@ -809,7 +756,6 @@ export default function RecipientDashboard() {
       setError(
         "Please complete your recipient profile first."
       );
-
       return;
     }
 
@@ -831,23 +777,20 @@ export default function RecipientDashboard() {
             food_type:
               form.food_type.trim(),
 
-            quantity_needed:
-              Number(
-                form.quantity_needed
-              ),
+            quantity_needed: Number(
+              form.quantity_needed
+            ),
 
             quantity_unit:
               form.quantity_unit,
 
-            urgency_score:
-              Number(
-                form.urgency_score
-              ),
+            urgency_score: Number(
+              form.urgency_score
+            ),
 
-            people_to_feed:
-              Number(
-                form.people_to_feed
-              ),
+            people_to_feed: Number(
+              form.people_to_feed
+            ),
           }),
         }
       );
@@ -855,14 +798,9 @@ export default function RecipientDashboard() {
       const data = await response.json();
 
       if (response.status === 401) {
-        localStorage.removeItem(
-          "access_token"
-        );
-
+        localStorage.removeItem("access_token");
         localStorage.removeItem("user");
-
         navigate("/login");
-
         return;
       }
 
@@ -904,12 +842,8 @@ export default function RecipientDashboard() {
   // ============================================================
 
   const handleLogout = () => {
-    localStorage.removeItem(
-      "access_token"
-    );
-
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user");
-
     navigate("/login");
   };
 
@@ -921,9 +855,7 @@ export default function RecipientDashboard() {
     if (!date) return "—";
 
     try {
-      return new Date(
-        date
-      ).toLocaleDateString(
+      return new Date(date).toLocaleDateString(
         "en-NG",
         {
           day: "numeric",
@@ -946,32 +878,30 @@ export default function RecipientDashboard() {
       );
   };
 
-  const getDeliveryStatusClass = (
-    status
-  ) => {
+  const getDeliveryStatusClass = (status) => {
     switch (status) {
       case "delivered":
-        return "bg-emerald-50 text-emerald-700";
+        return "border-green/20 bg-light-green text-deep-green";
 
       case "in_transit":
-        return "bg-blue-50 text-blue-700";
+        return "border-blue-200 bg-blue-50 text-blue-700";
 
       case "picked_up":
-        return "bg-purple-50 text-purple-700";
+        return "border-purple-200 bg-purple-50 text-purple-700";
 
       case "assigned":
-        return "bg-amber-50 text-amber-700";
+        return "border-amber-200 bg-amber-50 text-amber-700";
 
       case "pending":
-        return "bg-gray-100 text-gray-600";
+        return "border-line bg-paper text-muted";
 
       default:
-        return "bg-gray-100 text-gray-600";
+        return "border-line bg-paper text-muted";
     }
   };
 
   // ============================================================
-  // CALCULATED DASHBOARD DATA
+  // CALCULATED DATA
   // ============================================================
 
   const activeNeeds = needs.filter(
@@ -994,17 +924,44 @@ export default function RecipientDashboard() {
     ).length;
 
   // ============================================================
-  // LOADING SCREEN
+  // LOADING
   // ============================================================
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-green-100 border-t-green-700 animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-paper">
+        <div className="w-full max-w-md px-6">
+          <div className="mb-8 flex items-center justify-between border-b border-line pb-5">
+            <div>
+              <p className="fb-label text-green">
+                FoodBridge AI
+              </p>
 
-          <p className="text-sm text-gray-500">
-            Loading your FoodBridge dashboard...
+              <p className="mt-2 text-xs text-muted">
+                Recipient platform
+              </p>
+            </div>
+
+            <RefreshCw
+              size={18}
+              className="animate-spin text-green"
+            />
+          </div>
+
+          <div className="h-px w-full overflow-hidden bg-line">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{
+                duration: 1.8,
+                ease: "easeInOut",
+              }}
+              className="h-full bg-green"
+            />
+          </div>
+
+          <p className="mt-4 text-xs uppercase tracking-[0.08em] text-muted">
+            Loading your dashboard...
           </p>
         </div>
       </div>
@@ -1016,859 +973,835 @@ export default function RecipientDashboard() {
   // ============================================================
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-paper text-ink">
 
-      {/* ========================================================
-          SIDEBAR
-      ======================================================== */}
+      {/* ======================================================
+          DESKTOP SIDEBAR
+      ====================================================== */}
 
-      <aside className="fixed left-0 top-0 hidden h-screen w-64 border-r border-gray-200 bg-white lg:flex lg:flex-col">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[250px] border-r border-line bg-paper lg:flex lg:flex-col">
 
-        {/* Logo */}
-
-        <div className="flex h-20 items-center border-b border-gray-100 px-6">
-          <div>
-            <h1 className="text-xl font-bold text-green-800">
+        <div className="border-b border-line px-7 py-7">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="text-left"
+          >
+            <p className="text-xl font-medium tracking-[-0.04em]">
               FoodBridge
-            </h1>
-
-            <p className="text-[11px] font-medium tracking-wide text-gray-400">
-              TURNING SURPLUS INTO HOPE
+              <span className="text-green"> AI</span>
             </p>
-          </div>
+
+            <p className="mt-2 text-[9px] uppercase tracking-[0.12em] text-muted">
+              Turning surplus into hope
+            </p>
+          </button>
         </div>
 
-        {/* Navigation */}
+        <div className="px-7 py-8">
+          <p className="fb-label mb-4 text-ash">
+            Recipient / 01
+          </p>
 
-        <nav className="flex-1 space-y-1 px-4 py-6">
+          <nav className="space-y-1">
+            <button
+              type="button"
+              className="flex w-full items-center justify-between border-l-2 border-green bg-light-green/40 px-3 py-3 text-left text-sm text-deep-green"
+            >
+              <span className="flex items-center gap-3">
+                <LayoutDashboard size={16} />
+                Dashboard
+              </span>
 
-          <button
-            type="button"
-            className="flex w-full items-center gap-3 rounded-xl bg-green-50 px-4 py-3 text-sm font-semibold text-green-700"
-          >
-            <LayoutDashboard size={18} />
-            Dashboard
-          </button>
+              <ArrowRight size={14} />
+            </button>
 
-          <button
-            type="button"
-            onClick={() =>
-              document
-                .getElementById("food-needs")
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                })
-            }
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-green-700"
-          >
-            <HeartHandshake size={18} />
-            Food Needs
-          </button>
+            <button
+              type="button"
+              onClick={() =>
+                document
+                  .getElementById("food-needs")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  })
+              }
+              className="flex w-full items-center gap-3 border-l-2 border-transparent px-3 py-3 text-left text-sm text-muted transition hover:border-green hover:text-ink"
+            >
+              <HeartHandshake size={16} />
+              Food needs
+            </button>
 
-          <button
-            type="button"
-            onClick={() =>
-              document
-                .getElementById("deliveries")
-                ?.scrollIntoView({
-                  behavior: "smooth",
-                })
-            }
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-green-700"
-          >
-            <Truck size={18} />
-            Deliveries
-          </button>
+            <button
+              type="button"
+              onClick={() =>
+                document
+                  .getElementById("deliveries")
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  })
+              }
+              className="flex w-full items-center gap-3 border-l-2 border-transparent px-3 py-3 text-left text-sm text-muted transition hover:border-green hover:text-ink"
+            >
+              <Truck size={16} />
+              Deliveries
+            </button>
 
-          <button
-            type="button"
-            onClick={openProfileForm}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-green-700"
-          >
-            <Building2 size={18} />
-            Organization Profile
-          </button>
+            <button
+              type="button"
+              onClick={openProfileForm}
+              className="flex w-full items-center gap-3 border-l-2 border-transparent px-3 py-3 text-left text-sm text-muted transition hover:border-green hover:text-ink"
+            >
+              <Building2 size={16} />
+              Organization
+            </button>
+          </nav>
+        </div>
 
-        </nav>
-
-        {/* Sidebar bottom */}
-
-        <div className="border-t border-gray-100 p-4">
-
+        <div className="mt-auto border-t border-line p-7">
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-500 transition hover:bg-red-50 hover:text-red-600"
+            className="flex w-full items-center gap-3 text-sm text-muted transition hover:text-red-600"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Sign out
           </button>
-
         </div>
       </aside>
 
-      {/* ========================================================
-          MAIN CONTENT
-      ======================================================== */}
+      {/* ======================================================
+          MAIN
+      ====================================================== */}
 
-      <main className="lg:ml-64">
+      <main className="lg:ml-[250px]">
 
-        {/* ======================================================
+        {/* ====================================================
             TOP BAR
-        ====================================================== */}
+        ==================================================== */}
 
-        <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-line bg-paper/95 backdrop-blur-md">
 
-          <div className="flex h-20 items-center justify-between px-5 sm:px-8">
+          <div className="flex min-h-[72px] items-center justify-between px-5 sm:px-8 lg:px-10">
 
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
-                Recipient Dashboard
+              <p className="fb-label text-muted">
+                Recipient dashboard
               </p>
 
-              <h2 className="mt-1 text-lg font-bold text-gray-900">
-                Welcome back
-                {profile?.organization_name
-                  ? `, ${profile.organization_name}`
-                  : ""}
-              </h2>
+              <p className="mt-1 text-sm">
+                {profile?.organization_name ||
+                  "Your community workspace"}
+              </p>
             </div>
 
-            {/* Notification */}
-
-            <div className="relative">
+            <div className="flex items-center gap-3">
 
               <button
                 type="button"
-                onClick={() =>
-                  setShowNotifications(
-                    (previous) =>
-                      !previous
-                  )
-                }
-                className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 transition hover:border-green-200 hover:bg-green-50 hover:text-green-700"
+                onClick={loadRecipientData}
+                className="hidden items-center gap-2 border border-line px-3 py-2 text-[10px] uppercase tracking-[0.08em] text-muted transition hover:border-green hover:text-green sm:flex"
               >
-                <Bell size={19} />
-
-                {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-700 px-1 text-[10px] font-bold text-white">
-                    {unreadCount > 9
-                      ? "9+"
-                      : unreadCount}
-                  </span>
-                )}
+                <RefreshCw size={14} />
+                Refresh
               </button>
 
-              {/* Notification dropdown */}
-
-              {showNotifications && (
-                <div className="absolute right-0 top-14 z-50 w-[min(360px,calc(100vw-32px))] overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
-
-                  <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-
-                    <div>
-                      <p className="text-sm font-bold">
-                        Notifications
-                      </p>
-
-                      <p className="text-xs text-gray-400">
-                        {unreadCount} unread
-                      </p>
-                    </div>
-
-                    {unreadCount > 0 && (
-                      <button
-                        type="button"
-                        onClick={
-                          markAllNotificationsRead
-                        }
-                        className="flex items-center gap-1 text-xs font-semibold text-green-700 hover:text-green-800"
-                      >
-                        <CheckCheck
-                          size={14}
-                        />
-                        Mark all read
-                      </button>
-                    )}
-
-                  </div>
-
-                  <div className="max-h-80 overflow-y-auto">
-
-                    {notifications.length ===
-                    0 ? (
-                      <div className="px-4 py-8 text-center">
-                        <Bell
-                          size={24}
-                          className="mx-auto text-gray-300"
-                        />
-
-                        <p className="mt-2 text-sm text-gray-400">
-                          No notifications yet.
-                        </p>
-                      </div>
-                    ) : (
-                      notifications.map(
-                        (notification) => (
-                          <button
-                            type="button"
-                            key={
-                              notification.id
-                            }
-                            onClick={() =>
-                              !notification.is_read &&
-                              markNotificationRead(
-                                notification.id
-                              )
-                            }
-                            className={`w-full border-b border-gray-50 px-4 py-3 text-left transition hover:bg-gray-50 ${
-                              notification.is_read
-                                ? "bg-white"
-                                : "bg-green-50/50"
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-
-                              <div className="mt-1">
-                                {notification.is_read ? (
-                                  <Check
-                                    size={15}
-                                    className="text-gray-300"
-                                  />
-                                ) : (
-                                  <span className="block h-2.5 w-2.5 rounded-full bg-green-600" />
-                                )}
-                              </div>
-
-                              <div className="min-w-0 flex-1">
-
-                                <p className="text-sm font-semibold text-gray-800">
-                                  {notification.title ||
-                                    "FoodBridge notification"}
-                                </p>
-
-                                <p className="mt-1 text-xs leading-5 text-gray-500">
-                                  {notification.message ||
-                                    notification.body ||
-                                    ""}
-                                </p>
-
-                                <p className="mt-2 text-[10px] text-gray-400">
-                                  {formatDate(
-                                    notification.created_at
-                                  )}
-                                </p>
-
-                              </div>
-
-                            </div>
-                          </button>
-                        )
-                      )
-                    )}
-
-                  </div>
-
-                </div>
-              )}
-
-            </div>
-
-          </div>
-
-        </header>
-
-        {/* ======================================================
-            PAGE CONTENT
-        ====================================================== */}
-
-        <div className="px-5 py-8 sm:px-8 lg:px-10">
-
-          {/* ====================================================
-              INTRO
-          ==================================================== */}
-
-          <section className="mb-8">
-
-            <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
-
-              <div>
-
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-green-100 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-700">
-                  <HeartHandshake size={14} />
-                  Food redistribution
-                </div>
-
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                  Help your community
-                  <br className="hidden sm:block" />
-                  receive the food it needs.
-                </h1>
-
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
-                  Create food needs, receive suitable
-                  donations, and track deliveries through
-                  FoodBridge AI.
-                </p>
-
-              </div>
-
-              <div className="flex flex-wrap gap-3">
+              <div className="relative">
 
                 <button
                   type="button"
-                  onClick={loadRecipientData}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-green-200 hover:bg-green-50 hover:text-green-700"
+                  onClick={() =>
+                    setShowNotifications(
+                      (previous) =>
+                        !previous
+                    )
+                  }
+                  className="relative flex h-10 w-10 items-center justify-center border border-line transition hover:border-green hover:text-green"
                 >
-                  <RefreshCw size={16} />
-                  Refresh
+                  <Bell size={17} />
+
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center bg-green px-1 text-[8px] text-white">
+                      {unreadCount > 9
+                        ? "9+"
+                        : unreadCount}
+                    </span>
+                  )}
                 </button>
+
+                <AnimatePresence>
+                  {showNotifications && (
+                    <motion.div
+                      initial={{
+                        opacity: 0,
+                        y: -8,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        y: -8,
+                      }}
+                      className="absolute right-0 top-12 z-50 w-[min(380px,calc(100vw-32px))] border border-line bg-paper shadow-[0_20px_60px_rgba(0,0,0,0.08)]"
+                    >
+                      <div className="flex items-center justify-between border-b border-line px-4 py-4">
+                        <div>
+                          <p className="text-sm">
+                            Notifications
+                          </p>
+
+                          <p className="mt-1 text-[10px] uppercase tracking-[0.08em] text-muted">
+                            {unreadCount} unread
+                          </p>
+                        </div>
+
+                        {unreadCount > 0 && (
+                          <button
+                            type="button"
+                            onClick={
+                              markAllNotificationsRead
+                            }
+                            className="flex items-center gap-1 text-[10px] uppercase tracking-[0.06em] text-green"
+                          >
+                            <CheckCheck size={13} />
+                            Mark all
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="max-h-80 overflow-y-auto">
+                        {notifications.length ===
+                        0 ? (
+                          <div className="px-5 py-10 text-center">
+                            <Bell
+                              size={22}
+                              className="mx-auto text-ash"
+                            />
+
+                            <p className="mt-3 text-xs text-muted">
+                              No notifications yet.
+                            </p>
+                          </div>
+                        ) : (
+                          notifications.map(
+                            (notification) => (
+                              <button
+                                type="button"
+                                key={
+                                  notification.id
+                                }
+                                onClick={() =>
+                                  !notification.is_read &&
+                                  markNotificationRead(
+                                    notification.id
+                                  )
+                                }
+                                className={`w-full border-b border-line px-4 py-4 text-left transition hover:bg-light-green/20 ${
+                                  notification.is_read
+                                    ? "bg-paper"
+                                    : "bg-light-green/20"
+                                }`}
+                              >
+                                <div className="flex gap-3">
+                                  <div className="mt-1">
+                                    {notification.is_read ? (
+                                      <Check
+                                        size={14}
+                                        className="text-ash"
+                                      />
+                                    ) : (
+                                      <span className="block h-2 w-2 bg-green" />
+                                    )}
+                                  </div>
+
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm">
+                                      {notification.title ||
+                                        "FoodBridge notification"}
+                                    </p>
+
+                                    <p className="mt-1 text-xs leading-5 text-muted">
+                                      {notification.message ||
+                                        notification.body ||
+                                        ""}
+                                    </p>
+
+                                    <p className="mt-2 text-[9px] uppercase tracking-[0.06em] text-ash">
+                                      {formatDate(
+                                        notification.created_at
+                                      )}
+                                    </p>
+                                  </div>
+                                </div>
+                              </button>
+                            )
+                          )
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden h-10 items-center gap-2 border border-line px-3 text-[10px] uppercase tracking-[0.08em] text-muted transition hover:border-red-300 hover:text-red-600 md:flex"
+              >
+                <LogOut size={14} />
+                Exit
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* ====================================================
+            CONTENT
+        ==================================================== */}
+
+        <div className="mx-auto max-w-[1400px] px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
+
+          {/* ==================================================
+              INTRO
+          ================================================== */}
+
+          <section className="border-b border-line pb-12">
+
+            <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+
+              <div>
+                <p className="fb-label mb-5 text-green">
+                  01 — Your community
+                </p>
+
+                <h1 className="max-w-5xl text-[clamp(3.2rem,7vw,7.5rem)] font-normal leading-[0.86] tracking-[-0.06em]">
+                  RECEIVE
+                  <br />
+                  WHAT
+                  <br />
+                  <span className="text-green">
+                    MATTERS.
+                  </span>
+                </h1>
+
+                <p className="mt-7 max-w-2xl text-sm leading-7 text-muted md:text-base">
+                  Create food needs, receive suitable
+                  donations, and track incoming
+                  deliveries through FoodBridge.
+                </p>
+              </div>
+
+              <div className="flex flex-col items-start gap-3 lg:items-end">
 
                 <button
                   type="button"
                   onClick={openNeedForm}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800"
+                  className="group flex items-center gap-8 bg-deep-green px-5 py-4 text-[10px] uppercase tracking-[0.08em] text-white transition hover:bg-green"
                 >
-                  <Plus size={17} />
                   Add food need
+                  <ArrowRight
+                    size={15}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
                 </button>
 
+                <button
+                  type="button"
+                  onClick={loadRecipientData}
+                  className="flex items-center gap-2 text-[10px] uppercase tracking-[0.08em] text-muted sm:hidden"
+                >
+                  <RefreshCw size={13} />
+                  Refresh data
+                </button>
               </div>
-
             </div>
-
           </section>
 
-          {/* ====================================================
+          {/* ==================================================
               ERROR
-          ==================================================== */}
+          ================================================== */}
 
           {error && (
-            <div className="mb-6 flex items-start justify-between gap-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700">
-
+            <div className="mt-6 flex items-start justify-between gap-4 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               <p>{error}</p>
 
               <button
                 type="button"
-                onClick={() =>
-                  setError("")
-                }
-                className="shrink-0"
+                onClick={() => setError("")}
               >
-                <X size={17} />
+                <X size={16} />
               </button>
-
             </div>
           )}
 
-          {/* ====================================================
-              PROFILE CARD
-          ==================================================== */}
+          {/* ==================================================
+              PROFILE
+          ================================================== */}
 
-          <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="border-b border-line py-10">
 
-            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="grid gap-8 lg:grid-cols-[1fr_0.7fr]">
 
-              <div className="flex items-start gap-4">
+              <div>
+                <p className="fb-label text-muted">
+                  Organization
+                </p>
 
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-green-50 text-green-700">
-                  <Building2 size={24} />
-                </div>
-
-                <div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-
-                    <h3 className="text-lg font-bold">
-                      {profile?.organization_name ||
-                        "Recipient profile"}
-                    </h3>
-
-                    {profile && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-semibold text-green-700">
-                        <ShieldCheck
-                          size={12}
-                        />
-                        {profile.is_verified
-                          ? "Verified"
-                          : "Profile active"}
-                      </span>
-                    )}
-
+                <div className="mt-4 flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-light-green text-green">
+                    <Building2 size={21} />
                   </div>
 
-                  {profile ? (
-                    <>
-                      <p className="mt-1 text-sm text-gray-500">
-                        {profile.organization_type ||
-                          "Community organization"}
-                      </p>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-xl tracking-[-0.02em]">
+                        {profile?.organization_name ||
+                          "Recipient profile"}
+                      </h2>
 
-                      <p className="mt-2 flex items-center gap-1.5 text-xs text-gray-400">
-                        <MapPin size={13} />
+                      {profile && (
+                        <span className="flex items-center gap-1 text-[9px] uppercase tracking-[0.08em] text-green">
+                          <ShieldCheck size={12} />
 
-                        {profile.city ||
-                          "City not set"}
-
-                        {profile.state
-                          ? `, ${profile.state}`
-                          : ""}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="mt-2 text-sm text-amber-600">
-                      Complete your organization profile
-                      to start receiving matched food.
-                    </p>
-                  )}
-
-                </div>
-
-              </div>
-
-              <button
-                type="button"
-                onClick={openProfileForm}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-2.5 text-sm font-semibold text-green-700 transition hover:bg-green-100"
-              >
-                <Building2 size={16} />
-                {profile
-                  ? "Edit profile"
-                  : "Create profile"}
-              </button>
-
-            </div>
-
-            {profile && (
-              <div className="mt-5 grid gap-3 border-t border-gray-100 pt-5 sm:grid-cols-3">
-
-                <div className="rounded-xl bg-gray-50 p-4">
-
-                  <p className="text-xs text-gray-400">
-                    People supported
-                  </p>
-
-                  <p className="mt-1 text-xl font-bold">
-                    {profile.people_supported ||
-                      0}
-                  </p>
-
-                </div>
-
-                <div className="rounded-xl bg-gray-50 p-4">
-
-                  <p className="text-xs text-gray-400">
-                    Location status
-                  </p>
-
-                  <p className="mt-1 text-sm font-semibold text-green-700">
-                    {profile.latitude !==
-                      null &&
-                    profile.latitude !==
-                      undefined &&
-                    profile.longitude !==
-                      null &&
-                    profile.longitude !==
-                      undefined
-                      ? "Coordinates saved"
-                      : "Location needed"}
-                  </p>
-
-                </div>
-
-                <div className="rounded-xl bg-gray-50 p-4">
-
-                  <p className="text-xs text-gray-400">
-                    Organization
-                  </p>
-
-                  <p className="mt-1 truncate text-sm font-semibold">
-                    {profile.organization_type ||
-                      "Community organization"}
-                  </p>
-
-                </div>
-
-              </div>
-            )}
-
-          </section>
-
-          {/* ====================================================
-              LOCATION INTELLIGENCE
-          ==================================================== */}
-
-          <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
-
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-
-              <div className="flex items-start gap-4">
-
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-700">
-                  <Navigation size={22} />
-                </div>
-
-                <div className="min-w-0">
-
-                  <div className="flex flex-wrap items-center gap-2">
-
-                    <h3 className="text-lg font-semibold">
-                      Delivery location
-                    </h3>
-
-                    {profile?.latitude !==
-                      null &&
-                      profile?.latitude !==
-                        undefined &&
-                      profile?.longitude !==
-                        null &&
-                      profile?.longitude !==
-                        undefined && (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
-                          <CheckCircle2
-                            size={12}
-                          />
-                          Coordinates saved
+                          {profile.is_verified
+                            ? "Verified"
+                            : "Active"}
                         </span>
                       )}
+                    </div>
 
+                    {profile ? (
+                      <>
+                        <p className="mt-2 text-sm text-muted">
+                          {profile.organization_type ||
+                            "Community organization"}
+                        </p>
+
+                        <p className="mt-2 flex items-center gap-2 text-xs text-muted">
+                          <MapPin size={13} />
+
+                          {profile.city ||
+                            "City not set"}
+
+                          {profile.state
+                            ? `, ${profile.state}`
+                            : ""}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="mt-2 max-w-xl text-sm text-amber-700">
+                        Complete your organization
+                        profile before creating food
+                        needs.
+                      </p>
+                    )}
                   </div>
+                </div>
+              </div>
 
-                  <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
-                    Add your organization location so
-                    FoodBridge AI can calculate delivery
-                    distance and identify practical food
-                    matches.
-                  </p>
+              <div className="flex items-end justify-between border-t border-line pt-6 lg:border-t-0 lg:border-l lg:pl-8">
 
-                  {profile ? (
-                    <div className="mt-3">
+                {profile ? (
+                  <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:w-full">
 
-                      <p className="text-sm font-medium text-gray-700">
-                        {profile.address ||
-                          "No address saved"}
+                    <div>
+                      <p className="fb-label text-muted">
+                        People
                       </p>
 
-                      <p className="mt-1 text-xs text-gray-400">
-                        {profile.city ||
-                          "City not set"}
+                      <p className="mt-2 text-2xl">
+                        {profile.people_supported ||
+                          0}
+                      </p>
+                    </div>
 
-                        {profile.state
-                          ? `, ${profile.state}`
-                          : ""}
+                    <div>
+                      <p className="fb-label text-muted">
+                        Location
                       </p>
 
-                      {profile.latitude !==
-                        null &&
+                      <p className="mt-2 text-xs text-green">
+                        {profile.latitude !==
+                          null &&
                         profile.latitude !==
                           undefined &&
                         profile.longitude !==
                           null &&
                         profile.longitude !==
-                          undefined && (
-                          <p className="mt-1 text-[11px] text-gray-400">
-                            Coordinates:{" "}
-                            {Number(
-                              profile.latitude
-                            ).toFixed(6)}
-                            ,{" "}
-                            {Number(
-                              profile.longitude
-                            ).toFixed(6)}
-                          </p>
-                        )}
-
+                          undefined
+                          ? "Coordinates saved"
+                          : "Location needed"}
+                      </p>
                     </div>
-                  ) : (
-                    <p className="mt-3 text-xs text-amber-600">
-                      Complete your recipient profile
-                      first.
-                    </p>
-                  )}
 
-                </div>
+                    <div className="hidden sm:block">
+                      <p className="fb-label text-muted">
+                        Type
+                      </p>
 
-              </div>
+                      <p className="mt-2 truncate text-xs">
+                        {profile.organization_type ||
+                          "Organization"}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div />
+                )}
 
-              {profile && (
                 <button
                   type="button"
                   onClick={openProfileForm}
-                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-2.5 text-sm font-semibold text-green-700 transition hover:bg-green-100"
+                  className="flex shrink-0 items-center gap-2 text-[10px] uppercase tracking-[0.08em] text-green"
                 >
-                  <MapPin size={16} />
+                  <Building2 size={14} />
 
-                  {profile.latitude !==
-                    null &&
-                  profile.latitude !==
-                    undefined &&
-                  profile.longitude !==
-                    null &&
-                  profile.longitude !==
-                    undefined
-                    ? "Update location"
-                    : "Add location"}
+                  {profile
+                    ? "Edit"
+                    : "Create"}
                 </button>
-              )}
-
+              </div>
             </div>
-
           </section>
 
-          {/* ====================================================
-              STATS
-          ==================================================== */}
+          {/* ==================================================
+              LOCATION
+          ================================================== */}
 
-          <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <section className="border-b border-line py-10">
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-              <div className="flex items-center justify-between">
-
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-green-700">
-                  <HeartHandshake
-                    size={19}
-                  />
-                </div>
-
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                  Needs
-                </span>
-
-              </div>
-
-              <p className="mt-4 text-3xl font-bold">
-                {activeNeeds}
-              </p>
-
-              <p className="mt-1 text-xs text-gray-400">
-                Active food needs
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-              <div className="flex items-center justify-between">
-
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                  <Truck size={19} />
-                </div>
-
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                  Deliveries
-                </span>
-
-              </div>
-
-              <p className="mt-4 text-3xl font-bold">
-                {completedDeliveries}
-              </p>
-
-              <p className="mt-1 text-xs text-gray-400">
-                Completed deliveries
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-              <div className="flex items-center justify-between">
-
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                  <Clock3 size={19} />
-                </div>
-
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                  In progress
-                </span>
-
-              </div>
-
-              <p className="mt-4 text-3xl font-bold">
-                {pendingDeliveries}
-              </p>
-
-              <p className="mt-1 text-xs text-gray-400">
-                Deliveries in progress
-              </p>
-
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-
-              <div className="flex items-center justify-between">
-
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
-                  <Users size={19} />
-                </div>
-
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
-                  Community
-                </span>
-
-              </div>
-
-              <p className="mt-4 text-3xl font-bold">
-                {profile?.people_supported ||
-                  0}
-              </p>
-
-              <p className="mt-1 text-xs text-gray-400">
-                People supported
-              </p>
-
-            </div>
-
-          </section>
-
-          {/* ====================================================
-              IMPACT OVERVIEW
-          ==================================================== */}
-
-          <section className="mb-6 rounded-2xl bg-[#14532D] p-6 text-white shadow-sm sm:p-7">
-
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
 
               <div>
-
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80">
-                  <HeartHandshake
-                    size={14}
-                  />
-                  Community impact
-                </div>
-
-                <h3 className="mt-4 text-2xl font-bold">
-                  Every delivery helps
-                  someone eat.
-                </h3>
-
-                <p className="mt-2 max-w-xl text-sm leading-6 text-white/60">
-                  FoodBridge connects available surplus
-                  food with organizations that need it,
-                  helping communities receive food more
-                  efficiently.
+                <p className="fb-label text-green">
+                  02 — Location intelligence
                 </p>
 
+                <h2 className="mt-4 max-w-lg text-3xl font-normal leading-[0.95] tracking-[-0.04em] sm:text-4xl">
+                  WHERE SHOULD
+                  <br />
+                  THE FOOD
+                  <br />
+                  <span className="text-green">
+                    ARRIVE?
+                  </span>
+                </h2>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 sm:min-w-[280px]">
+              <div className="border-t border-line pt-5 lg:border-t-0 lg:pt-0">
 
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div className="flex flex-col gap-6 sm:flex-row sm:justify-between">
 
-                  <p className="text-xs text-white/40">
-                    Completed
-                  </p>
+                  <div className="flex gap-4">
 
-                  <p className="mt-1 text-2xl font-bold">
-                    {completedDeliveries}
-                  </p>
+                    <Navigation
+                      size={20}
+                      className="mt-1 shrink-0 text-green"
+                    />
 
-                  <p className="mt-1 text-[10px] text-[#A7D7B8]">
-                    deliveries
-                  </p>
+                    <div>
+                      <p className="text-sm">
+                        Delivery location
+                      </p>
 
+                      <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+                        Your location helps FoodBridge
+                        calculate distance and identify
+                        practical food matches.
+                      </p>
+
+                      {profile ? (
+                        <div className="mt-5">
+                          <p className="text-sm">
+                            {profile.address ||
+                              "No address saved"}
+                          </p>
+
+                          <p className="mt-1 text-xs text-muted">
+                            {profile.city ||
+                              "City not set"}
+
+                            {profile.state
+                              ? `, ${profile.state}`
+                              : ""}
+                          </p>
+
+                          {profile.latitude !==
+                            null &&
+                            profile.latitude !==
+                              undefined &&
+                            profile.longitude !==
+                              null &&
+                            profile.longitude !==
+                              undefined && (
+                              <p className="mt-2 text-[10px] uppercase tracking-[0.06em] text-ash">
+                                Coordinates{" "}
+                                {Number(
+                                  profile.latitude
+                                ).toFixed(6)}
+                                {" / "}
+                                {Number(
+                                  profile.longitude
+                                ).toFixed(6)}
+                              </p>
+                            )}
+                        </div>
+                      ) : (
+                        <p className="mt-4 text-xs text-amber-700">
+                          Complete your profile first.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {profile && (
+                    <button
+                      type="button"
+                      onClick={openProfileForm}
+                      className="flex h-fit shrink-0 items-center gap-2 border border-line px-4 py-3 text-[10px] uppercase tracking-[0.08em] text-muted transition hover:border-green hover:text-green"
+                    >
+                      <MapPin size={14} />
+
+                      {profile.latitude !==
+                        null &&
+                      profile.latitude !==
+                        undefined &&
+                      profile.longitude !==
+                        null &&
+                      profile.longitude !==
+                        undefined
+                        ? "Update"
+                        : "Add location"}
+                    </button>
+                  )}
                 </div>
-
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-
-                  <p className="text-xs text-white/40">
-                    Supported
-                  </p>
-
-                  <p className="mt-1 text-2xl font-bold">
-                    {profile?.people_supported ||
-                      0}
-                  </p>
-
-                  <p className="mt-1 text-[10px] text-[#A7D7B8]">
-                    people
-                  </p>
-
-                </div>
-
               </div>
-
             </div>
-
           </section>
 
-          {/* ====================================================
-              RECENT DELIVERIES
-          ==================================================== */}
+          {/* ==================================================
+              STATS
+          ================================================== */}
+
+          <section className="border-b border-line py-10">
+
+            <div className="grid grid-cols-2 md:grid-cols-4">
+
+              <div className="border-b border-line py-5 pr-5 md:border-b-0 md:border-r">
+                <p className="fb-label text-muted">
+                  Active needs
+                </p>
+
+                <p className="mt-3 text-4xl tracking-[-0.04em]">
+                  {activeNeeds}
+                </p>
+
+                <p className="mt-2 text-xs text-muted">
+                  Current requests
+                </p>
+              </div>
+
+              <div className="border-b border-line py-5 pl-5 md:border-b-0 md:border-r md:px-6">
+                <p className="fb-label text-muted">
+                  Completed
+                </p>
+
+                <p className="mt-3 text-4xl tracking-[-0.04em]">
+                  {completedDeliveries}
+                </p>
+
+                <p className="mt-2 text-xs text-muted">
+                  Deliveries received
+                </p>
+              </div>
+
+              <div className="border-b border-line py-5 pr-5 md:border-b-0 md:border-r md:px-6">
+                <p className="fb-label text-muted">
+                  In progress
+                </p>
+
+                <p className="mt-3 text-4xl tracking-[-0.04em]">
+                  {pendingDeliveries}
+                </p>
+
+                <p className="mt-2 text-xs text-muted">
+                  On the way
+                </p>
+              </div>
+
+              <div className="py-5 pl-5 md:px-6">
+                <p className="fb-label text-muted">
+                  Community
+                </p>
+
+                <p className="mt-3 text-4xl tracking-[-0.04em]">
+                  {profile?.people_supported ||
+                    0}
+                </p>
+
+                <p className="mt-2 text-xs text-muted">
+                  People supported
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ==================================================
+              IMPACT STRIP
+          ================================================== */}
+
+          <section className="border-b border-line py-10">
+
+            <div className="bg-deep-green px-6 py-8 text-white sm:px-8 sm:py-10">
+
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+
+                <div>
+                  <p className="fb-label text-light-green">
+                    03 — Community impact
+                  </p>
+
+                  <h2 className="mt-5 max-w-3xl text-[clamp(2.5rem,5vw,5rem)] font-normal leading-[0.9] tracking-[-0.05em]">
+                    EVERY DELIVERY
+                    <br />
+                    HELPS SOMEONE
+                    <br />
+                    <span className="text-light-green">
+                      EAT.
+                    </span>
+                  </h2>
+
+                  <p className="mt-6 max-w-xl text-sm leading-7 text-white/60">
+                    FoodBridge connects available
+                    surplus food with organizations
+                    serving people and communities.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 border-t border-white/10 lg:border-l lg:border-t-0">
+
+                  <div className="border-r border-white/10 px-5 py-4">
+                    <p className="fb-label text-white/40">
+                      Completed
+                    </p>
+
+                    <p className="mt-3 text-3xl">
+                      {completedDeliveries}
+                    </p>
+
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.06em] text-light-green">
+                      deliveries
+                    </p>
+                  </div>
+
+                  <div className="px-5 py-4">
+                    <p className="fb-label text-white/40">
+                      Supported
+                    </p>
+
+                    <p className="mt-3 text-3xl">
+                      {profile?.people_supported ||
+                        0}
+                    </p>
+
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.06em] text-light-green">
+                      people
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ==================================================
+              DELIVERIES
+          ================================================== */}
 
           <section
             id="deliveries"
-            className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-sm"
+            className="border-b border-line py-12"
           >
 
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-5 sm:px-6">
+            <div className="mb-7 flex items-end justify-between gap-5">
 
               <div>
-
-                <h3 className="font-bold">
-                  Recent deliveries
-                </h3>
-
-                <p className="mt-1 text-xs text-gray-400">
-                  Track your incoming food
+                <p className="fb-label text-green">
+                  04 — Movement
                 </p>
 
+                <h2 className="mt-3 text-3xl font-normal tracking-[-0.04em] sm:text-4xl">
+                  RECENT DELIVERIES
+                </h2>
+
+                <p className="mt-2 text-sm text-muted">
+                  Track food moving toward your
+                  organization.
+                </p>
               </div>
 
               <Truck
-                size={19}
-                className="text-gray-300"
+                size={20}
+                className="hidden text-ash sm:block"
               />
-
             </div>
 
             {deliveries.length === 0 ? (
-              <div className="px-5 py-12 text-center sm:px-6">
+              <div className="border-y border-line py-14 text-center">
 
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 text-gray-300">
-                  <Truck size={22} />
-                </div>
+                <Truck
+                  size={25}
+                  className="mx-auto text-ash"
+                />
 
-                <p className="mt-3 text-sm font-medium text-gray-600">
-                  No deliveries yet
+                <p className="mt-4 text-sm">
+                  No deliveries yet.
                 </p>
 
-                <p className="mt-1 text-xs text-gray-400">
-                  Your matched food deliveries will
-                  appear here.
+                <p className="mt-2 text-xs text-muted">
+                  Matched food deliveries will appear
+                  here.
                 </p>
-
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="border-t border-line">
 
                 {deliveries
                   .slice(0, 5)
-                  .map((delivery) => (
-                    <div
+                  .map((delivery, index) => (
+                    <motion.div
                       key={delivery.id}
-                      className="flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                      initial={{
+                        opacity: 0,
+                        y: 12,
+                      }}
+                      whileInView={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      viewport={{
+                        once: true,
+                      }}
+                      transition={{
+                        delay: index * 0.04,
+                      }}
+                      className="grid gap-4 border-b border-line py-5 sm:grid-cols-[1fr_auto] sm:items-center"
                     >
 
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-start gap-4">
 
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-700">
-                          <Utensils
-                            size={17}
-                          />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-light-green text-green">
+                          <Utensils size={17} />
                         </div>
 
                         <div>
-
-                          <p className="text-sm font-semibold">
+                          <p className="text-sm">
                             {delivery.food_name ||
                               delivery.food_type ||
                               "Food delivery"}
                           </p>
 
-                          <p className="mt-1 text-xs text-gray-400">
+                          <p className="mt-1 text-xs text-muted">
                             {delivery.quantity
                               ? `${delivery.quantity} ${
                                   delivery.quantity_unit ||
@@ -1877,21 +1810,19 @@ export default function RecipientDashboard() {
                               : "Food donation"}
                           </p>
 
-                          <p className="mt-1 text-[11px] text-gray-400">
+                          <p className="mt-2 text-[9px] uppercase tracking-[0.06em] text-ash">
                             {formatDate(
                               delivery.created_at ||
                                 delivery.createdAt
                             )}
                           </p>
-
                         </div>
-
                       </div>
 
-                      <div className="flex items-center justify-between gap-4 sm:justify-end">
+                      <div className="flex items-center justify-between gap-5 sm:justify-end">
 
                         <span
-                          className={`rounded-full px-3 py-1.5 text-[10px] font-semibold ${getDeliveryStatusClass(
+                          className={`border px-3 py-1.5 text-[9px] uppercase tracking-[0.06em] ${getDeliveryStatusClass(
                             delivery.status
                           )}`}
                         >
@@ -1901,549 +1832,250 @@ export default function RecipientDashboard() {
                         </span>
 
                         <ChevronRight
-                          size={17}
-                          className="text-gray-300"
+                          size={15}
+                          className="text-ash"
                         />
-
                       </div>
-
-                    </div>
+                    </motion.div>
                   ))}
-
               </div>
             )}
-
           </section>
 
-          {/* ====================================================
+          {/* ==================================================
               FOOD NEEDS
-          ==================================================== */}
+          ================================================== */}
 
           <section
             id="food-needs"
-            className="rounded-2xl border border-gray-200 bg-white shadow-sm"
+            className="py-12"
           >
 
-            <div className="flex flex-col gap-4 border-b border-gray-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="mb-7 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
 
               <div>
-
-                <h3 className="font-bold">
-                  Your food needs
-                </h3>
-
-                <p className="mt-1 text-xs text-gray-400">
-                  Tell FoodBridge what your community
-                  needs.
+                <p className="fb-label text-green">
+                  05 — Your requests
                 </p>
 
+                <h2 className="mt-3 text-3xl font-normal tracking-[-0.04em] sm:text-4xl">
+                  FOOD NEEDS
+                </h2>
+
+                <p className="mt-2 max-w-xl text-sm text-muted">
+                  Tell FoodBridge what your community
+                  needs so suitable surplus can be
+                  identified.
+                </p>
               </div>
 
               <button
                 type="button"
                 onClick={openNeedForm}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-green-800"
+                className="group flex w-fit items-center gap-6 bg-deep-green px-5 py-3.5 text-[10px] uppercase tracking-[0.08em] text-white transition hover:bg-green"
               >
-                <Plus size={16} />
+                <Plus size={15} />
                 Add food need
+                <ArrowRight
+                  size={14}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </button>
-
             </div>
 
             {needs.length === 0 ? (
-              <div className="px-5 py-12 text-center sm:px-6">
+              <div className="border-y border-line py-14 text-center">
 
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-50 text-green-700">
-                  <Utensils size={21} />
-                </div>
+                <Utensils
+                  size={25}
+                  className="mx-auto text-ash"
+                />
 
-                <p className="mt-3 text-sm font-medium text-gray-600">
-                  No food needs added yet
+                <p className="mt-4 text-sm">
+                  No food needs added yet.
                 </p>
 
-                <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-gray-400">
-                  Add the type and quantity of food your
-                  organization needs so FoodBridge can
-                  identify suitable donations.
+                <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-muted">
+                  Add the type and quantity of food
+                  your organization needs so
+                  FoodBridge can identify suitable
+                  donations.
                 </p>
 
                 <button
                   type="button"
                   onClick={openNeedForm}
-                  className="mt-5 inline-flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-2.5 text-xs font-semibold text-green-700 hover:bg-green-100"
+                  className="mt-5 text-[10px] uppercase tracking-[0.08em] text-green"
                 >
-                  <Plus size={15} />
-                  Create your first need
+                  Create your first need →
                 </button>
-
               </div>
             ) : (
-              <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
+              <div className="grid border-t border-line sm:grid-cols-2 xl:grid-cols-3">
 
-                {needs.map((need) => (
-                  <div
+                {needs.map((need, index) => (
+                  <motion.div
                     key={need.id}
-                    className="rounded-xl border border-gray-100 bg-gray-50 p-4"
+                    initial={{
+                      opacity: 0,
+                      y: 15,
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    viewport={{
+                      once: true,
+                    }}
+                    transition={{
+                      delay: index * 0.04,
+                    }}
+                    className="border-b border-line py-6 sm:px-5 sm:nth-[odd]:border-r xl:px-6 xl:nth-[3n+1]:border-r"
                   >
 
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start justify-between gap-4">
 
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-green-700 shadow-sm">
-                        <Utensils
-                          size={17}
-                        />
+                      <div>
+                        <p className="fb-label text-muted">
+                          Need /{" "}
+                          {String(index + 1).padStart(
+                            2,
+                            "0"
+                          )}
+                        </p>
+
+                        <h3 className="mt-3 text-xl capitalize tracking-[-0.02em]">
+                          {need.food_type ||
+                            "Food"}
+                        </h3>
                       </div>
 
-                      <span className="rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-semibold text-green-700">
+                      <span className="text-[9px] uppercase tracking-[0.06em] text-green">
                         {formatStatus(
                           need.status ||
                             "active"
                         )}
                       </span>
-
                     </div>
 
-                    <h4 className="mt-4 font-semibold capitalize">
-                      {need.food_type ||
-                        "Food"}
-                    </h4>
-
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-5 text-sm text-muted">
                       {need.quantity_needed ||
                         0}{" "}
                       {need.quantity_unit ||
                         "items"}
                     </p>
 
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-3">
+                    <div className="mt-5 border-t border-line pt-4">
 
-                      <span className="text-[11px] text-gray-400">
-                        People to feed
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase tracking-[0.06em] text-ash">
+                          People to feed
+                        </span>
 
-                      <span className="text-xs font-semibold text-gray-700">
-                        {need.people_to_feed ||
-                          0}
-                      </span>
+                        <span className="text-sm">
+                          {need.people_to_feed ||
+                            0}
+                        </span>
+                      </div>
 
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-[10px] uppercase tracking-[0.06em] text-ash">
+                          Urgency
+                        </span>
+
+                        <span className="text-sm text-amber-700">
+                          {need.urgency_score ||
+                            0}
+                          /100
+                        </span>
+                      </div>
                     </div>
-
-                    <div className="mt-2 flex items-center justify-between">
-
-                      <span className="text-[11px] text-gray-400">
-                        Urgency
-                      </span>
-
-                      <span className="text-xs font-semibold text-amber-600">
-                        {need.urgency_score ||
-                          0}
-                        /100
-                      </span>
-
-                    </div>
-
-                  </div>
+                  </motion.div>
                 ))}
-
               </div>
             )}
-
           </section>
 
-          {/* ====================================================
+          {/* ==================================================
               FOOTER
-          ==================================================== */}
+          ================================================== */}
 
-          <footer className="mt-8 pb-4 text-center">
+          <footer className="border-t border-line py-6">
 
-            <p className="text-xs text-gray-400">
-              FoodBridge AI · Turning Surplus Into Hope
-            </p>
+            <div className="flex flex-col gap-3 text-[9px] uppercase tracking-[0.08em] text-muted sm:flex-row sm:items-center sm:justify-between">
 
+              <span>
+                FoodBridge AI
+              </span>
+
+              <span>
+                Recipient platform
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                  })
+                }
+                className="flex items-center gap-2 text-green"
+              >
+                Back to top
+                <ArrowDownRight
+                  size={12}
+                  className="-rotate-90"
+                />
+              </button>
+            </div>
           </footer>
-
         </div>
-
       </main>
 
       {/* ========================================================
           PROFILE MODAL
       ======================================================== */}
 
-      {showProfileForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-
-            {/* Modal header */}
-
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-5 py-4 sm:px-6">
-
-              <div>
-
-                <p className="text-xs font-medium uppercase tracking-wider text-green-700">
-                  Recipient profile
-                </p>
-
-                <h3 className="mt-1 text-lg font-bold">
-                  {profile
-                    ? "Update your location"
-                    : "Create your organization profile"}
-                </h3>
-
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setShowProfileForm(false);
-                  setLocationResult(null);
-                  setLocationMessage("");
-                }}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700"
-              >
-                <X size={19} />
-              </button>
-
-            </div>
-
-            {/* Form */}
-
-            <form
-              onSubmit={handleCreateProfile}
-              className="space-y-6 p-5 sm:p-6"
+      <AnimatePresence>
+        {showProfileForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: 20,
+              }}
+              className="max-h-[92vh] w-full max-w-2xl overflow-y-auto border border-line bg-paper"
             >
 
-              {/* Organization details */}
+              {/* Header */}
 
-              {!profile && (
-                <div className="space-y-4">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-line bg-paper px-5 py-5 sm:px-7">
 
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-gray-700">
-                      Organization name
-                    </label>
+                <div>
+                  <p className="fb-label text-green">
+                    Recipient profile
+                  </p>
 
-                    <input
-                      type="text"
-                      name="organization_name"
-                      value={
-                        profileForm.organization_name
-                      }
-                      onChange={
-                        handleProfileChange
-                      }
-                      required
-                      placeholder="e.g. Hope Community Centre"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-gray-700">
-                      Organization type
-                    </label>
-
-                    <select
-                      name="organization_type"
-                      value={
-                        profileForm.organization_type
-                      }
-                      onChange={
-                        handleProfileChange
-                      }
-                      required
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                    >
-                      <option value="">
-                        Select organization type
-                      </option>
-
-                      <option value="NGO">
-                        NGO
-                      </option>
-
-                      <option value="Charity">
-                        Charity
-                      </option>
-
-                      <option value="Community Centre">
-                        Community Centre
-                      </option>
-
-                      <option value="Orphanage">
-                        Orphanage
-                      </option>
-
-                      <option value="Shelter">
-                        Shelter
-                      </option>
-
-                      <option value="Food Bank">
-                        Food Bank
-                      </option>
-
-                      <option value="Religious Organization">
-                        Religious Organization
-                      </option>
-
-                      <option value="Other">
-                        Other
-                      </option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-sm font-semibold text-gray-700">
-                      People supported
-                    </label>
-
-                    <input
-                      type="number"
-                      min="0"
-                      name="people_supported"
-                      value={
-                        profileForm.people_supported
-                      }
-                      onChange={
-                        handleProfileChange
-                      }
-                      placeholder="e.g. 50"
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                    />
-                  </div>
-
+                  <h3 className="mt-2 text-xl tracking-[-0.03em]">
+                    {profile
+                      ? "Update your location"
+                      : "Create your organization"}
+                  </h3>
                 </div>
-              )}
-
-              {/* ==================================================
-                  LOCATION SEARCH
-              ================================================== */}
-
-              <div className="rounded-2xl border border-green-100 bg-green-50/50 p-4 sm:p-5">
-
-                <div className="flex items-start gap-3">
-
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100 text-green-700">
-                    <MapPin size={19} />
-                  </div>
-
-                  <div>
-
-                    <h4 className="font-semibold text-gray-800">
-                      Find your delivery location
-                    </h4>
-
-                    <p className="mt-1 text-xs leading-5 text-gray-500">
-                      Enter your address, street, bus stop,
-                      landmark, or organization name. FoodBridge
-                      will find the coordinates automatically.
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <div className="mt-5 space-y-4">
-
-                  {/* Address */}
-
-                  <div>
-
-                    <label className="mb-2 block text-sm font-semibold text-gray-700">
-                      Address or nearby landmark
-                    </label>
-
-                    <textarea
-                      name="address"
-                      value={
-                        profileForm.address
-                      }
-                      onChange={
-                        handleProfileChange
-                      }
-                      rows={3}
-                      required
-                      placeholder="e.g. Hope Community Centre, Fajuyi Bus Stop, Ado-Ekiti"
-                      className="w-full resize-none rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                    />
-
-                    <p className="mt-1.5 text-[11px] text-gray-400">
-                      You can use a bus stop, street,
-                      landmark, school, church, market, or
-                      organization name.
-                    </p>
-
-                  </div>
-
-                  {/* City / State */}
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-
-                    <div>
-
-                      <label className="mb-2 block text-sm font-semibold text-gray-700">
-                        City / Town
-                      </label>
-
-                      <input
-                        type="text"
-                        name="city"
-                        value={
-                          profileForm.city
-                        }
-                        onChange={
-                          handleProfileChange
-                        }
-                        placeholder="e.g. Ado-Ekiti"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                      />
-
-                    </div>
-
-                    <div>
-
-                      <label className="mb-2 block text-sm font-semibold text-gray-700">
-                        State
-                      </label>
-
-                      <input
-                        type="text"
-                        name="state"
-                        value={
-                          profileForm.state
-                        }
-                        onChange={
-                          handleProfileChange
-                        }
-                        placeholder="e.g. Ekiti"
-                        className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                      />
-
-                    </div>
-
-                  </div>
-
-                  {/* Find button */}
-
-                  <button
-                    type="button"
-                    onClick={
-                      handleFindLocation
-                    }
-                    disabled={
-                      locationLoading
-                    }
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-
-                    {locationLoading ? (
-                      <>
-                        <RefreshCw
-                          size={17}
-                          className="animate-spin"
-                        />
-                        Finding location...
-                      </>
-                    ) : (
-                      <>
-                        <Search size={17} />
-                        Find this location
-                      </>
-                    )}
-
-                  </button>
-
-                  {/* Location message */}
-
-                  {locationMessage && (
-                    <div
-                      className={`rounded-xl border px-4 py-3 text-xs leading-5 ${
-                        locationMessage.includes(
-                          "successfully"
-                        )
-                          ? "border-emerald-100 bg-emerald-50 text-emerald-700"
-                          : "border-amber-100 bg-amber-50 text-amber-700"
-                      }`}
-                    >
-                      {locationMessage}
-                    </div>
-                  )}
-
-                  {/* Detected location */}
-
-                  {locationResult && (
-                    <div className="rounded-xl border border-green-200 bg-white p-4 shadow-sm">
-
-                      <div className="flex items-start gap-3">
-
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-50 text-green-700">
-                          <CheckCircle2
-                            size={18}
-                          />
-                        </div>
-
-                        <div className="min-w-0">
-
-                          <p className="text-sm font-semibold text-gray-800">
-                            Location detected
-                          </p>
-
-                          <p className="mt-1 text-xs leading-5 text-gray-500">
-                            {locationResult.display_name ||
-                              "Location found"}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      <div className="mt-4 grid grid-cols-2 gap-3">
-
-                        <div className="rounded-lg bg-gray-50 p-3">
-
-                          <p className="text-[10px] uppercase tracking-wider text-gray-400">
-                            Latitude
-                          </p>
-
-                          <p className="mt-1 text-xs font-semibold text-gray-700">
-                            {locationResult.latitude}
-                          </p>
-
-                        </div>
-
-                        <div className="rounded-lg bg-gray-50 p-3">
-
-                          <p className="text-[10px] uppercase tracking-wider text-gray-400">
-                            Longitude
-                          </p>
-
-                          <p className="mt-1 text-xs font-semibold text-gray-700">
-                            {locationResult.longitude}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      <p className="mt-4 text-[10px] leading-4 text-gray-400">
-                        Location search powered by
-                        OpenStreetMap. Please review the
-                        detected location before saving.
-                      </p>
-
-                    </div>
-                  )}
-
-                </div>
-
-              </div>
-
-              {/* ==================================================
-                  ACTIONS
-              ================================================== */}
-
-              <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
 
                 <button
                   type="button"
@@ -2452,301 +2084,576 @@ export default function RecipientDashboard() {
                     setLocationResult(null);
                     setLocationMessage("");
                   }}
-                  className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                  className="flex h-9 w-9 items-center justify-center border border-line text-muted transition hover:border-ink hover:text-ink"
                 >
-                  Cancel
+                  <X size={17} />
                 </button>
-
-                <button
-                  type="submit"
-                  disabled={
-                    profileSubmitting ||
-                    !profileForm.latitude ||
-                    !profileForm.longitude
-                  }
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-
-                  {profileSubmitting ? (
-                    <>
-                      <RefreshCw
-                        size={16}
-                        className="animate-spin"
-                      />
-
-                      {profile
-                        ? "Saving changes..."
-                        : "Creating profile..."}
-                    </>
-                  ) : (
-                    <>
-                      {profile
-                        ? "Save changes"
-                        : "Create profile"}
-
-                      <ChevronRight
-                        size={16}
-                      />
-                    </>
-                  )}
-
-                </button>
-
               </div>
 
-            </form>
+              <form
+                onSubmit={handleCreateProfile}
+                className="space-y-8 p-5 sm:p-7"
+              >
 
-          </div>
+                {/* Organization */}
 
-        </div>
-      )}
+                {!profile && (
+                  <div>
+                    <p className="fb-label mb-5 text-muted">
+                      Organization details
+                    </p>
+
+                    <div className="space-y-5">
+
+                      <div>
+                        <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                          Organization name
+                        </label>
+
+                        <input
+                          type="text"
+                          name="organization_name"
+                          value={
+                            profileForm.organization_name
+                          }
+                          onChange={
+                            handleProfileChange
+                          }
+                          required
+                          placeholder="e.g. Hope Community Centre"
+                          className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none transition placeholder:text-ash focus:border-green"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                          Organization type
+                        </label>
+
+                        <select
+                          name="organization_type"
+                          value={
+                            profileForm.organization_type
+                          }
+                          onChange={
+                            handleProfileChange
+                          }
+                          required
+                          className="w-full border-b border-line bg-paper px-0 py-3 text-sm outline-none focus:border-green"
+                        >
+                          <option value="">
+                            Select organization type
+                          </option>
+
+                          <option value="NGO">
+                            NGO
+                          </option>
+
+                          <option value="Charity">
+                            Charity
+                          </option>
+
+                          <option value="Community Centre">
+                            Community Centre
+                          </option>
+
+                          <option value="Orphanage">
+                            Orphanage
+                          </option>
+
+                          <option value="Shelter">
+                            Shelter
+                          </option>
+
+                          <option value="Food Bank">
+                            Food Bank
+                          </option>
+
+                          <option value="Religious Organization">
+                            Religious Organization
+                          </option>
+
+                          <option value="Other">
+                            Other
+                          </option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                          People supported
+                        </label>
+
+                        <input
+                          type="number"
+                          min="0"
+                          name="people_supported"
+                          value={
+                            profileForm.people_supported
+                          }
+                          onChange={
+                            handleProfileChange
+                          }
+                          placeholder="50"
+                          className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Location */}
+
+                <div className="border-t border-line pt-8">
+
+                  <div className="flex items-start gap-4">
+
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-light-green text-green">
+                      <MapPin size={18} />
+                    </div>
+
+                    <div>
+                      <p className="text-sm">
+                        Find your delivery location
+                      </p>
+
+                      <p className="mt-1 text-xs leading-5 text-muted">
+                        Enter your address, street,
+                        bus stop, landmark, or
+                        organization name.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-5">
+
+                    <div>
+                      <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                        Address or nearby landmark
+                      </label>
+
+                      <textarea
+                        name="address"
+                        value={
+                          profileForm.address
+                        }
+                        onChange={
+                          handleProfileChange
+                        }
+                        rows={3}
+                        required
+                        placeholder="e.g. Hope Community Centre, Fajuyi Bus Stop, Ado-Ekiti"
+                        className="w-full resize-none border border-line bg-transparent px-4 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                      />
+
+                      <p className="mt-2 text-[10px] text-ash">
+                        Bus stops, streets, schools,
+                        churches, markets, and
+                        organization names are accepted.
+                      </p>
+                    </div>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+
+                      <div>
+                        <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                          City / Town
+                        </label>
+
+                        <input
+                          type="text"
+                          name="city"
+                          value={
+                            profileForm.city
+                          }
+                          onChange={
+                            handleProfileChange
+                          }
+                          placeholder="Ado-Ekiti"
+                          className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                          State
+                        </label>
+
+                        <input
+                          type="text"
+                          name="state"
+                          value={
+                            profileForm.state
+                          }
+                          onChange={
+                            handleProfileChange
+                          }
+                          placeholder="Ekiti"
+                          className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleFindLocation}
+                      disabled={locationLoading}
+                      className="flex w-full items-center justify-center gap-3 bg-deep-green px-5 py-4 text-[10px] uppercase tracking-[0.08em] text-white transition hover:bg-green disabled:opacity-50"
+                    >
+                      {locationLoading ? (
+                        <>
+                          <RefreshCw
+                            size={15}
+                            className="animate-spin"
+                          />
+                          Finding location...
+                        </>
+                      ) : (
+                        <>
+                          <Search size={15} />
+                          Find this location
+                        </>
+                      )}
+                    </button>
+
+                    {locationMessage && (
+                      <div
+                        className={`border px-4 py-3 text-xs leading-5 ${
+                          locationMessage.includes(
+                            "successfully"
+                          )
+                            ? "border-green/20 bg-light-green text-deep-green"
+                            : "border-amber-200 bg-amber-50 text-amber-700"
+                        }`}
+                      >
+                        {locationMessage}
+                      </div>
+                    )}
+
+                    {locationResult && (
+                      <div className="border border-green/20 bg-light-green/30 p-5">
+
+                        <div className="flex gap-3">
+
+                          <CheckCircle2
+                            size={18}
+                            className="mt-0.5 shrink-0 text-green"
+                          />
+
+                          <div>
+                            <p className="text-sm">
+                              Location detected
+                            </p>
+
+                            <p className="mt-1 text-xs leading-5 text-muted">
+                              {locationResult.display_name ||
+                                "Location found"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-5 grid grid-cols-2 border-t border-green/10 pt-4">
+
+                          <div>
+                            <p className="fb-label text-muted">
+                              Latitude
+                            </p>
+
+                            <p className="mt-2 text-xs">
+                              {locationResult.latitude}
+                            </p>
+                          </div>
+
+                          <div>
+                            <p className="fb-label text-muted">
+                              Longitude
+                            </p>
+
+                            <p className="mt-2 text-xs">
+                              {locationResult.longitude}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="mt-4 text-[9px] leading-4 text-ash">
+                          Location search powered by
+                          OpenStreetMap. Review the
+                          detected location before saving.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+
+                <div className="flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:justify-end">
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowProfileForm(false);
+                      setLocationResult(null);
+                      setLocationMessage("");
+                    }}
+                    className="border border-line px-5 py-3 text-[10px] uppercase tracking-[0.08em] text-muted transition hover:border-ink hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={
+                      profileSubmitting ||
+                      !profileForm.latitude ||
+                      !profileForm.longitude
+                    }
+                    className="flex items-center justify-center gap-3 bg-deep-green px-5 py-3 text-[10px] uppercase tracking-[0.08em] text-white transition hover:bg-green disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {profileSubmitting ? (
+                      <>
+                        <RefreshCw
+                          size={14}
+                          className="animate-spin"
+                        />
+
+                        {profile
+                          ? "Saving changes..."
+                          : "Creating profile..."}
+                      </>
+                    ) : (
+                      <>
+                        {profile
+                          ? "Save changes"
+                          : "Create profile"}
+
+                        <ChevronRight size={14} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ========================================================
           FOOD NEED MODAL
       ======================================================== */}
 
-      {showNeedForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
-
-          <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
-
-            {/* Header */}
-
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
-
-              <div>
-
-                <p className="text-xs font-medium uppercase tracking-wider text-green-700">
-                  Food request
-                </p>
-
-                <h3 className="mt-1 text-lg font-bold">
-                  Add a food need
-                </h3>
-
-              </div>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setShowNeedForm(false)
-                }
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700"
-              >
-                <X size={19} />
-              </button>
-
-            </div>
-
-            {/* Form */}
-
-            <form
-              onSubmit={handleCreateNeed}
-              className="space-y-5 p-5 sm:p-6"
+      <AnimatePresence>
+        {showNeedForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: 20,
+              }}
+              className="w-full max-w-lg border border-line bg-paper"
             >
 
-              {/* Food type */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  Food type
-                </label>
-
-                <input
-                  type="text"
-                  name="food_type"
-                  value={
-                    form.food_type
-                  }
-                  onChange={
-                    handleNeedChange
-                  }
-                  required
-                  placeholder="e.g. bakery, rice, vegetables"
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                />
-
-              </div>
-
-              {/* Quantity */}
-
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-between border-b border-line px-5 py-5 sm:px-7">
 
                 <div>
+                  <p className="fb-label text-green">
+                    Food request
+                  </p>
 
-                  <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    Quantity needed
-                  </label>
-
-                  <input
-                    type="number"
-                    min="1"
-                    name="quantity_needed"
-                    value={
-                      form.quantity_needed
-                    }
-                    onChange={
-                      handleNeedChange
-                    }
-                    required
-                    placeholder="20"
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                  />
-
+                  <h3 className="mt-2 text-xl tracking-[-0.03em]">
+                    Add a food need
+                  </h3>
                 </div>
-
-                <div>
-
-                  <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    Unit
-                  </label>
-
-                  <select
-                    name="quantity_unit"
-                    value={
-                      form.quantity_unit
-                    }
-                    onChange={
-                      handleNeedChange
-                    }
-                    className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                  >
-                    <option value="items">
-                      Items
-                    </option>
-
-                    <option value="servings">
-                      Servings
-                    </option>
-
-                    <option value="kg">
-                      Kilograms
-                    </option>
-
-                    <option value="packs">
-                      Packs
-                    </option>
-
-                    <option value="boxes">
-                      Boxes
-                    </option>
-                  </select>
-
-                </div>
-
-              </div>
-
-              {/* People */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  People to feed
-                </label>
-
-                <input
-                  type="number"
-                  min="0"
-                  name="people_to_feed"
-                  value={
-                    form.people_to_feed
-                  }
-                  onChange={
-                    handleNeedChange
-                  }
-                  placeholder="e.g. 20"
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none transition placeholder:text-gray-300 focus:border-green-500 focus:ring-4 focus:ring-green-50"
-                />
-
-              </div>
-
-              {/* Urgency */}
-
-              <div>
-
-                <div className="mb-2 flex items-center justify-between">
-
-                  <label className="text-sm font-semibold text-gray-700">
-                    Urgency
-                  </label>
-
-                  <span className="text-sm font-bold text-amber-600">
-                    {form.urgency_score}
-                    /100
-                  </span>
-
-                </div>
-
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  name="urgency_score"
-                  value={
-                    form.urgency_score
-                  }
-                  onChange={
-                    handleNeedChange
-                  }
-                  className="w-full accent-green-700"
-                />
-
-                <div className="mt-1 flex justify-between text-[10px] text-gray-400">
-                  <span>Low</span>
-                  <span>High</span>
-                </div>
-
-              </div>
-
-              {/* Actions */}
-
-              <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
 
                 <button
                   type="button"
                   onClick={() =>
                     setShowNeedForm(false)
                   }
-                  className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50"
+                  className="flex h-9 w-9 items-center justify-center border border-line text-muted hover:text-ink"
                 >
-                  Cancel
+                  <X size={17} />
                 </button>
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-
-                  {submitting ? (
-                    <>
-                      <RefreshCw
-                        size={16}
-                        className="animate-spin"
-                      />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      Create food need
-                      <ChevronRight
-                        size={16}
-                      />
-                    </>
-                  )}
-
-                </button>
-
               </div>
 
-            </form>
+              <form
+                onSubmit={handleCreateNeed}
+                className="space-y-6 p-5 sm:p-7"
+              >
 
-          </div>
+                <div>
+                  <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                    Food type
+                  </label>
 
-        </div>
-      )}
+                  <input
+                    type="text"
+                    name="food_type"
+                    value={form.food_type}
+                    onChange={handleNeedChange}
+                    required
+                    placeholder="e.g. bakery, rice, vegetables"
+                    className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                  />
+                </div>
 
+                <div className="grid grid-cols-2 gap-5">
+
+                  <div>
+                    <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                      Quantity needed
+                    </label>
+
+                    <input
+                      type="number"
+                      min="1"
+                      name="quantity_needed"
+                      value={
+                        form.quantity_needed
+                      }
+                      onChange={handleNeedChange}
+                      required
+                      placeholder="20"
+                      className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                      Unit
+                    </label>
+
+                    <select
+                      name="quantity_unit"
+                      value={
+                        form.quantity_unit
+                      }
+                      onChange={handleNeedChange}
+                      className="w-full border-b border-line bg-paper px-0 py-3 text-sm outline-none focus:border-green"
+                    >
+                      <option value="items">
+                        Items
+                      </option>
+
+                      <option value="servings">
+                        Servings
+                      </option>
+
+                      <option value="kg">
+                        Kilograms
+                      </option>
+
+                      <option value="packs">
+                        Packs
+                      </option>
+
+                      <option value="boxes">
+                        Boxes
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-xs uppercase tracking-[0.06em] text-muted">
+                    People to feed
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    name="people_to_feed"
+                    value={
+                      form.people_to_feed
+                    }
+                    onChange={handleNeedChange}
+                    placeholder="20"
+                    className="w-full border-b border-line bg-transparent px-0 py-3 text-sm outline-none placeholder:text-ash focus:border-green"
+                  />
+                </div>
+
+                <div>
+
+                  <div className="mb-3 flex items-center justify-between">
+
+                    <label className="text-xs uppercase tracking-[0.06em] text-muted">
+                      Urgency
+                    </label>
+
+                    <span className="text-sm text-amber-700">
+                      {form.urgency_score}/100
+                    </span>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    name="urgency_score"
+                    value={
+                      form.urgency_score
+                    }
+                    onChange={handleNeedChange}
+                    className="w-full accent-[#1F7A4D]"
+                  />
+
+                  <div className="mt-2 flex justify-between text-[9px] uppercase tracking-[0.06em] text-ash">
+                    <span>Low</span>
+                    <span>High</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col-reverse gap-3 border-t border-line pt-6 sm:flex-row sm:justify-end">
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowNeedForm(false)
+                    }
+                    className="border border-line px-5 py-3 text-[10px] uppercase tracking-[0.08em] text-muted hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="flex items-center justify-center gap-3 bg-deep-green px-5 py-3 text-[10px] uppercase tracking-[0.08em] text-white hover:bg-green disabled:opacity-60"
+                  >
+                    {submitting ? (
+                      <>
+                        <RefreshCw
+                          size={14}
+                          className="animate-spin"
+                        />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        Create food need
+                        <ChevronRight size={14} />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

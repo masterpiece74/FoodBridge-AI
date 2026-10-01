@@ -34,105 +34,92 @@ function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#14532D]/5 bg-[#FAFAF7]/90 px-6 py-4 backdrop-blur-xl md:px-12 lg:px-20">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
-        {/* =====================================================
-            LOGO
-        ===================================================== */}
-
-        <Link
-          to="/"
-          onClick={closeMobileMenu}
-          aria-label="FoodBridge AI home"
-          className="group flex items-center text-2xl font-bold tracking-tight text-[#14532D]"
-        >
-          FoodBridge
-          <span className="text-[#1F7A4D] transition-colors duration-200 group-hover:text-[#14532D]">
-            AI
-          </span>
-        </Link>
-
-        {/* =====================================================
-            DESKTOP NAVIGATION
-        ===================================================== */}
-
-        <div className="hidden items-center gap-8 md:flex">
+    <nav className="sticky top-0 z-50 border-b border-line bg-paper">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10 lg:px-12">
+        <div className="flex h-[72px] items-center justify-between">
+          {/* LOGO */}
           <Link
             to="/"
-            className={`text-sm font-medium transition-colors duration-200 ${
-              isActive("/")
-                ? "text-[#14532D]"
-                : "text-gray-600 hover:text-[#14532D]"
-            }`}
+            onClick={closeMobileMenu}
+            aria-label="FoodBridge AI home"
+            className="group flex items-baseline text-xl font-normal tracking-[-0.04em] md:text-2xl"
           >
-            Home
+            FoodBridge
+            <span className="ml-1 text-green">AI</span>
           </Link>
 
+          {/* DESKTOP NAVIGATION */}
+          <div className="hidden items-center md:flex">
+            <Link
+              to="/"
+              className={`border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
+                isActive("/")
+                  ? "text-green"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              Home
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection("how-it-works")}
+              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+            >
+              How It Works
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollToSection("impact")}
+              className="border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
+            >
+              Impact
+            </button>
+
+            <Link
+              to="/about"
+              className={`border-l border-line px-6 py-2 text-[11px] uppercase tracking-[0.08em] transition-colors ${
+                isActive("/about")
+                  ? "text-green"
+                  : "text-muted hover:text-ink"
+              }`}
+            >
+              About
+            </Link>
+
+            <Link
+              to="/login"
+              className="ml-4 inline-flex items-center gap-2 border border-ink bg-ink px-5 py-3 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:bg-green hover:border-green"
+            >
+              Enter platform
+              <ArrowRight size={14} strokeWidth={1.4} />
+            </Link>
+          </div>
+
+          {/* MOBILE MENU BUTTON */}
           <button
             type="button"
-            onClick={() => scrollToSection("how-it-works")}
-            className="text-sm font-medium text-gray-600 transition-colors duration-200 hover:text-[#14532D]"
+            aria-label={
+              mobileMenuOpen
+                ? "Close navigation menu"
+                : "Open navigation menu"
+            }
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMobileMenuOpen((current) => !current)}
+            className="flex h-10 w-10 items-center justify-center border border-line text-ink transition-colors hover:border-ink hover:text-green md:hidden"
           >
-            How It Works
+            {mobileMenuOpen ? (
+              <X size={20} strokeWidth={1.4} />
+            ) : (
+              <Menu size={20} strokeWidth={1.4} />
+            )}
           </button>
-
-          <button
-            type="button"
-            onClick={() => scrollToSection("impact")}
-            className="text-sm font-medium text-gray-600 transition-colors duration-200 hover:text-[#14532D]"
-          >
-            Impact
-          </button>
-
-          <Link
-            to="/about"
-            className={`text-sm font-medium transition-colors duration-200 ${
-              isActive("/about")
-                ? "text-[#14532D]"
-                : "text-gray-600 hover:text-[#14532D]"
-            }`}
-          >
-            About
-          </Link>
         </div>
-
-        {/* =====================================================
-            DESKTOP GET STARTED
-        ===================================================== */}
-
-        <Link
-          to="/login"
-          className="hidden items-center gap-2 rounded-full bg-[#14532D] px-5 py-3 text-sm font-semibold text-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-[#1F7A4D] hover:shadow-md md:flex"
-        >
-          Get Started
-
-          <ArrowRight size={16} strokeWidth={2} />
-        </Link>
-
-        {/* =====================================================
-            MOBILE MENU BUTTON
-        ===================================================== */}
-
-        <button
-          type="button"
-          aria-label={
-            mobileMenuOpen
-              ? "Close navigation menu"
-              : "Open navigation menu"
-          }
-          aria-expanded={mobileMenuOpen}
-          aria-controls="mobile-navigation"
-          onClick={() => setMobileMenuOpen((current) => !current)}
-          className="rounded-xl p-2 text-[#14532D] transition hover:bg-[#A7D7B8]/30 focus:outline-none focus:ring-2 focus:ring-[#14532D]/20 md:hidden"
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
 
-      {/* =====================================================
-          MOBILE NAVIGATION
-      ===================================================== */}
-
+      {/* MOBILE NAVIGATION */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -141,17 +128,17 @@ function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="overflow-hidden md:hidden"
+            className="border-t border-line md:hidden"
           >
-            <div className="border-t border-[#14532D]/10 pb-4 pt-4">
-              <div className="flex flex-col gap-1">
+            <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+              <div className="flex flex-col">
                 <Link
                   to="/"
                   onClick={closeMobileMenu}
-                  className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                  className={`border-b border-line py-5 text-xs uppercase tracking-[0.08em] transition-colors ${
                     isActive("/")
-                      ? "bg-[#A7D7B8]/20 text-[#14532D]"
-                      : "text-gray-700 hover:bg-[#A7D7B8]/20 hover:text-[#14532D]"
+                      ? "text-green"
+                      : "text-muted hover:text-ink"
                   }`}
                 >
                   Home
@@ -160,7 +147,7 @@ function Navbar() {
                 <button
                   type="button"
                   onClick={() => scrollToSection("how-it-works")}
-                  className="rounded-xl px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-[#A7D7B8]/20 hover:text-[#14532D]"
+                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
                 >
                   How It Works
                 </button>
@@ -168,7 +155,7 @@ function Navbar() {
                 <button
                   type="button"
                   onClick={() => scrollToSection("impact")}
-                  className="rounded-xl px-4 py-3 text-left text-sm font-medium text-gray-700 transition hover:bg-[#A7D7B8]/20 hover:text-[#14532D]"
+                  className="border-b border-line py-5 text-left text-xs uppercase tracking-[0.08em] text-muted transition-colors hover:text-ink"
                 >
                   Impact
                 </button>
@@ -176,10 +163,10 @@ function Navbar() {
                 <Link
                   to="/about"
                   onClick={closeMobileMenu}
-                  className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
+                  className={`border-b border-line py-5 text-xs uppercase tracking-[0.08em] transition-colors ${
                     isActive("/about")
-                      ? "bg-[#A7D7B8]/20 text-[#14532D]"
-                      : "text-gray-700 hover:bg-[#A7D7B8]/20 hover:text-[#14532D]"
+                      ? "text-green"
+                      : "text-muted hover:text-ink"
                   }`}
                 >
                   About
@@ -188,10 +175,10 @@ function Navbar() {
                 <Link
                   to="/login"
                   onClick={closeMobileMenu}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-[#14532D] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1F7A4D]"
+                  className="my-5 flex items-center justify-between border border-ink bg-ink px-5 py-4 text-xs uppercase tracking-[0.08em] text-white transition-colors hover:border-green hover:bg-green"
                 >
-                  Get Started
-                  <ArrowRight size={16} strokeWidth={2} />
+                  Enter platform
+                  <ArrowRight size={15} strokeWidth={1.4} />
                 </Link>
               </div>
             </div>
@@ -203,4 +190,3 @@ function Navbar() {
 }
 
 export default Navbar;
-

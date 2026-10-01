@@ -3,19 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  Building2,
+  CheckCircle2,
   Eye,
   EyeOff,
-  User,
+  HandHeart,
+  Heart,
+  LockKeyhole,
   Mail,
   Phone,
-  LockKeyhole,
-  HeartHandshake,
   ShieldCheck,
-  CheckCircle2,
-  Building2,
-  HandHeart,
   Truck,
-  Sparkles,
+  User,
 } from "lucide-react";
 
 const Register = () => {
@@ -249,321 +248,290 @@ const Register = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F7F4]">
+    <div className="min-h-screen bg-paper text-ink">
 
-      {/* =========================================
-          TOP NAV
-      ========================================== */}
+      {/* =====================================================
+          TOP BAR
+      ====================================================== */}
 
-      <header className="border-b border-gray-200 bg-white">
-
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-
-          {/* Brand */}
+      <header className="border-b border-line">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5 md:px-10 lg:px-12">
 
           <Link
             to="/"
-            className="flex items-center gap-3"
+            className="group flex items-center gap-3"
           >
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EAF6EE] text-[#1F7A4D]">
-              <HeartHandshake size={22} />
+            <div className="flex h-8 w-8 items-center justify-center border border-line">
+              <Heart
+                size={15}
+                strokeWidth={1.3}
+                className="text-green"
+              />
             </div>
 
             <div>
-
-              <p className="text-base font-bold tracking-tight text-[#0B2F1A]">
-
+              <p className="text-sm font-medium tracking-[-0.02em]">
                 FoodBridge
-
-                <span className="text-[#1F7A4D]">
-                  {" "}AI
-                </span>
-
+                <span className="text-green">AI</span>
               </p>
 
-              <p className="hidden text-[11px] text-gray-400 sm:block">
-                Turning surplus into hope.
+              <p className="hidden text-[9px] uppercase tracking-[0.08em] text-muted sm:block">
+                Turning surplus into hope
               </p>
-
             </div>
-
           </Link>
 
-
-          {/* Login */}
-
-          <div className="flex items-center gap-3">
-
-            <span className="hidden text-sm text-gray-500 sm:block">
-              Already a member?
-            </span>
-
-            <Link
-              to="/login"
-              className="
-                rounded-xl
-                border
-                border-gray-200
-                bg-white
-                px-4
-                py-2.5
-                text-sm
-                font-semibold
-                text-[#1F7A4D]
-                transition
-                hover:border-[#1F7A4D]
-                hover:bg-[#F4FAF6]
-              "
-            >
-              Login
-            </Link>
-
-          </div>
+          <Link
+            to="/login"
+            className="fb-arrow text-[10px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-green"
+          >
+            Already a member?
+            <ArrowRight
+              size={14}
+              strokeWidth={1.2}
+            />
+          </Link>
 
         </div>
-
       </header>
 
 
-      {/* =========================================
+      {/* =====================================================
           MAIN
-      ========================================== */}
+      ====================================================== */}
 
-      <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:py-14">
+      <main className="mx-auto grid max-w-[1400px] lg:grid-cols-[0.9fr_1.1fr]">
 
-        {/* Back */}
+        {/* =================================================
+            LEFT SIDE
+        ================================================== */}
 
-        <button
-          onClick={() => navigate(-1)}
-          className="
-            mb-8
-            flex
-            items-center
-            gap-2
-            text-sm
-            font-medium
-            text-gray-500
-            transition
-            hover:text-[#1F7A4D]
-          "
-        >
-          <ArrowLeft size={17} />
-          Back
-        </button>
+        <section className="relative hidden overflow-hidden border-r border-line lg:block">
 
+          <div className="sticky top-0 h-screen max-h-[1000px]">
 
-        {/* =========================================
-            CONTENT CARD
-        ========================================== */}
-
-        <div
-          className="
-            grid
-            overflow-hidden
-            rounded-[30px]
-            border
-            border-gray-200
-            bg-white
-            shadow-xl
-            shadow-gray-900/[0.06]
-            lg:grid-cols-[0.85fr_1.15fr]
-          "
-        >
-
-          {/* =========================================
-              LEFT SIDE
-          ========================================== */}
-
-          <section
-            className="
-              relative
-              overflow-hidden
-              bg-[#0B2F1A]
-              px-7
-              py-10
-              text-white
-              sm:px-10
-              lg:px-12
-              lg:py-12
-            "
-          >
-
-            {/* Decorative background */}
-
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#1F7A4D]/40" />
-
-            <div className="absolute -bottom-32 -left-28 h-80 w-80 rounded-full bg-[#14532D]/80" />
-
-
-            {/* Image */}
-
-            <div
-              className="
-                absolute
-                inset-0
-                bg-cover
-                bg-center
-                opacity-[0.12]
-              "
-              style={{
-                backgroundImage: "url('/aaa.png')",
-              }}
+            <img
+              src="/aaa.png"
+              alt="FoodBridge community food support"
+              className="absolute inset-0 h-full w-full object-cover"
             />
 
+            <div className="absolute inset-0 bg-black/50" />
 
-            <div className="relative z-10 flex h-full flex-col justify-between">
+            <div className="absolute left-10 top-10 xl:left-12">
+              <p className="text-[10px] uppercase tracking-[0.1em] text-white/50">
+                02 — Join the network
+              </p>
+            </div>
 
-              {/* Top */}
+            <div className="absolute inset-x-0 bottom-0 p-10 xl:p-12">
 
-              <div>
+              <div className="max-w-xl text-white">
 
-                <div
-                  className="
-                    inline-flex
-                    items-center
-                    gap-2
-                    rounded-full
-                    border
-                    border-white/10
-                    bg-white/10
-                    px-3
-                    py-1.5
-                    text-xs
-                    font-medium
-                    text-green-100
-                    backdrop-blur-md
-                  "
-                >
-                  <Sparkles size={14} />
+                <div className="mb-10 flex items-center justify-between border-b border-white/20 pb-5">
+                  <span className="text-[10px] uppercase tracking-[0.1em] text-white/55">
+                    FoodBridge / Community
+                  </span>
 
-                  Join the FoodBridge community
+                  <Heart
+                    size={16}
+                    strokeWidth={1.2}
+                    className="text-light-green"
+                  />
                 </div>
 
+                <p className="text-[10px] uppercase tracking-[0.1em] text-light-green">
+                  There is room for you
+                </p>
 
-                <h1
-                  className="
-                    mt-8
-                    max-w-md
-                    text-4xl
-                    font-bold
-                    leading-[1.1]
-                    tracking-tight
-                    sm:text-5xl
-                  "
-                >
-                  Good food
+                <h1 className="mt-5 text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                  ONE NETWORK.
                   <br />
-                  should never
-                  <br />
-                  go to waste.
+                  <span className="text-light-green">
+                    MANY HANDS.
+                  </span>
                 </h1>
 
-
-                <p className="mt-6 max-w-md text-sm leading-7 text-green-50/75">
-                  FoodBridge AI brings donors, recipients and
-                  volunteers together so surplus food can reach
-                  communities that need it.
+                <p className="mt-8 max-w-md text-sm leading-7 text-white/65">
+                  Whether you have surplus food, need food support,
+                  or can help move it, FoodBridge gives you a place
+                  to make that contribution count.
                 </p>
+
+                <div className="mt-10 border-t border-white/20 pt-5">
+                  <p className="text-[10px] uppercase tracking-[0.08em] text-white/40">
+                    Surplus → Connection → Community
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* =================================================
+            RIGHT SIDE
+        ================================================== */}
+
+        <section className="px-6 py-12 sm:px-10 md:px-14 lg:px-16 xl:px-20">
+
+          <div className="mx-auto max-w-2xl">
+
+            {/* MOBILE LABEL */}
+
+            <div className="mb-12 lg:hidden">
+              <p className="fb-label text-green">
+                02 — Join the network
+              </p>
+            </div>
+
+
+            {/* INTRO */}
+
+            <div className="border-b border-line pb-10">
+
+              <p className="fb-label text-green">
+                Create your FoodBridge account
+              </p>
+
+              <h2 className="mt-5 text-[clamp(3rem,7vw,5.5rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                JOIN THE
+                <br />
+                <span className="text-green">
+                  NETWORK.
+                </span>
+              </h2>
+
+              <p className="mt-7 max-w-lg text-sm leading-7 text-muted md:text-base">
+                Choose how you want to participate, then create
+                your account. You can start contributing as soon
+                as you're registered.
+              </p>
+
+            </div>
+
+
+            {/* ERROR */}
+
+            {error && (
+              <div className="border-b border-red-300 bg-red-50 px-4 py-4 text-sm leading-6 text-red-700">
+                {error}
+              </div>
+            )}
+
+
+            {/* =================================================
+                ROLE SELECTION
+            ================================================== */}
+
+            <div className="border-b border-line py-8">
+
+              <div className="flex items-end justify-between gap-6">
+
+                <div>
+                  <p className="fb-label text-muted">
+                    Choose your role
+                  </p>
+
+                  <p className="mt-2 text-sm text-muted">
+                    How would you like to contribute?
+                  </p>
+                </div>
+
+                <span className="hidden text-[10px] uppercase tracking-[0.08em] text-ash sm:block">
+                  Select one
+                </span>
 
               </div>
 
 
-              {/* Assistant */}
+              <div className="mt-6 grid border-l border-t border-line sm:grid-cols-3">
 
-              <div className="mt-12">
+                {roles.map((role) => {
+                  const Icon = role.icon;
+                  const selected =
+                    formData.role === role.value;
 
-                <div
-                  className="
-                    rounded-2xl
-                    border
-                    border-white/10
-                    bg-white/[0.08]
-                    p-5
-                    backdrop-blur-md
-                  "
-                >
-
-                  <div className="flex items-start gap-4">
-
-                    <div
-                      className="
-                        flex
-                        h-11
-                        w-11
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-xl
-                        bg-white
-                        text-[#1F7A4D]
-                        shadow-lg
-                      "
+                  return (
+                    <button
+                      key={role.value}
+                      type="button"
+                      onClick={() =>
+                        handleRoleChange(role.value)
+                      }
+                      className={`
+                        relative
+                        border-b
+                        border-r
+                        border-line
+                        p-5
+                        text-left
+                        transition-colors
+                        ${
+                          selected
+                            ? "bg-light-green"
+                            : "bg-paper hover:bg-white"
+                        }
+                      `}
                     >
-                      <Sparkles size={20} />
-                    </div>
 
+                      {selected && (
+                        <CheckCircle2
+                          size={15}
+                          strokeWidth={1.3}
+                          className="absolute right-4 top-4 text-green"
+                        />
+                      )}
 
-                    <div>
+                      <Icon
+                        size={22}
+                        strokeWidth={1.2}
+                        className={
+                          selected
+                            ? "text-green"
+                            : "text-graphite"
+                        }
+                      />
 
-                      <div className="flex items-center gap-2">
-
-                        <p className="text-sm font-semibold">
-                          FoodBridge Assistant
-                        </p>
-
-                        <span className="h-1.5 w-1.5 rounded-full bg-green-300" />
-
-                      </div>
-
-                      <p className="mt-2 text-xs leading-5 text-green-50/70">
-                        {assistantMessage}
+                      <p className="mt-10 text-sm font-medium">
+                        {role.title}
                       </p>
 
-                    </div>
+                      <p className="mt-2 text-[11px] leading-5 text-muted">
+                        {role.description}
+                      </p>
 
-                  </div>
+                    </button>
+                  );
+                })}
 
-                </div>
+              </div>
 
 
-                {/* Impact points */}
+              {/* ASSISTANT MESSAGE */}
 
-                <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="mt-6 border-l-2 border-green bg-light-green/40 px-4 py-4">
 
-                  <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4">
+                <div className="flex items-start gap-3">
 
-                    <HeartHandshake
-                      size={19}
-                      className="text-green-300"
-                    />
+                  <Heart
+                    size={15}
+                    strokeWidth={1.3}
+                    className="mt-0.5 shrink-0 text-green"
+                  />
 
-                    <p className="mt-3 text-xs font-semibold">
-                      Connect
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.08em] text-green">
+                      FoodBridge guide
                     </p>
 
-                    <p className="mt-1 text-[11px] leading-5 text-green-50/60">
-                      Bring people and food together.
+                    <p className="mt-2 text-xs leading-5 text-muted">
+                      {assistantMessage}
                     </p>
-
-                  </div>
-
-
-                  <div className="rounded-xl border border-white/10 bg-white/[0.06] p-4">
-
-                    <ShieldCheck
-                      size={19}
-                      className="text-green-300"
-                    />
-
-                    <p className="mt-3 text-xs font-semibold">
-                      Make impact
-                    </p>
-
-                    <p className="mt-1 text-[11px] leading-5 text-green-50/60">
-                      Help reduce waste and hunger.
-                    </p>
-
                   </div>
 
                 </div>
@@ -572,372 +540,195 @@ const Register = () => {
 
             </div>
 
-          </section>
 
+            {/* =================================================
+                GOOGLE
+            ================================================== */}
 
-          {/* =========================================
-              RIGHT SIDE FORM
-          ========================================== */}
-
-          <section className="px-6 py-10 sm:px-10 lg:px-14 lg:py-12">
-
-            <div className="mx-auto max-w-xl">
-
-
-              {/* Header */}
-
-              <div>
-
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#1F7A4D]">
-                  Get started
-                </p>
-
-                <h2
-                  className="
-                    mt-2
-                    text-3xl
-                    font-bold
-                    tracking-tight
-                    text-[#0B2F1A]
-                    sm:text-4xl
-                  "
-                >
-                  Create your account
-                </h2>
-
-                <p className="mt-3 max-w-lg text-sm leading-6 text-gray-500">
-                  A few details are all you need to join FoodBridge AI.
-                </p>
-
-              </div>
-
-
-              {/* Error */}
-
-              {error && (
-
-                <div
-                  className="
-                    mt-6
-                    rounded-xl
-                    border
-                    border-red-200
-                    bg-red-50
-                    px-4
-                    py-3
-                    text-sm
-                    leading-5
-                    text-red-700
-                  "
-                >
-                  {error}
-                </div>
-
-              )}
-
-
-              {/* =========================================
-                  ROLE
-              ========================================== */}
-
-              <div className="mt-8">
-
-                <div className="mb-3 flex items-center justify-between">
-
-                  <label className="text-sm font-semibold text-gray-800">
-                    I want to participate as a
-                  </label>
-
-                  <span className="text-xs text-gray-400">
-                    Choose one
-                  </span>
-
-                </div>
-
-
-                <div className="grid gap-3 sm:grid-cols-3">
-
-                  {roles.map((role) => {
-
-                    const Icon = role.icon;
-
-                    const selected =
-                      formData.role === role.value;
-
-                    return (
-
-                      <button
-                        key={role.value}
-                        type="button"
-                        onClick={() =>
-                          handleRoleChange(role.value)
-                        }
-                        className={`
-                          relative
-                          rounded-2xl
-                          border
-                          p-4
-                          text-left
-                          transition-all
-                          duration-200
-                          ${
-                            selected
-                              ? "border-[#1F7A4D] bg-[#F0F8F3] shadow-sm ring-2 ring-[#A7D7B8]/50"
-                              : "border-gray-200 bg-white hover:border-[#A7D7B8] hover:bg-[#FAFCFA]"
-                          }
-                        `}
-                      >
-
-                        {selected && (
-
-                          <CheckCircle2
-                            size={17}
-                            className="
-                              absolute
-                              right-3
-                              top-3
-                              text-[#1F7A4D]
-                            "
-                          />
-
-                        )}
-
-
-                        <div
-                          className={`
-                            flex
-                            h-10
-                            w-10
-                            items-center
-                            justify-center
-                            rounded-xl
-                            transition
-                            ${
-                              selected
-                                ? "bg-[#1F7A4D] text-white"
-                                : "bg-gray-100 text-gray-500"
-                            }
-                          `}
-                        >
-                          <Icon size={19} />
-                        </div>
-
-
-                        <p className="mt-3 text-sm font-semibold text-gray-800">
-                          {role.title}
-                        </p>
-
-                        <p className="mt-1 text-[11px] leading-5 text-gray-500">
-                          {role.description}
-                        </p>
-
-                      </button>
-
-                    );
-
-                  })}
-
-                </div>
-
-              </div>
-
-
-              {/* =========================================
-                  GOOGLE REGISTRATION
-              ========================================== */}
+            <div className="border-b border-line py-8">
 
               <button
                 type="button"
                 onClick={handleGoogleRegister}
                 disabled={googleLoading || loading}
                 className="
-                  mt-6
+                  group
                   flex
                   w-full
                   items-center
-                  justify-center
-                  gap-3
-                  rounded-xl
+                  justify-between
                   border
-                  border-gray-200
-                  bg-white
-                  py-3.5
-                  text-sm
-                  font-semibold
-                  text-gray-700
-                  shadow-sm
-                  transition
-                  hover:border-gray-300
-                  hover:bg-gray-50
-                  hover:shadow-md
+                  border-line
+                  px-5
+                  py-4
+                  text-left
+                  transition-colors
+                  hover:border-ink
                   disabled:cursor-not-allowed
-                  disabled:opacity-60
+                  disabled:opacity-50
                 "
               >
 
-                {/* Google Icon */}
+                <span className="flex items-center gap-4">
 
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="#4285F4"
-                    d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
-                  />
-                </svg>
+                  <span className="flex h-7 w-7 items-center justify-center border border-line">
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="#4285F4"
+                        d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
+                      />
+                    </svg>
+                  </span>
 
-                {googleLoading
-                  ? "Connecting to Google..."
-                  : `Continue with Google as ${
-                      formData.role.charAt(0).toUpperCase() +
-                      formData.role.slice(1)
-                    }`}
+                  <span className="text-sm">
+                    {googleLoading
+                      ? "Connecting to Google..."
+                      : `Continue with Google as ${
+                          formData.role.charAt(0).toUpperCase() +
+                          formData.role.slice(1)
+                        }`}
+                  </span>
+
+                </span>
+
+                <ArrowRight
+                  size={15}
+                  strokeWidth={1.2}
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                />
 
               </button>
 
-
-              {/* Divider */}
-
-              <div className="my-6 flex items-center gap-4">
-
-                <div className="h-px flex-1 bg-gray-200" />
-
-                <span className="text-xs font-medium text-gray-400">
-                  OR
-                </span>
-
-                <div className="h-px flex-1 bg-gray-200" />
-
-              </div>
+            </div>
 
 
-              {/* =========================================
-                  FORM
-              ========================================== */}
+            {/* =================================================
+                FORM
+            ================================================== */}
 
-              <form
-                onSubmit={handleSubmit}
-                className="space-y-6"
-              >
+            <form
+              onSubmit={handleSubmit}
+              className="pt-8"
+            >
+
+              {/* PERSONAL INFORMATION */}
+
+              <div className="border-b border-line pb-8">
+
+                <p className="fb-label text-muted">
+                  Personal information
+                </p>
 
 
-                {/* PERSONAL INFORMATION */}
+                {/* FULL NAME */}
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="mt-7">
 
-                  {/* Full Name */}
+                  <label
+                    htmlFor="full_name"
+                    className="fb-label text-muted"
+                  >
+                    Full name
+                  </label>
 
-                  <div className="sm:col-span-2">
+                  <div className="relative mt-4">
 
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Full Name
-                    </label>
+                    <User
+                      size={17}
+                      strokeWidth={1.2}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
+                    />
 
-                    <div className="relative">
-
-                      <User
-                        size={18}
-                        className="
-                          absolute
-                          left-4
-                          top-1/2
-                          -translate-y-1/2
-                          text-gray-400
-                        "
-                      />
-
-                      <input
-                        type="text"
-                        name="full_name"
-                        value={formData.full_name}
-                        onChange={handleChange}
-                        required
-                        placeholder="Enter your full name"
-                        className="
-                          w-full
-                          rounded-xl
-                          border
-                          border-gray-200
-                          bg-white
-                          py-3.5
-                          pl-11
-                          pr-4
-                          text-sm
-                          text-gray-800
-                          outline-none
-                          transition
-                          placeholder:text-gray-400
-                          focus:border-[#1F7A4D]
-                          focus:ring-4
-                          focus:ring-[#A7D7B8]/30
-                        "
-                      />
-
-                    </div>
+                    <input
+                      id="full_name"
+                      type="text"
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleChange}
+                      required
+                      autoComplete="name"
+                      placeholder="Your full name"
+                      className="
+                        w-full
+                        border-0
+                        border-b
+                        border-line
+                        bg-transparent
+                        px-8
+                        py-3
+                        text-base
+                        text-ink
+                        outline-none
+                        placeholder:text-ash
+                        focus:border-green
+                      "
+                    />
 
                   </div>
 
+                </div>
 
-                  {/* Email */}
+
+                {/* EMAIL + PHONE */}
+
+                <div className="mt-7 grid gap-7 sm:grid-cols-2">
 
                   <div>
 
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Email Address
+                    <label
+                      htmlFor="email"
+                      className="fb-label text-muted"
+                    >
+                      Email address
                     </label>
 
-                    <div className="relative">
+                    <div className="relative mt-4">
 
                       <Mail
-                        size={18}
-                        className="
-                          absolute
-                          left-4
-                          top-1/2
-                          -translate-y-1/2
-                          text-gray-400
-                        "
+                        size={17}
+                        strokeWidth={1.2}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                       />
 
                       <input
+                        id="email"
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        autoComplete="email"
                         placeholder="you@example.com"
                         className="
                           w-full
-                          rounded-xl
-                          border
-                          border-gray-200
-                          bg-white
-                          py-3.5
-                          pl-11
-                          pr-4
-                          text-sm
-                          text-gray-800
+                          border-0
+                          border-b
+                          border-line
+                          bg-transparent
+                          px-8
+                          py-3
+                          text-base
+                          text-ink
                           outline-none
-                          transition
-                          placeholder:text-gray-400
-                          focus:border-[#1F7A4D]
-                          focus:ring-4
-                          focus:ring-[#A7D7B8]/30
+                          placeholder:text-ash
+                          focus:border-green
                         "
                       />
 
@@ -946,50 +737,44 @@ const Register = () => {
                   </div>
 
 
-                  {/* Phone */}
-
                   <div>
 
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Phone Number
+                    <label
+                      htmlFor="phone"
+                      className="fb-label text-muted"
+                    >
+                      Phone number
                     </label>
 
-                    <div className="relative">
+                    <div className="relative mt-4">
 
                       <Phone
-                        size={18}
-                        className="
-                          absolute
-                          left-4
-                          top-1/2
-                          -translate-y-1/2
-                          text-gray-400
-                        "
+                        size={17}
+                        strokeWidth={1.2}
+                        className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                       />
 
                       <input
+                        id="phone"
                         type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
+                        autoComplete="tel"
                         placeholder="0800 000 0000"
                         className="
                           w-full
-                          rounded-xl
-                          border
-                          border-gray-200
-                          bg-white
-                          py-3.5
-                          pl-11
-                          pr-4
-                          text-sm
-                          text-gray-800
+                          border-0
+                          border-b
+                          border-line
+                          bg-transparent
+                          px-8
+                          py-3
+                          text-base
+                          text-ink
                           outline-none
-                          transition
-                          placeholder:text-gray-400
-                          focus:border-[#1F7A4D]
-                          focus:ring-4
-                          focus:ring-[#A7D7B8]/30
+                          placeholder:text-ash
+                          focus:border-green
                         "
                       />
 
@@ -999,29 +784,39 @@ const Register = () => {
 
                 </div>
 
+              </div>
+
+
+              {/* PASSWORD */}
+
+              <div className="border-b border-line py-8">
+
+                <p className="fb-label text-muted">
+                  Account security
+                </p>
+
 
                 {/* PASSWORD */}
 
-                <div>
+                <div className="mt-7">
 
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="password"
+                    className="fb-label text-muted"
+                  >
                     Password
                   </label>
 
-                  <div className="relative">
+                  <div className="relative mt-4">
 
                     <LockKeyhole
-                      size={18}
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                      "
+                      size={17}
+                      strokeWidth={1.2}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                     />
 
                     <input
+                      id="password"
                       type={
                         showPassword
                           ? "text"
@@ -1031,27 +826,24 @@ const Register = () => {
                       value={formData.password}
                       onChange={handleChange}
                       required
+                      autoComplete="new-password"
                       placeholder="Create a secure password"
                       className="
                         w-full
-                        rounded-xl
-                        border
-                        border-gray-200
-                        bg-white
-                        py-3.5
-                        pl-11
+                        border-0
+                        border-b
+                        border-line
+                        bg-transparent
+                        px-8
+                        py-3
                         pr-12
-                        text-sm
-                        text-gray-800
+                        text-base
+                        text-ink
                         outline-none
-                        transition
-                        placeholder:text-gray-400
-                        focus:border-[#1F7A4D]
-                        focus:ring-4
-                        focus:ring-[#A7D7B8]/30
+                        placeholder:text-ash
+                        focus:border-green
                       "
                     />
-
 
                     <button
                       type="button"
@@ -1060,48 +852,50 @@ const Register = () => {
                           (previous) => !previous
                         )
                       }
-                      className="
-                        absolute
-                        right-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                        transition
-                        hover:text-[#1F7A4D]
-                      "
+                      aria-label={
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-graphite transition-colors hover:text-green"
                     >
                       {showPassword ? (
-                        <EyeOff size={19} />
+                        <EyeOff
+                          size={18}
+                          strokeWidth={1.2}
+                        />
                       ) : (
-                        <Eye size={19} />
+                        <Eye
+                          size={18}
+                          strokeWidth={1.2}
+                        />
                       )}
                     </button>
 
                   </div>
 
 
-                  {/* Strength */}
+                  {/* PASSWORD STRENGTH */}
 
                   {formData.password && (
+                    <div className="mt-4">
 
-                    <div className="mt-3">
+                      <div className="flex items-center justify-between">
 
-                      <div className="mb-1.5 flex items-center justify-between">
-
-                        <span className="text-xs text-gray-400">
+                        <span className="text-[10px] uppercase tracking-[0.07em] text-ash">
                           Password strength
                         </span>
 
-                        <span className="text-xs font-semibold text-[#1F7A4D]">
+                        <span className="text-[10px] uppercase tracking-[0.07em] text-green">
                           {passwordStrength.label}
                         </span>
 
                       </div>
 
-                      <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+                      <div className="mt-2 h-px w-full bg-line">
 
                         <div
-                          className="h-full rounded-full bg-[#1F7A4D] transition-all duration-300"
+                          className="h-px bg-green transition-all duration-300"
                           style={{
                             width: passwordStrength.width,
                           }}
@@ -1110,7 +904,6 @@ const Register = () => {
                       </div>
 
                     </div>
-
                   )}
 
                 </div>
@@ -1118,26 +911,25 @@ const Register = () => {
 
                 {/* CONFIRM PASSWORD */}
 
-                <div>
+                <div className="mt-7">
 
-                  <label className="mb-2 block text-sm font-medium text-gray-700">
-                    Confirm Password
+                  <label
+                    htmlFor="confirm_password"
+                    className="fb-label text-muted"
+                  >
+                    Confirm password
                   </label>
 
-                  <div className="relative">
+                  <div className="relative mt-4">
 
                     <LockKeyhole
-                      size={18}
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                      "
+                      size={17}
+                      strokeWidth={1.2}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
                     />
 
                     <input
+                      id="confirm_password"
                       type={
                         showConfirmPassword
                           ? "text"
@@ -1147,35 +939,33 @@ const Register = () => {
                       value={formData.confirm_password}
                       onChange={handleChange}
                       required
+                      autoComplete="new-password"
                       placeholder="Confirm your password"
                       className={`
                         w-full
-                        rounded-xl
-                        border
-                        bg-white
-                        py-3.5
-                        pl-11
+                        border-0
+                        border-b
+                        bg-transparent
+                        px-8
+                        py-3
                         pr-12
-                        text-sm
-                        text-gray-800
+                        text-base
+                        text-ink
                         outline-none
-                        transition
-                        placeholder:text-gray-400
-                        focus:ring-4
+                        placeholder:text-ash
                         ${
                           formData.confirm_password &&
                           formData.password !==
                             formData.confirm_password
-                            ? "border-red-400 focus:border-red-400 focus:ring-red-100"
+                            ? "border-red-400 focus:border-red-400"
                             : formData.confirm_password &&
                               formData.password ===
                                 formData.confirm_password
-                            ? "border-green-400 focus:border-[#1F7A4D] focus:ring-[#A7D7B8]/30"
-                            : "border-gray-200 focus:border-[#1F7A4D] focus:ring-[#A7D7B8]/30"
+                            ? "border-green"
+                            : "border-line focus:border-green"
                         }
                       `}
                     />
-
 
                     <button
                       type="button"
@@ -1184,88 +974,79 @@ const Register = () => {
                           (previous) => !previous
                         )
                       }
-                      className="
-                        absolute
-                        right-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                        transition
-                        hover:text-[#1F7A4D]
-                      "
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      className="absolute right-0 top-1/2 -translate-y-1/2 text-graphite transition-colors hover:text-green"
                     >
                       {showConfirmPassword ? (
-                        <EyeOff size={19} />
+                        <EyeOff
+                          size={18}
+                          strokeWidth={1.2}
+                        />
                       ) : (
-                        <Eye size={19} />
+                        <Eye
+                          size={18}
+                          strokeWidth={1.2}
+                        />
                       )}
                     </button>
 
                   </div>
 
 
-                  {/* Match indicator */}
+                  {/* MATCH STATUS */}
 
                   {formData.confirm_password && (
-
-                    <div className="mt-2">
+                    <div className="mt-3">
 
                       {formData.password ===
                       formData.confirm_password ? (
-
-                        <p className="flex items-center gap-1.5 text-xs font-medium text-[#1F7A4D]">
-
-                          <CheckCircle2 size={14} />
-
+                        <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.07em] text-green">
+                          <CheckCircle2
+                            size={13}
+                            strokeWidth={1.3}
+                          />
                           Passwords match
-
                         </p>
-
                       ) : (
-
-                        <p className="text-xs font-medium text-red-500">
+                        <p className="text-[10px] uppercase tracking-[0.07em] text-red-500">
                           Passwords do not match
                         </p>
-
                       )}
 
                     </div>
-
                   )}
 
                 </div>
 
-
-                {/* TRUST NOTE */}
-
-                <div
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                    rounded-xl
-                    border
-                    border-gray-100
-                    bg-[#FAFAF7]
-                    px-4
-                    py-3
-                  "
-                >
-
-                  <ShieldCheck
-                    size={18}
-                    className="mt-0.5 shrink-0 text-[#1F7A4D]"
-                  />
-
-                  <p className="text-xs leading-5 text-gray-500">
-                    Your account information is securely handled.
-                    You can change your role-specific details later.
-                  </p>
-
-                </div>
+              </div>
 
 
-                {/* SUBMIT */}
+              {/* SECURITY NOTE */}
+
+              <div className="flex items-start gap-3 border-b border-line py-6">
+
+                <ShieldCheck
+                  size={15}
+                  strokeWidth={1.2}
+                  className="mt-0.5 shrink-0 text-green"
+                />
+
+                <p className="text-xs leading-6 text-muted">
+                  Your account information is securely handled.
+                  Your selected role determines the experience
+                  available after registration.
+                </p>
+
+              </div>
+
+
+              {/* SUBMIT */}
+
+              <div className="pt-8">
 
                 <button
                   type="submit"
@@ -1275,80 +1056,80 @@ const Register = () => {
                     flex
                     w-full
                     items-center
-                    justify-center
-                    gap-2
-                    rounded-xl
-                    bg-[#1F7A4D]
+                    justify-between
+                    bg-deep-green
+                    px-5
                     py-4
-                    text-sm
-                    font-semibold
+                    text-[11px]
+                    uppercase
+                    tracking-[0.08em]
                     text-white
-                    shadow-lg
-                    shadow-green-900/10
-                    transition
-                    hover:bg-[#14532D]
-                    hover:shadow-xl
+                    transition-colors
+                    hover:bg-green
                     disabled:cursor-not-allowed
                     disabled:opacity-60
                   "
                 >
 
-                  {loading ? (
+                  <span>
+                    {loading
+                      ? "Creating account..."
+                      : "Create FoodBridge account"}
+                  </span>
 
-                    <>
-
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-
-                      Creating Account...
-
-                    </>
-
-                  ) : (
-
-                    <>
-
-                      Create Account
-
-                      <ArrowRight
-                        size={18}
-                        className="transition-transform group-hover:translate-x-1"
-                      />
-
-                    </>
-
+                  {!loading && (
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.2}
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
                   )}
 
                 </button>
 
-              </form>
+              </div>
+
+            </form>
 
 
-              {/* Login */}
+            {/* LOGIN */}
 
-              <p className="mt-7 text-center text-sm text-gray-500">
+            <div className="mt-10 border-t border-line pt-7">
 
-                Already have an account?{" "}
+              <p className="text-sm text-muted">
+
+                Already have an account?
 
                 <Link
                   to="/login"
-                  className="
-                    font-semibold
-                    text-[#1F7A4D]
-                    transition
-                    hover:text-[#14532D]
-                    hover:underline
-                  "
+                  className="ml-2 text-green transition-colors hover:text-deep-green"
                 >
-                  Login
+                  Login →
                 </Link>
 
               </p>
 
             </div>
 
-          </section>
 
-        </div>
+            {/* BACK */}
+
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="mt-8 fb-arrow text-[10px] uppercase tracking-[0.08em] text-ash transition-colors hover:text-green"
+            >
+              <ArrowLeft
+                size={13}
+                strokeWidth={1.2}
+              />
+
+              Go back
+            </button>
+
+          </div>
+
+        </section>
 
       </main>
 

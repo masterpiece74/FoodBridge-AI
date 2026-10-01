@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
+  ArrowRight,
   Eye,
   EyeOff,
-  HeartHandshake,
+  Heart,
   LockKeyhole,
   Mail,
   ShieldCheck,
@@ -120,9 +121,6 @@ const Login = () => {
       setGoogleLoading(true);
       setError("");
 
-      // Existing FoodBridge users keep their existing role.
-      // A completely new Google account will be created as a donor
-      // when starting from the Login page.
       window.location.href =
         `${API_URL}/auth/google/login?role=donor`;
 
@@ -138,809 +136,493 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#f3f4f2]">
+    <div className="min-h-screen bg-paper text-ink">
 
-      {/* =========================
-          FADED BACKGROUND IMAGE
-      ========================== */}
+      {/* =====================================================
+          TOP BAR
+      ====================================================== */}
 
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/aaa.png')",
-          backgroundPosition: "center",
-        }}
-      />
-
-      {/* WHITE FADE */}
-
-      <div className="absolute inset-0 bg-white/80" />
-
-      {/* SOFT BLUR */}
-
-      <div className="absolute inset-0 backdrop-blur-sm" />
-
-
-      {/* =========================
-          AUTH HEADER
-      ========================== */}
-
-      <header className="absolute top-0 left-0 right-0 z-50">
-
-        <div
-          className="
-            mx-auto
-            flex
-            max-w-7xl
-            items-center
-            justify-between
-            px-5
-            py-5
-            sm:px-8
-          "
-        >
-
-          {/* BRAND */}
+      <header className="border-b border-line">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-5 md:px-10 lg:px-12">
 
           <Link
             to="/"
-            className="flex items-center gap-3 group"
+            className="group flex items-center gap-3"
           >
-
-            <div
-              className="
-                flex
-                h-10
-                w-10
-                items-center
-                justify-center
-                rounded-xl
-                bg-white
-                border
-                border-gray-200
-                shadow-sm
-                transition
-                group-hover:shadow-md
-              "
-            >
-              <HeartHandshake
-                size={20}
-                className="text-green-700"
+            <div className="flex h-8 w-8 items-center justify-center border border-line">
+              <Heart
+                size={15}
+                strokeWidth={1.3}
+                className="text-green"
               />
             </div>
 
-            <div className="leading-tight">
-
-              <p
-                className="
-                  text-base
-                  font-bold
-                  tracking-tight
-                  text-gray-900
-                "
-              >
-                FoodBridge{" "}
-                <span className="text-green-600">
-                  AI
-                </span>
+            <div>
+              <p className="text-sm font-medium tracking-[-0.02em]">
+                FoodBridge
+                <span className="text-green">AI</span>
               </p>
 
-              <p
-                className="
-                  hidden
-                  text-[11px]
-                  text-gray-500
-                  sm:block
-                "
-              >
-                Turning Surplus Into Hope
+              <p className="hidden text-[9px] uppercase tracking-[0.08em] text-muted sm:block">
+                Turning surplus into hope
               </p>
-
             </div>
-
           </Link>
-
-
-          {/* BACK TO HOME */}
 
           <Link
             to="/"
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-xl
-              border
-              border-gray-200
-              bg-white/90
-              px-4
-              py-2.5
-              text-sm
-              font-medium
-              text-gray-600
-              shadow-sm
-              backdrop-blur-md
-              transition
-              hover:border-green-200
-              hover:bg-white
-              hover:text-green-700
-              hover:shadow-md
-            "
+            className="fb-arrow text-[10px] uppercase tracking-[0.08em] text-muted transition-colors hover:text-green"
           >
+            <ArrowLeft
+              size={14}
+              strokeWidth={1.2}
+            />
 
-            <ArrowLeft size={16} />
-
-            <span className="hidden sm:inline">
-              Back to Home
-            </span>
-
-            <span className="sm:hidden">
-              Home
-            </span>
-
+            Back to home
           </Link>
 
         </div>
-
       </header>
 
 
-      {/* =========================
-          MAIN PAGE
-      ========================== */}
+      {/* =====================================================
+          MAIN AUTH LAYOUT
+      ====================================================== */}
 
-      <div
-        className="
-          relative
-          z-10
-          min-h-screen
-          flex
-          items-center
-          justify-center
-          px-4
-          py-24
-        "
-      >
+      <main className="mx-auto grid min-h-[calc(100vh-73px)] max-w-[1400px] lg:grid-cols-[0.95fr_1.05fr]">
 
-        {/* LOGIN CARD */}
+        {/* =================================================
+            LEFT IMAGE / MESSAGE
+        ================================================== */}
 
-        <div
-          className="
-            w-full
-            max-w-5xl
-            min-h-[600px]
-            grid
-            lg:grid-cols-2
-            overflow-hidden
-            rounded-[28px]
-            bg-white
-            shadow-2xl
-            shadow-gray-900/10
-            border
-            border-white
-          "
-        >
+        <section className="relative hidden overflow-hidden border-r border-line lg:block">
 
-          {/* =========================
-              LEFT IMAGE SECTION
-          ========================== */}
+          <img
+            src="/aaa.png"
+            alt="FoodBridge community food support"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
 
-          <div
-            className="
-              relative
-              hidden
-              lg:block
-              bg-cover
-              bg-center
-              overflow-hidden
-            "
-            style={{
-              backgroundImage:
-                "url('/aaa.png')",
-              backgroundPosition:
-                "22% center",
-            }}
-          >
+          <div className="absolute inset-0 bg-black/45" />
 
-            {/* IMAGE OVERLAY */}
+          <div className="absolute inset-x-0 bottom-0 p-10 xl:p-12">
 
-            <div
-              className="
-                absolute
-                inset-0
-                bg-gradient-to-t
-                from-black/85
-                via-black/45
-                to-black/10
-              "
-            />
+            <div className="max-w-xl text-white">
 
-            {/* AI BADGE */}
+              <div className="mb-10 flex items-center justify-between border-b border-white/20 pb-5">
+                <span className="text-[10px] uppercase tracking-[0.1em] text-white/60">
+                  FoodBridge / Access
+                </span>
 
-            <div
-              className="
-                absolute
-                top-9
-                left-9
-                inline-flex
-                items-center
-                gap-2
-                px-4
-                py-2
-                rounded-full
-                bg-white/20
-                backdrop-blur-md
-                border
-                border-white/20
-                text-white
-                text-sm
-              "
-            >
-
-              <HeartHandshake
-                size={16}
-                className="text-green-300"
-              />
-
-              AI-powered food rescue
-
-            </div>
-
-
-            {/* LEFT CONTENT */}
-
-            <div
-              className="
-                absolute
-                bottom-0
-                left-0
-                right-0
-                p-10
-                text-white
-              "
-            >
-
-              <div
-                className="
-                  w-12
-                  h-12
-                  mb-6
-                  rounded-xl
-                  bg-green-600
-                  flex
-                  items-center
-                  justify-center
-                  shadow-lg
-                "
-              >
-                <HeartHandshake size={24} />
+                <Heart
+                  size={16}
+                  strokeWidth={1.2}
+                  className="text-light-green"
+                />
               </div>
 
-              <h1
-                className="
-                  text-4xl
-                  font-bold
-                  leading-[1.15]
-                  tracking-tight
-                  max-w-md
-                "
-              >
-                Turning surplus food into
-                meaningful impact.
-              </h1>
-
-              <p
-                className="
-                  mt-5
-                  max-w-md
-                  text-[15px]
-                  leading-7
-                  text-gray-200
-                "
-              >
-                FoodBridge AI connects food donors with
-                organizations that need it most — using
-                intelligent matching to reduce waste and
-                feed communities.
+              <p className="text-[10px] uppercase tracking-[0.1em] text-light-green">
+                Welcome back
               </p>
 
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  mt-7
-                  text-sm
-                  text-gray-200
-                "
-              >
+              <h1 className="mt-5 max-w-lg text-[clamp(3rem,5vw,5.8rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                GOOD FOOD
+                <br />
+                SHOULD
+                <br />
+                <span className="text-light-green">
+                  MOVE.
+                </span>
+              </h1>
 
+              <p className="mt-8 max-w-md text-sm leading-7 text-white/65">
+                Return to the FoodBridge network and continue
+                connecting surplus food with people and communities
+                that need it.
+              </p>
+
+              <div className="mt-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.08em] text-white/45">
                 <ShieldCheck
-                  size={17}
-                  className="text-green-400"
+                  size={14}
+                  strokeWidth={1.2}
+                  className="text-light-green"
                 />
 
-                Building a stronger, hunger-free community.
-
+                Secure platform access
               </div>
 
             </div>
 
           </div>
 
+          <div className="absolute left-10 top-10 xl:left-12">
+            <p className="text-[10px] uppercase tracking-[0.1em] text-white/50">
+              01 — Sign in
+            </p>
+          </div>
 
-          {/* =========================
-              RIGHT LOGIN SECTION
-          ========================== */}
-
-          <div
-            className="
-              flex
-              items-center
-              justify-center
-              bg-white
-              px-7
-              py-12
-              sm:px-12
-              lg:px-16
-            "
-          >
-
-            <div className="w-full max-w-md">
-
-              {/* LOGO */}
-
-              <div className="flex justify-center">
-
-                <div
-                  className="
-                    w-14
-                    h-14
-                    rounded-2xl
-                    bg-green-50
-                    flex
-                    items-center
-                    justify-center
-                    border
-                    border-green-100
-                  "
-                >
-
-                  <HeartHandshake
-                    size={27}
-                    className="text-green-700"
-                  />
-
-                </div>
-
-              </div>
+        </section>
 
 
-              {/* BRAND */}
+        {/* =================================================
+            RIGHT LOGIN FORM
+        ================================================== */}
 
-              <h1
-                className="
-                  mt-5
-                  text-center
-                  text-[25px]
-                  font-bold
-                  tracking-tight
-                  text-gray-900
-                "
-              >
+        <section className="flex items-center px-6 py-14 sm:px-10 md:px-16 lg:px-20 xl:px-24">
 
-                FoodBridge{" "}
+          <div className="w-full max-w-xl">
 
-                <span className="text-green-600">
-                  AI
+            {/* MOBILE LABEL */}
+
+            <div className="mb-14 lg:hidden">
+              <p className="fb-label text-green">
+                01 — Sign in
+              </p>
+            </div>
+
+
+            {/* INTRO */}
+
+            <div className="border-b border-line pb-10">
+
+              <p className="fb-label text-green">
+                Your FoodBridge account
+              </p>
+
+              <h2 className="mt-5 text-[clamp(3rem,7vw,5.5rem)] font-normal leading-[0.88] tracking-[-0.055em]">
+                WELCOME
+                <br />
+                <span className="text-green">
+                  BACK.
                 </span>
+              </h2>
 
-              </h1>
+              <p className="mt-7 max-w-md text-sm leading-7 text-muted md:text-base">
+                Sign in to manage donations, connect with
+                communities, coordinate deliveries, and continue
+                making an impact.
+              </p>
+
+            </div>
 
 
-              {/* WELCOME */}
+            {/* ERROR */}
 
-              <div className="text-center mt-4">
-
-                <h2
-                  className="
-                    text-xl
-                    font-semibold
-                    text-gray-800
-                  "
-                >
-                  Welcome Back 👋
-                </h2>
-
-                <p
-                  className="
-                    mt-2
-                    text-sm
-                    text-gray-500
-                  "
-                >
-                  Login to continue making an impact.
-                </p>
-
+            {error && (
+              <div className="border-b border-red-300 bg-red-50 px-4 py-4 text-sm leading-6 text-red-700">
+                {error}
               </div>
+            )}
 
 
-              {/* ERROR */}
+            {/* GOOGLE */}
 
-              {error && (
-
-                <div
-                  className="
-                    mt-6
-                    rounded-lg
-                    border
-                    border-red-200
-                    bg-red-50
-                    px-4
-                    py-3
-                    text-sm
-                    text-red-600
-                  "
-                >
-                  {error}
-                </div>
-
-              )}
-
-
-              {/* =========================
-                  GOOGLE LOGIN
-              ========================== */}
+            <div className="border-b border-line py-8">
 
               <button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={googleLoading || loading}
                 className="
-                  mt-8
+                  group
                   flex
                   w-full
                   items-center
-                  justify-center
-                  gap-3
-                  rounded-xl
+                  justify-between
                   border
-                  border-gray-200
-                  bg-white
-                  py-3.5
-                  text-sm
-                  font-semibold
-                  text-gray-700
-                  shadow-sm
-                  transition
-                  hover:border-gray-300
-                  hover:bg-gray-50
-                  hover:shadow-md
+                  border-line
+                  px-5
+                  py-4
+                  text-left
+                  transition-colors
+                  hover:border-ink
                   disabled:cursor-not-allowed
-                  disabled:opacity-60
+                  disabled:opacity-50
                 "
               >
 
-                {/* GOOGLE ICON */}
+                <span className="flex items-center gap-4">
 
-                <svg
-                  width="19"
-                  height="19"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="#4285F4"
-                    d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
-                  />
-                </svg>
+                  <span className="flex h-7 w-7 items-center justify-center border border-line">
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="#4285F4"
+                        d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21Z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75Z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M6.54 13.84a5.86 5.86 0 0 1 0-3.68V7.64H3.3a9.75 9.75 0 0 0 0 8.72l3.24-2.52Z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 6.13c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.22 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13Z"
+                      />
+                    </svg>
+                  </span>
 
-                {googleLoading
-                  ? "Connecting to Google..."
-                  : "Continue with Google"}
+                  <span className="text-sm">
+                    {googleLoading
+                      ? "Connecting to Google..."
+                      : "Continue with Google"}
+                  </span>
+
+                </span>
+
+                <ArrowRight
+                  size={15}
+                  strokeWidth={1.2}
+                  className="transition-transform duration-200 group-hover:translate-x-1"
+                />
 
               </button>
 
+            </div>
 
-              {/* DIVIDER */}
 
-              <div className="my-6 flex items-center gap-4">
+            {/* FORM */}
 
-                <div className="h-px flex-1 bg-gray-200" />
+            <form
+              onSubmit={handleLogin}
+              className="pt-8"
+            >
 
-                <span className="text-xs font-medium text-gray-400">
-                  OR
-                </span>
+              {/* EMAIL */}
 
-                <div className="h-px flex-1 bg-gray-200" />
+              <div className="border-b border-line pb-6">
+
+                <label
+                  htmlFor="email"
+                  className="fb-label text-muted"
+                >
+                  Email address
+                </label>
+
+                <div className="relative mt-4">
+
+                  <Mail
+                    size={17}
+                    strokeWidth={1.2}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
+                  />
+
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) =>
+                      setEmail(event.target.value)
+                    }
+                    placeholder="you@example.com"
+                    required
+                    autoComplete="email"
+                    className="
+                      w-full
+                      border-0
+                      border-b
+                      border-transparent
+                      bg-transparent
+                      px-8
+                      py-2
+                      text-base
+                      text-ink
+                      outline-none
+                      placeholder:text-ash
+                      focus:border-green
+                    "
+                  />
+
+                </div>
 
               </div>
 
 
-              {/* LOGIN FORM */}
+              {/* PASSWORD */}
 
-              <form
-                onSubmit={handleLogin}
-                className="space-y-5"
-              >
+              <div className="border-b border-line py-6">
 
-                {/* EMAIL */}
-
-                <div>
+                <div className="flex items-center justify-between">
 
                   <label
-                    className="
-                      block
-                      mb-2
-                      text-sm
-                      font-medium
-                      text-gray-700
-                    "
+                    htmlFor="password"
+                    className="fb-label text-muted"
                   >
-                    Email Address
+                    Password
                   </label>
 
-                  <div className="relative">
-
-                    <Mail
-                      size={18}
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                      "
-                    />
-
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(event) =>
-                        setEmail(event.target.value)
-                      }
-                      placeholder="Enter your email"
-                      required
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-gray-200
-                        bg-white
-                        px-4
-                        pl-11
-                        py-3.5
-                        text-sm
-                        text-gray-800
-                        outline-none
-                        placeholder:text-gray-400
-                        transition
-                        focus:border-green-500
-                        focus:ring-4
-                        focus:ring-green-100
-                      "
-                    />
-
-                  </div>
+                  <Link
+                    to="/forgot-password"
+                    className="text-[10px] uppercase tracking-[0.06em] text-green transition-colors hover:text-deep-green"
+                  >
+                    Forgot password?
+                  </Link>
 
                 </div>
 
+                <div className="relative mt-4">
 
-                {/* PASSWORD */}
+                  <LockKeyhole
+                    size={17}
+                    strokeWidth={1.2}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 text-graphite"
+                  />
 
-                <div>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(event) =>
+                      setPassword(event.target.value)
+                    }
+                    placeholder="Enter your password"
+                    required
+                    autoComplete="current-password"
+                    className="
+                      w-full
+                      border-0
+                      border-b
+                      border-transparent
+                      bg-transparent
+                      px-8
+                      py-2
+                      pr-12
+                      text-base
+                      text-ink
+                      outline-none
+                      placeholder:text-ash
+                      focus:border-green
+                    "
+                  />
 
-                  <div className="mb-2 flex items-center justify-between">
-
-                    <label
-                      className="
-                        block
-                        text-sm
-                        font-medium
-                        text-gray-700
-                      "
-                    >
-                      Password
-                    </label>
-
-                    {/* FORGOT PASSWORD */}
-
-                    <Link
-                      to="/forgot-password"
-                      className="
-                        text-sm
-                        font-semibold
-                        text-green-700
-                        transition
-                        hover:text-green-800
-                        hover:underline
-                      "
-                    >
-                      Forgot password?
-                    </Link>
-
-                  </div>
-
-                  <div className="relative">
-
-                    <LockKeyhole
-                      size={18}
-                      className="
-                        absolute
-                        left-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                      "
-                    />
-
-                    <input
-                      type={
-                        showPassword
-                          ? "text"
-                          : "password"
-                      }
-                      value={password}
-                      onChange={(event) =>
-                        setPassword(event.target.value)
-                      }
-                      placeholder="Enter your password"
-                      required
-                      className="
-                        w-full
-                        rounded-xl
-                        border
-                        border-gray-200
-                        bg-white
-                        px-4
-                        pl-11
-                        pr-12
-                        py-3.5
-                        text-sm
-                        text-gray-800
-                        outline-none
-                        placeholder:text-gray-400
-                        transition
-                        focus:border-green-500
-                        focus:ring-4
-                        focus:ring-green-100
-                      "
-                    />
-
-                    {/* SHOW PASSWORD */}
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowPassword(
-                          !showPassword
-                        )
-                      }
-                      aria-label={
-                        showPassword
-                          ? "Hide password"
-                          : "Show password"
-                      }
-                      className="
-                        absolute
-                        right-4
-                        top-1/2
-                        -translate-y-1/2
-                        text-gray-400
-                        hover:text-green-600
-                        transition
-                      "
-                    >
-
-                      {showPassword ? (
-                        <EyeOff size={19} />
-                      ) : (
-                        <Eye size={19} />
-                      )}
-
-                    </button>
-
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowPassword(!showPassword)
+                    }
+                    aria-label={
+                      showPassword
+                        ? "Hide password"
+                        : "Show password"
+                    }
+                    className="
+                      absolute
+                      right-0
+                      top-1/2
+                      -translate-y-1/2
+                      text-graphite
+                      transition-colors
+                      hover:text-green
+                    "
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} strokeWidth={1.2} />
+                    ) : (
+                      <Eye size={18} strokeWidth={1.2} />
+                    )}
+                  </button>
 
                 </div>
 
+              </div>
 
-                {/* LOGIN BUTTON */}
+
+              {/* SUBMIT */}
+
+              <div className="pt-8">
 
                 <button
                   type="submit"
                   disabled={loading || googleLoading}
                   className="
+                    group
+                    flex
                     w-full
-                    rounded-xl
-                    bg-[#10963f]
-                    py-3.5
-                    text-sm
-                    font-semibold
+                    items-center
+                    justify-between
+                    bg-deep-green
+                    px-5
+                    py-4
+                    text-[11px]
+                    uppercase
+                    tracking-[0.08em]
                     text-white
-                    shadow-md
-                    transition
-                    hover:bg-green-700
+                    transition-colors
+                    hover:bg-green
                     disabled:cursor-not-allowed
                     disabled:opacity-60
                   "
                 >
 
-                  {loading
-                    ? "Logging in..."
-                    : "Login"}
+                  <span>
+                    {loading
+                      ? "Logging in..."
+                      : "Login to FoodBridge"}
+                  </span>
+
+                  {!loading && (
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={1.2}
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  )}
 
                 </button>
 
-              </form>
+              </div>
+
+            </form>
 
 
-              {/* REGISTER */}
+            {/* REGISTER */}
 
-              <p
-                className="
-                  mt-7
-                  text-center
-                  text-sm
-                  text-gray-500
-                "
-              >
+            <div className="mt-10 border-t border-line pt-7">
 
-                Don't have an account?{" "}
+              <p className="text-sm text-muted">
+
+                Don't have an account?
 
                 <Link
                   to="/register"
-                  className="
-                    font-semibold
-                    text-green-700
-                    hover:text-green-800
-                  "
+                  className="ml-2 text-green transition-colors hover:text-deep-green"
                 >
-                  Create an account
+                  Create an account →
                 </Link>
 
               </p>
 
+            </div>
 
-              {/* SECURITY NOTE */}
 
-              <div
-                className="
-                  mt-8
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  text-xs
-                  text-gray-400
-                "
-              >
+            {/* SECURITY */}
 
-                <ShieldCheck size={14} />
+            <div className="mt-10 flex items-center gap-3 border-t border-line pt-5">
 
+              <ShieldCheck
+                size={14}
+                strokeWidth={1.2}
+                className="text-green"
+              />
+
+              <p className="text-[10px] uppercase tracking-[0.07em] text-ash">
                 Secure access to your FoodBridge account
-
-              </div>
+              </p>
 
             </div>
 
           </div>
 
-        </div>
+        </section>
 
-      </div>
+      </main>
 
     </div>
   );
