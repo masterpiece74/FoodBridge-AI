@@ -91,12 +91,16 @@ function Navbar() {
             {/* ENTER PLATFORM */}
             <Link
               to="/login"
-              className="ml-4 inline-flex items-center gap-2 border border-[#111111] bg-[#111111] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
+              className="ml-4 inline-flex shrink-0 items-center gap-2 border border-[#111111] bg-[#111111] px-5 py-3 text-[11px] font-medium uppercase tracking-[0.08em] !text-white no-underline transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
             >
-              Enter platform
+              <span className="!text-white no-underline">
+                Enter platform
+              </span>
+
               <ArrowRight
                 size={14}
                 strokeWidth={1.4}
+                className="!text-white"
               />
             </Link>
           </div>
@@ -180,12 +184,16 @@ function Navbar() {
                 <Link
                   to="/login"
                   onClick={closeMobileMenu}
-                  className="my-5 flex items-center justify-between border border-[#111111] bg-[#111111] px-5 py-4 text-xs font-medium uppercase tracking-[0.08em] text-white transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
+                  className="my-5 flex shrink-0 items-center justify-between border border-[#111111] bg-[#111111] px-5 py-4 text-xs font-medium uppercase tracking-[0.08em] !text-white no-underline transition-colors duration-200 hover:border-[#1F7A4D] hover:bg-[#1F7A4D]"
                 >
-                  Enter platform
+                  <span className="!text-white no-underline">
+                    Enter platform
+                  </span>
+
                   <ArrowRight
                     size={15}
                     strokeWidth={1.4}
+                    className="!text-white"
                   />
                 </Link>
               </div>
