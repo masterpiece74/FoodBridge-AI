@@ -131,19 +131,38 @@ function Hero() {
         </div>
 
         {/* =====================================================
-            RIGHT — PHOTOGRAPHY
+            RIGHT — CINEMATIC PHOTOGRAPHY
         ===================================================== */}
 
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9 }}
-          className="relative min-h-[600px] overflow-hidden lg:min-h-[calc(100vh-72px)]"
+          className="group relative min-h-[600px] overflow-hidden lg:min-h-[calc(100vh-72px)]"
         >
-          <img
+          {/* Animated image layer */}
+
+          <motion.img
             src="/foodbridge-hero.jpg.png"
             alt="Food donation and community food sharing"
             className="absolute inset-0 h-full w-full object-cover"
+            initial={{ scale: 1.04, x: 0, y: 0 }}
+            animate={{
+              scale: [1.04, 1.1, 1.04],
+              x: [0, -10, 0],
+              y: [0, -6, 0],
+            }}
+            transition={{
+              duration: 18,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          {/* Subtle hover movement */}
+
+          <motion.div
+            className="absolute inset-0 bg-black/0 transition-colors duration-700 group-hover:bg-black/[0.04]"
           />
 
           {/* IMAGE CAPTION */}
@@ -159,7 +178,16 @@ function Hero() {
               </p>
             </div>
 
-            <ArrowDownRight size={24} strokeWidth={1.2} />
+            <motion.div
+              animate={{ x: [0, 4, 0], y: [0, 4, 0] }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <ArrowDownRight size={24} strokeWidth={1.2} />
+            </motion.div>
           </div>
 
           {/* IMPACT MARKER */}

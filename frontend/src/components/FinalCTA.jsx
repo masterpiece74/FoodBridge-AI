@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function FinalCTA() {
   return (
-    <section className="border-b border-line bg-deep-green text-white">
+    <section className="border-b border-line bg-[#0B2F1A] text-white">
       <div className="mx-auto max-w-[1400px]">
         <div className="grid lg:grid-cols-[0.8fr_1.2fr]">
           {/* Section label */}
@@ -13,7 +13,7 @@ function FinalCTA() {
               <Heart
                 size={17}
                 strokeWidth={1.2}
-                className="text-light-green"
+                className="text-[#DCEFE3]"
               />
 
               <p className="fb-label text-white/50">
@@ -30,18 +30,16 @@ function FinalCTA() {
             transition={{ duration: 0.75 }}
             className="px-6 py-14 md:px-10 md:py-16 lg:px-12 lg:py-20"
           >
-            <p className="fb-label text-light-green">
+            <p className="fb-label text-[#DCEFE3]">
               There is another destination
             </p>
 
-            <h2 className="mt-6 max-w-5xl text-[clamp(3.5rem,8vw,8rem)] font-normal leading-[0.86] tracking-[-0.06em]">
+            <h2 className="mt-6 max-w-5xl text-[clamp(3.5rem,8vw,8rem)] font-normal leading-[0.86] tracking-[-0.06em] text-white">
               HAVE
               <br />
               SURPLUS?
               <br />
-              <span className="text-light-green">
-                MOVE IT.
-              </span>
+              <span className="text-[#DCEFE3]">MOVE IT.</span>
             </h2>
 
             <div className="mt-12 grid gap-10 md:grid-cols-[1fr_auto] md:items-end">
@@ -52,27 +50,33 @@ function FinalCTA() {
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row md:flex-col">
+                {/* DONATE FOOD */}
                 <Link
                   to="/register"
-                  className="group inline-flex items-center justify-between gap-8 border border-white bg-white px-5 py-4 text-[11px] uppercase tracking-[0.08em] text-deep-green transition-colors hover:bg-light-green"
+                  className="group inline-flex items-center justify-between gap-8 border border-white bg-white px-5 py-4 text-[11px] font-medium uppercase tracking-[0.08em] !text-[#0B2F1A] transition-colors duration-200 hover:bg-[#DCEFE3]"
                 >
-                  Donate food
+                  <span className="!text-[#0B2F1A]">
+                    Donate food
+                  </span>
+
                   <ArrowRight
                     size={16}
                     strokeWidth={1.2}
-                    className="transition-transform duration-200 group-hover:translate-x-1"
+                    className="!text-[#0B2F1A] transition-transform duration-200 group-hover:translate-x-1"
                   />
                 </Link>
 
+                {/* JOIN THE NETWORK */}
                 <Link
                   to="/register"
-                  className="group inline-flex items-center justify-between gap-8 border border-white/20 px-5 py-4 text-[11px] uppercase tracking-[0.08em] text-white transition-colors hover:border-light-green hover:text-light-green"
+                  className="group inline-flex items-center justify-between gap-8 border border-white/20 px-5 py-4 text-[11px] font-medium uppercase tracking-[0.08em] !text-white transition-colors duration-200 hover:border-[#DCEFE3] hover:!text-[#DCEFE3]"
                 >
-                  Join the network
+                  <span>Join the network</span>
+
                   <ArrowRight
                     size={16}
                     strokeWidth={1.2}
-                    className="transition-transform duration-200 group-hover:translate-x-1"
+                    className="text-current transition-transform duration-200 group-hover:translate-x-1"
                   />
                 </Link>
               </div>
@@ -87,7 +91,7 @@ function FinalCTA() {
               <Utensils
                 size={15}
                 strokeWidth={1.2}
-                className="text-light-green"
+                className="text-[#DCEFE3]"
               />
 
               <span className="text-[10px] uppercase tracking-[0.08em] text-white/45">
@@ -104,7 +108,7 @@ function FinalCTA() {
             <ArrowRight
               size={15}
               strokeWidth={1.2}
-              className="text-light-green"
+              className="text-[#DCEFE3]"
             />
           </div>
         </div>

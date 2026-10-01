@@ -212,17 +212,8 @@ function Footer() {
               </div>
             </div>
           </motion.div>
-        </div>
-
-        {/* Closing statement */}
-        <div className="grid border-t border-white/10 md:grid-cols-[0.8fr_1.2fr]">
-          <div className="border-b border-white/10 px-6 py-8 md:border-b-0 md:border-r md:px-10 lg:px-12">
-            <p className="text-[10px] uppercase tracking-[0.08em] text-white/30">
-              FoodBridge AI / 2026
-            </p>
-          </div>
-
-          <div className="flex flex-col justify-between gap-6 px-6 py-8 md:flex-row md:items-center md:px-10 lg:px-12">
+        
+           <div className="flex flex-col justify-between gap-6 px-6 py-8 md:flex-row md:items-center md:px-10 lg:px-12">
             <p className="text-sm text-white/50">
               Good food deserves another destination.
             </p>
